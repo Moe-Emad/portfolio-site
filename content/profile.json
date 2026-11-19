@@ -1,0 +1,16 @@
+{
+  "name": "Mohammed Emad",
+  "nameArabic": "محمد عماد",
+  "role": "Software engineer",
+  "location": "Egypt",
+  "headline": "From the database to the last pixel, I build web apps that just work.",
+  "about": [
+    "I am a software engineer based in Egypt. Most of my work is full-stack web: Laravel and PHP on one side, React and Next.js on the other, with the database, the tests and the deployment in between.",
+    "I like the part many people skip. When I take over a codebase I first make it safe to change: pinned dependencies, no secrets in the history, one command that runs every check. Then I fix what is broken, and only then add what is new. Each change gets a test that fails without it, a row in a tracker and a line in the changelog.",
+    "This site was built the same way. Its tracker and changelog are part of the repository."
+  ],
+  "links": {
+    "linkedin": "https://www.linkedin.com/in/mohammed-emad-779109271/",
+    "github": "https://github.com/Moe-Emad"
+  }
+}

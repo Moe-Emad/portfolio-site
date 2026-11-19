@@ -1,0 +1,146 @@
+{
+  "slug": "relic",
+  "title": "Relic",
+  "summary": "Upload an old codebase as a zip file and get a written report: an overview, three diagrams, a note on every file, and answers that show which lines they came from.",
+  "kind": "Own product",
+  "year": "2026",
+  "status": "Prototype",
+  "featured": true,
+  "order": 5,
+  "role": "Design and development of the analysis pipeline, the API and the interface.",
+  "stack": [
+    "Python",
+    "FastAPI",
+    "LangGraph",
+    "LangChain",
+    "Groq API",
+    "Next.js",
+    "React",
+    "TypeScript",
+    "Tailwind CSS"
+  ],
+  "description": [
+    "Taking over an old codebase starts with weeks of reading. Relic shortens that: upload the code as a zip file and it returns a written overview of the system, three diagrams (architecture, data flow and dependencies) and a note on every file. After that it answers questions from the code itself, and shows under each answer which files and lines it used.",
+    "It is a working prototype: the uploaded code is held in memory for an hour, finished reports are saved, and there are no accounts yet. The overview and the notes are written by an AI model and can be wrong; the dependency diagram and the counts are not.",
+    "I reworked it in 2026. The interface used to be a chat window with the upload behind a small button; now the upload and the report are the page. Behind it, reports are no longer cut off, the progress is real, and a larger project takes a few minutes on a free AI account instead of failing. The pictures show it reading an old PHP course project of mine, 49 files."
+  ],
+  "highlights": [
+    {
+      "title": "A core sample of the upload",
+      "text": "Before anything is analysed, the upload is drawn the way a geologist shows a drill core: one column whose layers are the languages in the zip, each as tall as its share of the bytes."
+    },
+    {
+      "title": "Answers that show their sources",
+      "text": "A question is matched against the uploaded code by a keyword ranking written by hand, with no embeddings. A page that matches brings along the script its form posts to. The model is told to answer only from the lines it was given, and those lines are listed under the answer."
+    },
+    {
+      "title": "Built for a small allowance",
+      "text": "A free account of the AI service allows 8,000 tokens a minute. Relic sizes every request to fit, condenses the notes folder by folder when they are too many, and spaces its requests so that none is refused. It says beforehand how long that will take: nine minutes estimated for 49 files, and nine to ten measured."
+    },
+    {
+      "title": "Structure first, model second",
+      "text": "The code is parsed before any model sees it. Imports, functions and classes are sent in batches, and the files are ranked first, so entry points and files that many others import get their note before tests and generated files."
+    },
+    {
+      "title": "Diagrams that render",
+      "text": "The dependency diagram comes from the import and include statements of Python, JavaScript, TypeScript and PHP files, not from the model. The two diagrams the model writes follow strict syntax rules and are cleaned before they reach the page."
+    },
+    {
+      "title": "Uploads it does not trust",
+      "text": "Size limits before and after unpacking, a compression-ratio check, a cap on the number of entries and a check against paths that climb out of the folder."
+    }
+  ],
+  "facts": [
+    {
+      "value": "122",
+      "label": "automated tests"
+    },
+    {
+      "value": "3",
+      "label": "diagrams per report"
+    },
+    {
+      "value": "60",
+      "label": "files noted per upload"
+    },
+    {
+      "value": "50 MB",
+      "label": "upload limit"
+    }
+  ],
+  "images": [
+    {
+      "src": "/images/projects/relic/01-core-sample.jpg",
+      "alt": "Relic after an upload: the heading \"49 files, ready to be read\", figures for files kept, files left out and size, a button to write the report, a line that says the run is expected to take about 9 minutes, and a column that shows the zip by language",
+      "caption": "After the upload. The core sample shows what the zip is made of, and Relic says how long the report will take on this account before anything starts.",
+      "device": "desktop",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "src": "/images/projects/relic/02-progress.jpg",
+      "alt": "Relic while it writes a report: a timer, four steps with their counts (16 of 49 notes written), and a notice that it is waiting 52 seconds for the per-minute allowance of the AI service",
+      "caption": "While it works. The counts come from the analysis itself, and a wait for the AI service is shown instead of failing.",
+      "device": "desktop",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "src": "/images/projects/relic/03-report.jpg",
+      "alt": "A Relic report on an old PHP project: a dark band with the name of the zip and buttons to download it as PDF or Markdown, a list of sections on the left, a notice that the overview was written from summaries of 4 folders, and the system overview",
+      "caption": "The report. Here Relic is reading an old PHP project of mine, and says how the overview was put together.",
+      "device": "desktop",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "src": "/images/projects/relic/04-question.jpg",
+      "alt": "The question section of a Relic report: the question \"What happens when a student signs in? Which files are involved?\" and the start of an answer that quotes the form in login_page.php and names login.php",
+      "caption": "A question about the code. The answer is written from the lines Relic looked up, and cites them.",
+      "device": "desktop",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "src": "/images/projects/relic/05-sources.jpg",
+      "alt": "The end of an answer in Relic: a list of the files involved, and under it a table headed \"Relic gave the model these parts of the code\" with seven files and their line ranges",
+      "caption": "Under every answer: exactly which files and lines the model was given.",
+      "device": "desktop",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "src": "/images/projects/relic/06-dependencies.jpg",
+      "alt": "The dependencies section of a Relic report: a diagram of file boxes with arrows that run to one shared file, with buttons to zoom and to fit",
+      "caption": "The dependency diagram is read from the import and include statements, not written by the model.",
+      "device": "desktop",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "src": "/images/projects/relic/07-architecture.jpg",
+      "alt": "The architecture section of a Relic report: groups of boxes for the templates, the database, the JavaScript and the styles, with arrows between them",
+      "caption": "The architecture diagram, drawn by the model and cleaned before it is shown.",
+      "device": "desktop",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "src": "/images/projects/relic/08-data-flow.jpg",
+      "alt": "The data flow section of a Relic report: a diagram from a browser request through a decision to the PHP pages and the MySQL database",
+      "caption": "The data-flow diagram. Diagrams can be zoomed and dragged.",
+      "device": "desktop",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "src": "/images/projects/relic/09-phone-report.jpg",
+      "alt": "A saved Relic report reopened on a phone: the name of the zip, buttons to download it or close it, the sections as a row that scrolls sideways, and the overview",
+      "caption": "A saved report, reopened on a phone.",
+      "device": "phone",
+      "width": 780,
+      "height": 1688
+    }
+  ],
+  "links": {}
+}

@@ -1,0 +1,19 @@
+# Text files use LF in the repo and in the working folder, on every PC: the same bytes on Windows, on Linux and
+# on GitHub (docs/pitfalls.md, rows 3 and 5). Editors on Windows read LF without trouble.
+* text=auto eol=lf
+
+# Git hooks and shell scripts must keep LF on every PC, or "sh" cannot run them (docs/pitfalls.md, row 3).
+.githooks/* text eol=lf
+*.sh text eol=lf
+
+# Binary files: never touched.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.avif binary
+*.gif binary
+*.ico binary
+*.mp4 binary
+*.glb binary
+*.woff2 binary

@@ -1,0 +1,101 @@
+{
+  "slug": "tpms",
+  "title": "TPMS",
+  "summary": "A training platform that connects course providers, instructors and students, with PDF certificates on completion.",
+  "kind": "Earlier work",
+  "status": "Finished",
+  "featured": true,
+  "order": 7,
+  "role": "Database design, the three portals and the certificate export.",
+  "stack": [
+    "PHP",
+    "MySQL",
+    "JavaScript",
+    "HTML",
+    "CSS"
+  ],
+  "description": [
+    "The Training Provider Management System connects three kinds of users. Training providers create and manage courses and assign instructors. Instructors see their courses and set their availability. Students browse, enrol and download a certificate for a finished course.",
+    "It is plain PHP with MySQL and no framework: each portal has its own sign-in, and eight tables hold the users, the courses, the certificates and the links between them.",
+    "I reworked its look in 2026: one colour for each of the three areas, one shared stylesheet instead of eleven, and pages that fit a phone. The PHP behind the pages and the database are the originals."
+  ],
+  "highlights": [
+    {
+      "title": "Three portals, one database",
+      "text": "Students, instructors and providers each sign in to their own area and see only what belongs to them."
+    },
+    {
+      "title": "Certificates as PDF",
+      "text": "A student can generate a certificate of completion for any enrolled course, drawn with the TCPDF library."
+    },
+    {
+      "title": "Many instructors per course",
+      "text": "Courses and instructors are linked through their own table, and each instructor keeps an availability status per course."
+    },
+    {
+      "title": "A colour for each area",
+      "text": "Student pages are teal, instructor pages amber and provider pages indigo, so it is always clear where you are. The course card and the course page are written once and shared by all three."
+    }
+  ],
+  "facts": [
+    {
+      "value": "3",
+      "label": "user roles"
+    },
+    {
+      "value": "8",
+      "label": "database tables"
+    }
+  ],
+  "images": [
+    {
+      "src": "/images/projects/tpms/01-sign-in.jpg",
+      "alt": "The sign-in page of TPMS: a form with a switch between Student, Instructor and Provider, beside a drawn certificate of completion on a teal panel",
+      "caption": "Sign-in. The switch leads to the three areas, and the panel takes the colour of the one chosen.",
+      "device": "desktop",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "src": "/images/projects/tpms/02-courses.jpg",
+      "alt": "The student area of TPMS: a greeting, the line \"12 courses are open for registration\" and two rows of course cards, each with a cover, a category, dates and a price in ringgit",
+      "caption": "The student area with the courses on offer. The covers are drawn sample pictures.",
+      "device": "desktop",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "src": "/images/projects/tpms/03-course-and-certificate.jpg",
+      "alt": "A course page in TPMS with its start date, end date and price, two instructors marked available and not available, and a button to download a certificate",
+      "caption": "A course the student has joined: who teaches it, who is available, and the button that draws the PDF certificate.",
+      "device": "desktop",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "src": "/images/projects/tpms/04-provider-dashboard.jpg",
+      "alt": "The provider area of TPMS in indigo: a greeting, the line \"You run 8 courses\", and three actions to add, edit and delete a course",
+      "caption": "The training provider signs in to their courses and the three management actions.",
+      "device": "desktop",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "src": "/images/projects/tpms/05-instructor-courses.jpg",
+      "alt": "The instructor area of TPMS in amber: a greeting, the line \"You teach 6 courses\" and the cards of those courses",
+      "caption": "The instructor area: the courses they teach, and a reminder to keep their availability up to date.",
+      "device": "desktop",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "src": "/images/projects/tpms/06-phone-courses.jpg",
+      "alt": "The student area of TPMS on a phone: a Menu button, a greeting and the course cards in one column",
+      "caption": "The same pages on a phone.",
+      "device": "phone",
+      "width": 780,
+      "height": 1688
+    }
+  ],
+  "links": {}
+}

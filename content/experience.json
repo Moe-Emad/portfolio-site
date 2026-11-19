@@ -1,0 +1,65 @@
+[
+  {
+    "id": "mtc-co-developer",
+    "role": "Co-developer",
+    "organisation": "MTC training platform",
+    "organisationNote": "a client project for a Saudi training company, built by a team of two",
+    "start": "2026-10",
+    "end": null,
+    "highlights": [
+      "Built the shared design kit and the page shells of the public site, the learner area and the back office, in Arabic and English, right to left and left to right.",
+      "Built the course catalogue and calendar, the content pages, the learner account and dashboard, and eleven API modules behind them with Node.js, Express and Prisma on MySQL.",
+      "Cover my screens with Playwright end-to-end tests, and ship every change as a reviewed pull request through a shared check that runs before each merge."
+    ],
+    "project": "mtc-training-platform"
+  },
+  {
+    "id": "sutherland-mobility-support",
+    "role": "Advanced Mobility Tech Support, AT&T",
+    "organisation": "Sutherland Global",
+    "start": "2026-07",
+    "end": null,
+    "highlights": [
+      "Solve wireless mobility problems for AT&T customers as an AT&T mobility expert, one case at a time."
+    ]
+  },
+  {
+    "id": "jpro-co-developer",
+    "role": "Co-developer",
+    "organisation": "Jpro Sdn Bhd",
+    "organisationNote": "an accounting tuition centre in Malaysia",
+    "start": "2026-05",
+    "end": "2026-06",
+    "highlights": [
+      "Built the pages for the ACCA, CIMA and CPA programmes and their papers, the blog and the contact pages, in Next.js and TypeScript.",
+      "Built registration flows of four or five steps per programme that end in a formatted e-mail to the centre, with rate limiting against abuse.",
+      "Added a chatbot that answers questions about fees, schedules and enrolment from the centre's own facts, and an admin area for posts and timetables."
+    ],
+    "project": "jpro-website"
+  },
+  {
+    "id": "asset-full-stack",
+    "role": "Software Engineering Intern",
+    "organisation": "Asset Technology Group",
+    "start": "2023-07",
+    "end": "2023-10",
+    "highlights": [
+      "Built an e-commerce platform with an Angular frontend and a Spring Boot backend.",
+      "Developed a standard reporting framework that made the key performance figures visible.",
+      "Took part in every phase of development, from the technical decisions to the implementation."
+    ]
+  },
+  {
+    "id": "uhrs-judge",
+    "role": "UHRS Judge, AI and search quality",
+    "organisation": "UHRS",
+    "organisationNote": "Microsoft's crowdsourcing platform for human review tasks",
+    "start": "2021-06",
+    "end": "2026-01",
+    "highlights": [
+      "Did review tasks on the platform: data labelling, categorisation, search moderation and transcription.",
+      "Contributed to AI training for Microsoft Copilot, judging model answers for quality and relevance.",
+      "Worked across several partner platforms, delivering accurate results on time for each project."
+    ]
+  }
+]

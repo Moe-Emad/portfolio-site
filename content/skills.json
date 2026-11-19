@@ -1,0 +1,27 @@
+[
+  {
+    "group": "Frontend",
+    "note": "Pages and interfaces, from static sites to dashboards.",
+    "skills": ["React", "Next.js", "TypeScript", "Tailwind CSS", "Vue", "Alpine.js", "Angular"]
+  },
+  {
+    "group": "Backend",
+    "note": "Application logic, sign-in and roles, APIs.",
+    "skills": ["Laravel", "PHP", "Node.js", "Python", "FastAPI", "Java", "Spring Boot"]
+  },
+  {
+    "group": "Data and services",
+    "note": "Where the data lives and what the application talks to.",
+    "skills": ["MariaDB", "MySQL", "Supabase", "Upstash Redis", "EmailJS"]
+  },
+  {
+    "group": "AI features",
+    "note": "Language models inside a product: chat that answers from given facts, analysis pipelines.",
+    "skills": ["LangGraph", "LangChain", "Groq API"]
+  },
+  {
+    "group": "Quality and delivery",
+    "note": "What keeps a change from breaking something else.",
+    "skills": ["Pest", "Playwright", "axe", "GitHub Actions", "gitleaks", "Vite"]
+  }
+]

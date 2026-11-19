@@ -1,0 +1,51 @@
+# Changelog
+
+One line per merged pull request, with the tracker item and the PR number. The plan is in
+`docs/tracking/CODE-TRACKER.md`. The numbers up to F27 (#86) are pull requests of the private working repository
+where that work was done; D4 brought it here.
+
+## Unreleased
+
+- Baseline: the original portfolio imported from its own repository at `583fd75`, without `.env`.
+- A1: project files and working rules - pitfalls, tracker, changelog, README, .gitignore, .env.example (#20)
+- A2: git hooks - gitleaks on staged changes, .env and .sql refused, no AI attribution, no direct push to main (#21)
+- A3: dependencies - 16 npm advisories fixed inside the current majors (now 0), installs run no package scripts, lock file check (#22)
+- B1: the build no longer fails on Linux - two imports had the wrong letter case; a test checks every import (#23)
+- B2: lint is clean - Hero component renamed so its hook is valid, unused import and missing dependency fixed (#24)
+- A4: npm run gate - every check in one command, run by the pre-push hook and by GitHub on every pull request; Dependabot; LF line endings (#25)
+- A5: browser tests - Playwright and axe on desktop and phone sizes, run by GitHub on every pull request (#27)
+- B5: invented counters, tutorial testimonials and 8.2 MB of unused public files removed; a test keeps public/ clean (#28)
+- B4: navigation - dead menu link removed, the main button is a real link, skip link, favicon type; browser tests follow every in-page link (#30)
+- B3: contact form - visible and announced success and error, field messages, bot trap, a notice when it is not set up; EmailJS loads on first send (#31)
+- F1: content in JSON files (profile, experience, skills, projects) with a schema the gate checks; TypeScript for new code (#32)
+- F2: a design of its own - two-script sign on Egyptian blue, light and dark theme, phone menu, own fonts; the tutorial 3D scene and 8 packages removed, JavaScript 1,415 kB to 225 kB (#33)
+- F3: a page per project with 26 real screenshots, a technology filter on the work list, a not-found page (#34)
+- F4: every page written to real HTML at build time; title, description, share picture and structured data per page; sitemap.xml and robots.txt (#35)
+- D1: README - setup on a fresh Windows PC, daily start, changing the content, tests, troubleshooting; a test keeps the docs in step with the project (#36)
+- D2: deploy guide - hosting choice with sources, EmailJS steps, settings, a checklist after every deploy, troubleshooting; security headers (#37)
+- F6: admin panel - Pages CMS forms over the content files, settings generated and kept in step with the schema by a test; no admin page on the public site (#38)
+- F5: speed - WebP copies of every screenshot in several widths, a page-weight budget in the tests; home page 553 kB to 286 kB (the original was 6,397 kB) (#39)
+- F7: command palette - Ctrl+K or the Search button to jump to a section or project, switch the theme, copy a link; keyboard and screen-reader friendly (#40)
+- F8: TPMS has pictures - four screenshots of its three portals, the table count corrected to eight; a Finished or Live project now needs at least one picture (#42)
+- F9: TPMS pictures of its redesigned pages - six screens including a phone view; the text says the look was reworked in 2026 and the PHP and database are the originals (#44)
+- F10: TPMS pictures retaken with twelve sample courses instead of four; descriptions name the numbers the pictures show (#46)
+- F11: the MTC training platform as the first main project, with eight pictures from a local copy on made-up data; Athelvoid and TPMS join the main list of seven (#48)
+- F12: Relic pictures of its reworked interface - seven screens from a real run including a phone view; the text says what was reworked (#50)
+- F13: no picture of the MTC admin panel - replaced by public pages and the learner area; a content check keeps it so (#52)
+- A6: The picomatch advisory GHSA-fc5q-39xc-vjpf, which has no fixed version yet, is on the reviewed list with its reason (#55)
+- F14: Relic's page shows the deeper analysis: nine pictures of a real run on an old PHP project, answers with their sources, pacing to the AI service's limit (#56)
+- F15: Athelvoid's page shows the reworked site and an admin area behind a real sign-in, with nine new pictures (#58)
+- D3: The tracker names the new private repos of the reworked Relic and Athelvoid (#60)
+- F16: Experience lists the MTC and Jpro work and the current job, links each job to its project page, and matches the CV (#62)
+- F17: A project can be a draft, kept in content but left out of the site; SaaS LMS is a draft for now (#64)
+- F18: The page uses the width of wide screens; text keeps a readable line length (#66)
+- F19: Selected work has tabs by kind of work with their counts instead of fourteen technology buttons (#68)
+- F20: The first screen opens with the name rising and the Arabic name written from the right; pictures unroll into view; nothing moves with reduce motion (#70)
+- B6: /work/ is a page with the list of work, and All work leads there (#72)
+- F21: RPLMS v2 shows its home page as the first picture (#74)
+- F22: Smaller and earlier work is a sheet of cells with the star of the first screen (#76)
+- F23: Blocks further down rise into place as you scroll, and the record figures count up (#78)
+- F24: Skills are rows of tags by group, without counts (#80)
+- F25: Each project in the list of work also shows its figures, my part and its points; a click on its picture opens it; its picture is sharp on wide screens (#82)
+- F26: The headline under the name is now: From the database to the last pixel, I build web apps that just work (#84)
+- F27: Molok El-Sook has a sharp 1440 px first picture, and a content rule keeps first pictures at least 1200 px wide (#86)

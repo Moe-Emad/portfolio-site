@@ -1,0 +1,72 @@
+# The gate on GitHub (tracker A4): the same "npm run gate" as on a developer PC, for every pull request and for
+# main - so a pull request from Dependabot, or a push from a clone without the git hooks, is checked too.
+# It runs on Linux: file names are case-sensitive there, as on every host (docs/pitfalls.md, row 1).
+#
+# Supply-chain rules of this file (tools/dev/ci.test.cjs checks them):
+# - actions are GitHub's own and pinned to a commit (Dependabot proposes updates)
+# - the token can only read the code; the job uses no secret
+# - never "pull_request_target": that would run a stranger's code with a writable token
+name: gate
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: gate-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  gate:
+    name: npm run gate
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+
+    steps:
+      - name: Get the code (with history, the gate looks at the commits of the branch)
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Node.js 22
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+
+      - name: Install from the lock file
+        run: |
+          npm ci
+          npm run hooks
+
+      - name: The gate
+        run: npm run gate
+
+  browser:
+    name: npm run test:browser
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+
+    steps:
+      - name: Get the code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Node.js 22
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+
+      - name: Install from the lock file, and the browser of the pinned Playwright version
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+
+      - name: Browser tests (desktop and phone sizes, axe)
+        run: npm run test:browser

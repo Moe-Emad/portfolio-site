@@ -1,0 +1,8 @@
+#!/bin/sh
+# Commit messages never name an AI as author or co-author (a working rule of this repo, see tools/dev/commit-attribution.cjs).
+# Enabled once per clone: npm run hooks
+if ! command -v node >/dev/null 2>&1; then
+  echo "commit-msg: Node.js is needed for the attribution check (tools/dev/commit-attribution.cjs)." >&2
+  exit 1
+fi
+exec node "$(dirname "$0")/../tools/dev/commit-attribution.cjs" --file "$1"

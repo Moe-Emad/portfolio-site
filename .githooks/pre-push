@@ -1,0 +1,37 @@
+#!/bin/sh
+# Before every push:
+# 1. main changes only through pull requests - a direct push to main is refused.
+# 2. the gate (tools/dev/gate.cjs, when the repository has one) must pass.
+# Enabled once per clone: npm run hooks
+# Note: the hook only exists on branches that contain .githooks/.
+hook_dir=$(cd "$(dirname "$0")" && pwd)
+pushing=0
+zero=0000000000000000000000000000000000000000
+while read -r local_ref local_sha remote_ref remote_sha; do
+  case "$remote_ref" in
+    refs/heads/main)
+      echo "pre-push: direct push to main is not allowed - push a branch and open a pull request." >&2
+      exit 1
+      ;;
+  esac
+  [ "$local_sha" = "$zero" ] || pushing=1 # deleting a remote branch pushes no code
+done
+[ "$pushing" = 1 ] || exit 0
+
+# The gate belongs to this repository. Another repository that borrows these hooks (the hook tests make one)
+# has nothing to check.
+top=$(cd "$(git rev-parse --show-toplevel)" && pwd)
+if [ "$top" != "$(cd "$hook_dir/.." && pwd)" ]; then
+  exit 0
+fi
+[ -f "$hook_dir/../tools/dev/gate.cjs" ] || exit 0
+if ! command -v node >/dev/null 2>&1; then
+  echo "pre-push: Node.js is needed for the gate (tools/dev/gate.cjs)." >&2
+  exit 1
+fi
+echo "pre-push: running the gate (npm run gate) ..." >&2
+node "$hook_dir/../tools/dev/gate.cjs" >&2 || {
+  echo "pre-push: the gate failed - nothing was pushed." >&2
+  exit 1
+}
+exit 0

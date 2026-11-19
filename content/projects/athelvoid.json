@@ -1,0 +1,133 @@
+{
+  "slug": "athelvoid",
+  "title": "Athelvoid",
+  "summary": "A company site with its own small content system: pages, a blog, a contact inbox, and an admin area behind a real sign-in that edits all of it.",
+  "kind": "Own product",
+  "year": "2026",
+  "status": "Prototype",
+  "featured": true,
+  "order": 6,
+  "role": "Design, pages, the content model, the admin area and its sign-in.",
+  "stack": [
+    "Next.js",
+    "React",
+    "TypeScript",
+    "Tailwind CSS"
+  ],
+  "description": [
+    "Athelvoid is the site of a small software studio: home, about, services, blog and contact, with an admin area that edits all of it. Messages from the contact form land in an inbox with new, read, replied and archived states.",
+    "It is a prototype with sample content, and it is not online yet. The content is kept in one JSON file, which is enough for one server and one editor.",
+    "I reworked it in 2026. The first version checked the admin password in the browser and left the admin routes open; now sign-in is checked on the server and every admin page and route asks for it. The look was reworked as well: the same dark violet, but flat, with its own typefaces, content that is visible without scripts, and an admin area that works on a phone."
+  ],
+  "highlights": [
+    {
+      "title": "An admin area that is really closed",
+      "text": "The password comes from the server's settings and is compared there, in constant time. The session is a signed cookie that scripts cannot read. Every admin page and route checks it, a write from another site is refused, and five wrong passwords lock sign-in for a while. With no password set, nobody gets in."
+    },
+    {
+      "title": "Checks that prove it",
+      "text": "A script of 52 checks runs against the running site: every admin route without a session, wrong and right passwords, changed and expired cookies, the lock, sign-out, and the limits of the contact form. On the first version 25 of its 28 checks failed."
+    },
+    {
+      "title": "Storage that can be swapped",
+      "text": "All reads and writes go through two functions. Today they use a JSON file; a database can replace it without touching the pages. Each admin section saves only its own part, so a message that arrives while the admin area is open is not lost."
+    },
+    {
+      "title": "One typed content model",
+      "text": "Posts, services, projects, team and the about page share one typed model with seed data, and everything that is saved is checked against it first."
+    },
+    {
+      "title": "Design tokens",
+      "text": "Colours, spacing and type are CSS custom properties. There is one animation, when a page loads, and it is switched off for visitors who ask their system for less motion."
+    }
+  ],
+  "facts": [
+    {
+      "value": "52",
+      "label": "admin security checks"
+    },
+    {
+      "value": "8",
+      "label": "admin sections"
+    },
+    {
+      "value": "6",
+      "label": "public pages"
+    }
+  ],
+  "images": [
+    {
+      "src": "/images/projects/athelvoid/01-home.jpg",
+      "alt": "The home page of Athelvoid: the headline \"We write the code. You own it.\", a short introduction, two buttons, and a list of the working terms: scope, price, progress and ownership",
+      "caption": "The home page: what the studio does and the terms it works on, with no decoration in the way.",
+      "device": "desktop",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "src": "/images/projects/athelvoid/05-admin-overview.jpg",
+      "alt": "The overview of the Athelvoid admin area: counts of messages, blog posts, services, projects and team members, the unread messages, and the latest posts",
+      "caption": "The admin area after signing in: what is on the site and what is waiting. The messages are sample data.",
+      "device": "desktop",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "src": "/images/projects/athelvoid/06-admin-inbox.jpg",
+      "alt": "The inbox of the Athelvoid admin area: filters for all, new, read, replied and archived, and three sample messages marked as new",
+      "caption": "Messages from the contact form land in an inbox with new, read, replied and archived states.",
+      "device": "desktop",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "src": "/images/projects/athelvoid/07-admin-editor.jpg",
+      "alt": "The post editor of the Athelvoid admin area: fields for title, slug, excerpt and content, and a side panel with author, category, date, tags and switches for published and featured",
+      "caption": "The post editor. An edit shows on the public page at once.",
+      "device": "desktop",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "src": "/images/projects/athelvoid/04-admin-sign-in.jpg",
+      "alt": "The sign-in page of the Athelvoid admin area: one password field, a sign-in button and a link back to the site",
+      "caption": "Sign-in is checked on the server. There is no default password.",
+      "device": "desktop",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "src": "/images/projects/athelvoid/02-services.jpg",
+      "alt": "The services page of Athelvoid: the heading \"What we build, and how a project runs\" and the list of services, each with a description and its parts",
+      "caption": "Services, edited from the admin area.",
+      "device": "desktop",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "src": "/images/projects/athelvoid/03-blog-post.jpg",
+      "alt": "A blog post on Athelvoid, \"Why we chose Next.js for (almost) everything\", marked as a sample post",
+      "caption": "A blog post, written in Markdown in the editor. The posts are sample content and say so.",
+      "device": "desktop",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "src": "/images/projects/athelvoid/08-home-phone.jpg",
+      "alt": "The home page of Athelvoid on a phone: the headline, the introduction, two buttons and the working terms",
+      "caption": "The home page on a phone.",
+      "device": "phone",
+      "width": 780,
+      "height": 1688
+    },
+    {
+      "src": "/images/projects/athelvoid/09-admin-inbox-phone.jpg",
+      "alt": "The inbox of the Athelvoid admin area on a phone, with the sections as a strip along the top",
+      "caption": "The admin area on a phone.",
+      "device": "phone",
+      "width": 780,
+      "height": 1688
+    }
+  ],
+  "links": {}
+}

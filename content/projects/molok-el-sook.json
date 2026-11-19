@@ -1,0 +1,105 @@
+{
+  "slug": "molok-el-sook",
+  "title": "Molok El-Sook",
+  "titleArabic": "ملوك السوق",
+  "summary": "An Egyptian property-trading party game for up to ten friends, each on their own phone, in Arabic and English.",
+  "kind": "Own product",
+  "year": "2026",
+  "status": "Finished",
+  "featured": true,
+  "order": 4,
+  "role": "Game design, rules, interface, the 3D board and the multiplayer logic.",
+  "stack": [
+    "JavaScript",
+    "HTML",
+    "CSS",
+    "Python"
+  ],
+  "description": [
+    "Molok El-Sook (Kings of the Market) is a property-trading party game for two to ten friends, each playing from their own phone, in Egyptian Arabic or English. The squares are places people know, from Shubra to the North Coast, and the cards speak the way friends do.",
+    "The board is new every game. It grows with the number of players, the host picks a map and switches features on or off, and each game draws its own house rules. On a phone the whole game fits one screen with nothing to scroll."
+  ],
+  "highlights": [
+    {
+      "title": "A board that changes",
+      "text": "40, 48 or 56 squares depending on the players, three maps, places drawn from 32 groups, and twist squares placed at random but kept spread out."
+    },
+    {
+      "title": "A 3D city",
+      "text": "The board tilts into a tabletop. Each property grows real 3D buildings as it is upgraded, from a house to a compound, roofed in its owner's colour."
+    },
+    {
+      "title": "Arabic that agrees with the player",
+      "text": "Each player picks a gender, so the cards and the log use the right verb form for everyone at the table."
+    },
+    {
+      "title": "Fair starts and comebacks",
+      "text": "Everyone starts with the same money, the last-place player gets help, and there are bank loans and buyouts so nobody is out of the game early."
+    }
+  ],
+  "facts": [
+    {
+      "value": "10",
+      "label": "players at most"
+    },
+    {
+      "value": "2",
+      "label": "languages"
+    },
+    {
+      "value": "7",
+      "label": "building levels"
+    }
+  ],
+  "images": [
+    {
+      "src": "/images/projects/molok-el-sook/01-mid-game.jpg",
+      "alt": "The Molok El-Sook board in the middle of a game: Egyptian places around the board, dice in the centre and the players listed in Arabic on the side",
+      "caption": "Mid-game in round 26: six players, the dice and the log in Egyptian Arabic.",
+      "device": "desktop",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "src": "/images/projects/molok-el-sook/02-3d-city.jpg",
+      "alt": "The board tilted into 3D with small buildings standing on the properties and the pyramids drawn in the middle",
+      "caption": "The 3D view: every upgrade adds a real building to the square.",
+      "device": "desktop",
+      "width": 800,
+      "height": 544
+    },
+    {
+      "src": "/images/projects/molok-el-sook/03-big-screen.jpg",
+      "alt": "The big-screen mode of the game, made to fill a television",
+      "caption": "Big-screen mode for a TV, while everyone plays from their phone.",
+      "device": "desktop",
+      "width": 800,
+      "height": 537
+    },
+    {
+      "src": "/images/projects/molok-el-sook/04-lobby.jpg",
+      "alt": "The lobby where the host picks the map, the rules and the features before a game starts",
+      "caption": "The lobby: the host picks the map and switches features on or off.",
+      "device": "desktop",
+      "width": 800,
+      "height": 609
+    },
+    {
+      "src": "/images/projects/molok-el-sook/05-title-deed.jpg",
+      "alt": "A title deed card showing the rent of a property at each building level",
+      "caption": "A title deed with the rent at each of the seven building levels.",
+      "device": "desktop",
+      "width": 800,
+      "height": 537
+    },
+    {
+      "src": "/images/projects/molok-el-sook/06-phone.jpg",
+      "alt": "The whole game on one phone screen: players, board, action card and a bottom bar",
+      "caption": "On a phone the whole game fits one screen.",
+      "device": "phone",
+      "width": 585,
+      "height": 1266
+    }
+  ],
+  "links": {}
+}
