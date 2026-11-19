@@ -33,6 +33,7 @@ issue and pull request numbers do not link here. From D4 on, the numbers are tho
 | B7 | #10 | The build starts Vite without npx, so the host's npm settings print no warnings | The build machine of Vercel sets an npm setting npm 11 does not know; every start of npm printed a warning, two of them from our build | `fix/b7-build-without-npx` | #11 | done |
 | B8 | #12 | Headers, caching and the install and build commands on Vercel | The live site is on Vercel, which reads vercel.json, not public/_headers; its install and build commands were left to the defaults | `fix/b8-vercel-settings` | #13 | done |
 | B9 | #16 | A printed page shows every block | A block not yet scrolled to stayed clipped on paper, so a page printed or saved as a PDF lost text and pictures | `fix/b9-print-every-block` | #17 | done |
+| B10 | #18 | After a failed send the label of the first field stays in view | The form put the cursor in a field just under the bar and its label stayed hidden behind the bar | `fix/b10-form-label-in-view` | #19 | done |
 
 ## F - features and the look
 
