@@ -1,6 +1,6 @@
 'use strict';
-// Content rules (tracker B5): the site serves only files it uses, and shows nothing that came with the video
-// tutorial the original was copied from.
+// Content rules (tracker B5): the site serves only files it uses, and shows none of the placeholder people, logos
+// and figures of its first version.
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
@@ -41,9 +41,9 @@ test('every file in public/ is used by the site', () => {
   assert.deepEqual(unused, [], 'public/ holds files that no page uses - anyone can download them');
 });
 
-test('nothing of the tutorial is left in the source', () => {
+test('no placeholder person, client or logo is left in the source', () => {
   const text = siteText();
-  // The tutorial's sample person, its sample clients and its logo.
+  // The sample person, the sample clients and the logo of the first version.
   for (const leftover of ['Adrian', 'Esther Howard', 'Guy Hawkins', 'jsm-logo', 'company-logo']) {
     assert.ok(!text.includes(leftover), `"${leftover}" is still in the source`);
   }

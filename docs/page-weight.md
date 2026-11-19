@@ -13,7 +13,7 @@ npm run weight
 
 ## The home page, from the original to today
 
-| | Original (copy of the tutorial) | After F2-F4 (new design, real HTML) | After F5 (this change) |
+| | Original | After F2-F4 (new design, real HTML) | After F5 (this change) |
 |---|---|---|---|
 | Requests | 41, of them 15 to other servers | 10, all to the site itself | 10, all to the site itself |
 | JavaScript | 414 kB | 74 kB | 74 kB |
@@ -24,8 +24,7 @@ npm run weight
 | 3D models and their lighting map | 2,908 kB | none | none |
 | **Total as it travels** | **6,397 kB** | **553 kB** | **286 kB on a desktop, 322 kB on a phone** |
 
-The original was measured from a build of the untouched backup (the original repository at `583fd75`) with the same
-method. Its 2,908 kB of 3D data are the models of the room (1,632 kB) and a lighting map the 3D library fetched
+The original was measured from a build of the first version (`583fd75`) with the same method. Its 2,908 kB of 3D data are the models of the room (1,632 kB) and a lighting map the 3D library fetched
 from another server (1,276 kB).
 
 ## Measured on 2026-11-19, A7 (React 19.3 and the other minor updates)

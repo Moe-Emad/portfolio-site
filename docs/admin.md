@@ -8,9 +8,6 @@ site again, and the change is online a minute or two later.
 Nothing was added to the public site for this. There is no `/admin` address on it and no sign-in page to defend;
 the only way in is your GitHub account.
 
-This setup follows the documented format of Pages CMS, but it could not be tried from here because it needs your
-GitHub sign-in. The first visit will show whether a form needs adjusting (see "If a form looks wrong").
-
 ## Signing in, the first time
 
 1. Open [app.pagescms.org](https://app.pagescms.org) and sign in with GitHub.

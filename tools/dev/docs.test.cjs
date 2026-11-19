@@ -29,6 +29,32 @@ test('the public docs name no private repository, no password setting and no fol
   assert.deepEqual(found, []);
 });
 
+// The docs describe the site (tracker D5). Working notes are kept in local/, which is never committed: the origin
+// of the site, private repositories and backups, the software of the developer's PC, the arrangements with a
+// client, security work that is still open, and notes about the developer's own likes and wishes.
+test('the public docs hold no working notes', () => {
+  const tracking = fs.readdirSync(path.join(ROOT, 'docs', 'tracking')).filter((name) => name.endsWith('.md')).map((name) => `docs/tracking/${name}`);
+  const rules = [
+    [/tutorial|\binvented\b/gi, 'the origin of the site'],
+    [/\bprivate (?:working )?repo(?:s|sitory|sitories)?\b|\bbackup\b/gi, 'a private repository or backup'],
+    [/\b(?:XAMPP|Laragon|MariaDB)\b/gi, "the software of the developer's PC"],
+    [/\b(?:consent|proposal|internal documents|staging)\b/gi, 'an arrangement with a client'],
+    [/\bnot set yet\b|\bbefore the site goes online\b|\bcommitted once\b/gi, 'security work that is still open'],
+    [/\bthe developer\b(?! tools)/gi, 'a note about the developer'],
+  ];
+  const found = [];
+  for (const file of [...DOCS, 'CHANGELOG.md', ...tracking]) {
+    for (const [pattern, what] of rules) {
+      for (const match of read(file).matchAll(pattern)) found.push(`${file}: ${what}: ${match[0]}`);
+    }
+  }
+  assert.deepEqual(found, []);
+});
+
+test('the local notes are never committed', () => {
+  assert.match(read('.gitignore'), /^\/local\/$/m, '.gitignore must hold the line /local/');
+});
+
 test('the README explains every npm script', () => {
   const readme = read('README.md');
   const scripts = Object.keys(JSON.parse(read('package.json')).scripts);

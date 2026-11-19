@@ -39,8 +39,8 @@ Any other static host works too (GitHub Pages, a shared web space): upload the c
      the monthly count.
    - In the e-mail template, set the recipient to your own address as fixed text, never to a field of the form.
      Then a stranger can only send mail to you.
-   - **Use a new public key.** The values of the original site were committed once, in its own repository.
-     Create a new public key in the dashboard (Account, API keys) and use the new one in the settings of the host.
+   - **Give the site a public key of its own** (Account, API keys), so it can be replaced at any time without
+     touching anything else, and use it in the settings of the host.
 3. **Run every check once more.**
 
    ```powershell
@@ -81,7 +81,7 @@ Any other static host works too (GitHub Pages, a shared web space): upload the c
    | `VITE_SITE_URL` | The address of the site without a closing slash, for example `https://mohammedemad.pages.dev` |
    | `VITE_APP_EMAILJS_SERVICE_ID` | From the EmailJS dashboard |
    | `VITE_APP_EMAILJS_TEMPLATE_ID` | From the EmailJS dashboard |
-   | `VITE_APP_EMAILJS_PUBLIC_KEY` | The new public key from step 2 |
+   | `VITE_APP_EMAILJS_PUBLIC_KEY` | The public key of the site from step 2 |
 
    These are typed into the dashboard of the host. They are never written into a file of the repository.
 4. **Save and Deploy.** The first build takes a minute or two. From now on every merge to `main` deploys by itself,
