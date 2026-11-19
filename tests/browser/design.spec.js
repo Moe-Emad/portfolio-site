@@ -284,6 +284,47 @@ test.describe('scrolling', () => {
   });
 });
 
+// A printed page shows every block (tracker B9): what still waits below the screen is in place on paper.
+test.describe('printing', () => {
+  const project = fs
+    .readdirSync('content/projects')
+    .filter((name) => name.endsWith('.json'))
+    .map((name) => JSON.parse(fs.readFileSync(`content/projects/${name}`, 'utf8')))
+    .find((entry) => entry.draft !== true);
+
+  for (const path of ['/', `/work/${project.slug}/`]) {
+    test(`${path} printed without scrolling hides no block, picture or title rule`, async ({ page }) => {
+      await page.emulateMedia({ reducedMotion: 'no-preference' });
+      await page.goto(path);
+      await expect(page.locator('h1')).toBeVisible();
+      // Without anything waiting the test would prove nothing.
+      await expect(page.locator('[data-reveal="waiting"]').first()).toBeAttached();
+
+      await page.emulateMedia({ media: 'print' });
+      const hidden = await page.evaluate(() => {
+        const found = [];
+        const check = (element, what, style) => {
+          if (style.clipPath !== 'none') found.push(`${what}: clip-path ${style.clipPath}`);
+          if (style.translate !== 'none' && style.translate !== '0px') found.push(`${what}: translate ${style.translate}`);
+        };
+        for (const block of document.querySelectorAll('[data-animate][data-reveal="waiting"]')) {
+          for (const child of block.children) check(child, `${block.className} > ${child.tagName.toLowerCase()}`, getComputedStyle(child));
+        }
+        for (const shot of document.querySelectorAll('.shot[data-reveal="waiting"]')) {
+          check(shot, 'shot', getComputedStyle(shot));
+          check(shot, 'shot picture', getComputedStyle(shot.querySelector('picture')));
+        }
+        for (const title of document.querySelectorAll('.section__title[data-reveal="waiting"]')) {
+          const rule = getComputedStyle(title, '::after').transform;
+          if (rule !== 'none') found.push(`rule under "${title.textContent}": transform ${rule}`);
+        }
+        return found;
+      });
+      expect(hidden).toEqual([]);
+    });
+  }
+});
+
 // Skills as rows of tags, without counts (tracker F24).
 test.describe('the skills', () => {
   test.use({ viewport: { width: 1920, height: 1080 } });

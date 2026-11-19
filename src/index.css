@@ -1920,3 +1920,23 @@ a:hover {
     transition: none;
   }
 }
+
+/* ---------- On paper ---------- */
+
+/* A printed page shows everything in place (tracker B9). What still waits below the screen is not clipped,
+   lowered or scaled on paper, and nothing moves while the page is laid out for print. These rules come last, so
+   they win over the waiting rules above, which have the same weight. */
+@media print {
+  [data-animate][data-reveal] > *,
+  .shot[data-reveal],
+  .shot[data-reveal] picture {
+    clip-path: none;
+    translate: none;
+    transition: none;
+  }
+
+  .section__title[data-reveal]::after {
+    transform: none;
+    transition: none;
+  }
+}
