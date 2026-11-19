@@ -121,5 +121,5 @@ cost time once are in [docs/pitfalls.md](docs/pitfalls.md).
 ## Deploying
 
 Every page is a plain HTML file, so any static host can serve the site. The live site is on Vercel, which builds
-and publishes every merge to `main`. [docs/deploy.md](docs/deploy.md) has the settings, the EmailJS steps and a
-checklist for after a deploy.
+and publishes every merge to `main` with the settings and headers in `vercel.json`. [docs/deploy.md](docs/deploy.md)
+has the settings, the EmailJS steps and a checklist for after a deploy.
