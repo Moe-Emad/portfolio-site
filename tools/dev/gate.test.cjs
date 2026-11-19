@@ -1,10 +1,11 @@
 'use strict';
-// Tests of the audit rule of the gate (tools/dev/gate.cjs): a known advisory passes, a new one fails.
+// Tests of the audit rule of the gate (tools/dev/gate.cjs): a known advisory passes, a new one fails, and an
+// accepted one that npm no longer reports is named (A8).
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
-const { newNpmAdvisories } = require('./gate.cjs');
+const { newNpmAdvisories, staleNpmAdvisories } = require('./gate.cjs');
 
 const ROOT = path.resolve(__dirname, '..', '..');
 
@@ -31,6 +32,22 @@ test('npm: known advisories pass, a new one is reported once per package', () =>
 
 test('npm: a clean audit passes', () => {
   assert.deepEqual(newNpmAdvisories({ vulnerabilities: {} }, []), []);
+  assert.deepEqual(staleNpmAdvisories({ vulnerabilities: {} }, []), []);
+});
+
+test('npm: an accepted advisory that npm no longer reports is named, one still reported is not', () => {
+  const audit = {
+    vulnerabilities: {
+      vite: { via: [{ url: 'https://github.com/advisories/GHSA-still-0000-0000', title: 'Still there' }, 'esbuild'] },
+      plugin: { via: ['vite'] },
+    },
+  };
+  assert.deepEqual(staleNpmAdvisories(audit, ['GHSA-still-0000-0000', 'GHSA-gone-0000-0000']), ['GHSA-gone-0000-0000']);
+  assert.deepEqual(staleNpmAdvisories(audit, ['GHSA-still-0000-0000']), []);
+});
+
+test('npm: every accepted advisory is stale when the audit is clean (the picomatch case of A8)', () => {
+  assert.deepEqual(staleNpmAdvisories({ vulnerabilities: {} }, ['GHSA-fc5q-39xc-vjpf']), ['GHSA-fc5q-39xc-vjpf']);
 });
 
 test('the gate is wired up: npm run gate, and the pre-push hook runs it', () => {
@@ -60,7 +77,8 @@ test('every listed advisory has an id, a reason and the date it was checked', ()
   }
 });
 
-test('the picomatch advisory without a fixed version is listed', () => {
+// A6 accepted the picomatch advisory; it was withdrawn on 2026-11-18 and left the list in A8.
+test('the withdrawn picomatch advisory is no longer accepted', () => {
   const listed = require('./known-advisories.json').npm;
-  assert.ok(Object.keys(listed).includes('GHSA-fc5q-39xc-vjpf'));
+  assert.ok(!Object.keys(listed).includes('GHSA-fc5q-39xc-vjpf'));
 });

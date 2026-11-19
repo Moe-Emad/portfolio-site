@@ -25,6 +25,20 @@ function newNpmAdvisories(audit, knownIds) {
   return found;
 }
 
+/**
+ * Accepted advisories (tools/dev/known-advisories.json) that "npm audit --json" no longer reports, because they were
+ * fixed or withdrawn (A8). Left on the list, they would hide the same advisory if it ever came back.
+ */
+function staleNpmAdvisories(audit, knownIds) {
+  const reported = new Set();
+  for (const vulnerability of Object.values(audit.vulnerabilities || {})) {
+    for (const via of vulnerability.via || []) {
+      if (typeof via !== 'string') reported.add(String(via.url || '').split('/').pop());
+    }
+  }
+  return knownIds.filter((id) => !reported.has(id));
+}
+
 /** Runs a command line in the repo root; npm and npx are .cmd files on Windows, hence the shell. */
 function run(commandLine) {
   const r = spawnSync(commandLine, { cwd: ROOT, shell: true, encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 });
@@ -47,8 +61,12 @@ function npmAudit() {
   if (audit.error) return `npm audit failed: ${JSON.stringify(audit.error)}`;
   const known = Object.keys(require('./known-advisories.json').npm);
   const found = newNpmAdvisories(audit, known);
-  return found.length
-    ? `New npm advisories (fix inside the major, or list in tools/dev/known-advisories.json with the reason):\n  ${found.join('\n  ')}`
+  if (found.length) {
+    return `New npm advisories (fix inside the major, or list in tools/dev/known-advisories.json with the reason):\n  ${found.join('\n  ')}`;
+  }
+  const stale = staleNpmAdvisories(audit, known);
+  return stale.length
+    ? `Accepted advisories that npm audit no longer reports (fixed or withdrawn) - remove them from tools/dev/known-advisories.json:\n  ${stale.join('\n  ')}`
     : null;
 }
 
@@ -92,7 +110,7 @@ function steps() {
     );
   }
   if (!FAST) {
-    list.push(['npm audit: no new advisory', npmAudit], ['the site builds (Vite)', ok('npm run build')]);
+    list.push(['npm audit: no new advisory, no stale accepted one', npmAudit], ['the site builds (Vite)', ok('npm run build')]);
   }
   return list;
 }
@@ -118,4 +136,4 @@ function main() {
 
 if (require.main === module) process.exit(main());
 
-module.exports = { newNpmAdvisories };
+module.exports = { newNpmAdvisories, staleNpmAdvisories };
