@@ -30,6 +30,7 @@ issue and pull request numbers do not link here. From D4 on, the numbers are tho
 | B4 | #9 | Navigation: dead link, wrong scroll target, a button that is not a link | Menu points to a section that does not exist; the main button is not reachable by keyboard | `fix/b4-navigation` | #30 | done |
 | B5 | #10 | Placeholder content and unused files | Sample figures nobody measured on the page; 4.4 MB of unused files served publicly | `fix/b5-untrue-and-leftover-content` | #28 | done |
 | B6 | #71 | /work/ shows the list of work instead of "page not found" | Every project lives under /work/, so a visitor who shortens the address expects the list there | `fix/b6-work-page` | #72 | done |
+| B7 | #10 | The build starts Vite without npx, so the host's npm settings print no warnings | The build machine of Vercel sets an npm setting npm 11 does not know; every start of npm printed a warning, two of them from our build | `fix/b7-build-without-npx` | #11 | done |
 
 ## F - features and the look
 

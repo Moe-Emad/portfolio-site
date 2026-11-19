@@ -11,6 +11,7 @@
 // JavaScript runs, and any static host can serve the folder as it is.
 import { spawnSync } from 'node:child_process';
 import fs from 'node:fs';
+import { createRequire } from 'node:module';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
@@ -25,10 +26,22 @@ function option(name, fallback) {
   return index > -1 && process.argv[index + 1] ? process.argv[index + 1] : fallback;
 }
 
-function run(commandLine) {
-  const result = spawnSync(commandLine, { cwd: ROOT, shell: true, stdio: 'inherit' });
+/** Vite's own command file, the one `npx vite` would start. */
+const VITE_BIN = path.join(path.dirname(createRequire(import.meta.url).resolve('vite/package.json')), 'bin', 'vite.js');
+
+/**
+ * Runs Vite with the given arguments and returns the result of spawnSync (tracker B7). Vite's command file is
+ * started with this same Node.js, without npx and without a shell: npx starts npm, and npm warns about every npm
+ * setting in the environment it does not know - the build machine of Vercel sets one (npm_config_cache_dir).
+ */
+export function vite(args, options = {}) {
+  return spawnSync(process.execPath, [VITE_BIN, ...args], { cwd: ROOT, stdio: 'inherit', ...options });
+}
+
+function runVite(args) {
+  const result = vite(args);
   if (result.status !== 0) {
-    console.error(`build: "${commandLine}" failed.`);
+    console.error(`build: "vite ${args.join(' ')}" failed.${result.error ? ` ${result.error.message}` : ''}`);
     process.exit(result.status ?? 1);
   }
 }
@@ -49,13 +62,13 @@ export function fillTemplate(template, { path: pagePath, head, app }) {
 async function main() {
   const outDir = option('outDir', 'dist');
   const mode = option('mode', '');
-  const modeFlag = mode ? ` --mode ${mode}` : '';
+  const modeArgs = mode ? ['--mode', mode] : [];
   const out = path.join(ROOT, outDir);
   const ssrDir = `${outDir}-ssr`;
   const ssr = path.join(ROOT, ssrDir);
 
-  run(`npx vite build --outDir ${outDir} --emptyOutDir --logLevel warn${modeFlag}`);
-  run(`npx vite build --ssr src/entry-server.tsx --outDir ${ssrDir} --emptyOutDir --logLevel warn${modeFlag}`);
+  runVite(['build', '--outDir', outDir, '--emptyOutDir', '--logLevel', 'warn', ...modeArgs]);
+  runVite(['build', '--ssr', 'src/entry-server.tsx', '--outDir', ssrDir, '--emptyOutDir', '--logLevel', 'warn', ...modeArgs]);
 
   try {
     const server = await import(pathToFileURL(path.join(ssr, 'entry-server.js')).href);

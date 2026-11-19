@@ -3,6 +3,7 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
+const os = require('node:os');
 const path = require('node:path');
 
 const ROOT = path.resolve(__dirname, '..', '..');
@@ -15,6 +16,17 @@ const TEMPLATE = [
   '</head>',
   '<body><div id="root"></div><script type="module" src="/assets/app.js"></script></body>',
 ].join('\n');
+
+// B7: the build machine of Vercel sets npm_config_cache_dir, a setting npm 11 does not know, so every start of npm
+// there prints 'npm warn Unknown env config "cache-dir"'. The build starts Vite without npm, so it prints none.
+test('Vite starts without npm, so npm settings of the host print no warnings', async () => {
+  const { vite } = await import('./build.mjs');
+  const env = { ...process.env, npm_config_cache_dir: path.join(os.tmpdir(), 'b7-npm-cache-dir') };
+  const result = vite(['--version'], { stdio: 'pipe', encoding: 'utf8', env });
+  assert.equal(result.status, 0, `${result.stdout}${result.stderr}`);
+  assert.match(result.stdout, /vite\/\d/);
+  assert.doesNotMatch(`${result.stdout}${result.stderr}`, /npm warn/i);
+});
 
 test('a page gets its own head and its HTML inside the root element', async () => {
   const { fillTemplate } = await import('./build.mjs');
