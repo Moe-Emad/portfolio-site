@@ -52,3 +52,4 @@ and do not link here.
 - D4: The code of the site is published in this public repository; notes about other repositories are left out, and a docs test keeps them out (#2)
 - A7: The weekly minor and patch updates (React 19.3, Tailwind CSS 4.3, Playwright 1.65 and nine more); the lock check accepts packages bundled inside a package from the registry (#5)
 - A8: The withdrawn picomatch advisory is off the accepted list; the gate fails on an accepted advisory npm no longer reports, so the list cannot go stale (#7)
+- D5: The README documents the site itself; working notes stay off the public repository, and a docs test keeps them out (#9)

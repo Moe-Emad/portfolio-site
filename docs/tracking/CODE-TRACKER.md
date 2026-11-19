@@ -71,7 +71,7 @@ issue and pull request numbers do not link here. From D4 on, the numbers are tho
 | D2 | #19 | Deploy guide and checklist | The site has never been deployed; nothing about hosting is written down | `docs/d2-deploy-guide` | #37 | done |
 | D3 | #59 | The tracker is up to date on the reworked Relic and Athelvoid | The findings about them were out of date | `docs/d3-rework-repos` | #60 | done |
 | D4 | #1 | Publish the code of the site | An employer could read none of the code behind the projects; the code of the site itself can be shown | `chore/d4-publish` | #2 | done |
-| D5 | #8 | A README about the site, and public docs without working notes | The README was a setup manual, not documentation of the site; some docs carried working notes that do not belong in a public repository | `docs/d5-public-docs` | - | in progress |
+| D5 | #8 | A README about the site, and public docs without working notes | The README was a setup manual, not documentation of the site; some docs carried working notes that do not belong in a public repository | `docs/d5-public-docs` | #9 | done |
 
 ## Findings noted for later
 
