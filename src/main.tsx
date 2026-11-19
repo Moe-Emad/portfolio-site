@@ -8,6 +8,7 @@ import './index.css';
 import App from './App.tsx';
 import { content } from './content/index.ts';
 import { matchRoute } from './routes.ts';
+import { startSpeedInsights } from './lib/speed-insights.ts';
 
 const root = document.getElementById('root')!;
 const path = window.location.pathname;
@@ -26,3 +27,5 @@ const sameView = drawn !== undefined && JSON.stringify(matchRoute(drawn, slugs))
 
 if (sameView) hydrateRoot(root, app);
 else createRoot(root).render(app);
+
+startSpeedInsights(__VERCEL_ENV__);

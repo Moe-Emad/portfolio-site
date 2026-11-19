@@ -93,6 +93,10 @@ other static host works too (GitHub Pages, a shared web space): upload the conte
    checks of the pull request.
 5. **Your own domain** (optional): Settings, Domains, and follow the DNS steps. Then change `VITE_SITE_URL` to the
    new address and deploy again, so the sitemap and the link previews use it.
+6. **Speed Insights** (once): in the project, open **Speed Insights** and **Enable** it. The site starts its script
+   only in the build Vercel makes for production (`src/lib/speed-insights.ts`); previews, the PC and other hosts load
+   nothing. Until it is switched on, nothing is measured and the browser console of the live site notes that the
+   script could not be loaded. The figures of real visits then appear there, per page, after the first visits.
 
 ## 4. Or: deploy on Cloudflare Pages
 

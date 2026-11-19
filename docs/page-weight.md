@@ -27,6 +27,20 @@ npm run weight
 The original was measured from a build of the first version (`583fd75`) with the same method. Its 2,908 kB of 3D data are the models of the room (1,632 kB) and a lighting map the 3D library fetched
 from another server (1,276 kB).
 
+## Measured on 2026-11-20, F28 (Speed Insights)
+
+Speed Insights starts only in the build Vercel makes for production, so `npm run weight` and the budgets, which
+measure a test build, do not see it. The JavaScript files of the two builds, compressed with gzip:
+
+| | Main bundle | Loaded after the page has drawn |
+|---|---|---|
+| Before F28 | 94,870 B | - |
+| After F28, any build but Vercel's production one | 94,871 B | nothing |
+| After F28, Vercel's production build | 94,949 B | 1,097 B (the package) and 7,333 B (Vercel's script, `/_vercel/speed-insights/script.js`) |
+
+A visit to the live site downloads about 8.5 kB more, all of it after the page is drawn; the first view is
+unchanged. The size of Vercel's script was read from its public copy on the day; Vercel may change it.
+
 ## Measured on 2026-11-19, A7 (React 19.3 and the other minor updates)
 
 Only packages changed in A7, so only the code is compared. Both rows were measured on the same day with
