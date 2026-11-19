@@ -46,6 +46,47 @@ test('a package without a sha512 checksum is reported', () => {
   assert.match(npmLockProblems(pkg, lock).join('\n'), /old has no sha512 checksum/);
 });
 
+// A package can carry others inside its own download ("bundleDependencies"). npm lists them with "inBundle" and
+// without an address or a checksum: the checksum of the carrier covers them (A7, Tailwind CSS 4.3).
+const bundled = (extra = {}) => ({ version: '2.0.0', inBundle: true, optional: true, ...extra });
+
+test('a package bundled inside a package from the registry is accepted', () => {
+  const pkg = { dependencies: { carrier: '1.0.0' } };
+  const lock = lockFor(pkg, {
+    'node_modules/carrier': entry('carrier', { bundleDependencies: ['inner', '@scope/inner'] }),
+    'node_modules/carrier/node_modules/inner': bundled(),
+    'node_modules/carrier/node_modules/@scope/inner': bundled(),
+  });
+  assert.deepEqual(npmLockProblems(pkg, lock), []);
+});
+
+test('a package bundled inside another bundled package is accepted', () => {
+  const pkg = { dependencies: { carrier: '1.0.0' } };
+  const lock = lockFor(pkg, {
+    'node_modules/carrier': entry('carrier', { bundleDependencies: ['inner'] }),
+    'node_modules/carrier/node_modules/inner': bundled(),
+    'node_modules/carrier/node_modules/inner/node_modules/deep': bundled(),
+  });
+  assert.deepEqual(npmLockProblems(pkg, lock), []);
+});
+
+test('a package marked as bundled that no package carries is reported', () => {
+  const pkg = { dependencies: { stray: '1.0.0' } };
+  const lock = lockFor(pkg, { 'node_modules/stray': bundled() });
+  assert.match(npmLockProblems(pkg, lock).join('\n'), /stray is marked as bundled, but no package in the lock file carries it/);
+});
+
+test('a carrier from another server is reported, its bundled packages are not counted twice', () => {
+  const pkg = { dependencies: { carrier: '1.0.0' } };
+  const lock = lockFor(pkg, {
+    'node_modules/carrier': entry('carrier', { resolved: 'https://example.invalid/carrier.tgz' }),
+    'node_modules/carrier/node_modules/inner': bundled(),
+  });
+  const problems = npmLockProblems(pkg, lock).join('\n');
+  assert.match(problems, /carrier does not come from the npm registry/);
+  assert.doesNotMatch(problems, /inner/);
+});
+
 test('the lock file of this repo is clean', () => {
   const read = (file) => JSON.parse(fs.readFileSync(path.join(ROOT, file), 'utf8'));
   assert.deepEqual(npmLockProblems(read('package.json'), read('package-lock.json')), []);
