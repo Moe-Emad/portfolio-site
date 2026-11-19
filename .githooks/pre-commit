@@ -1,0 +1,9 @@
+#!/bin/sh
+# Before every commit: refuse .env files and database dumps and scan the staged changes for keys and passwords
+# with gitleaks (tracker A2). Enabled once per clone: npm run hooks
+# The scan cannot be skipped by a missing tool: without Node.js the commit is refused.
+if ! command -v node >/dev/null 2>&1; then
+  echo "pre-commit: Node.js is needed for the secret scan (tools/dev/secret-scan.cjs). Install it, then commit again." >&2
+  exit 1
+fi
+exec node "$(dirname "$0")/../tools/dev/secret-scan.cjs" staged

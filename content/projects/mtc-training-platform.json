@@ -1,0 +1,137 @@
+{
+  "slug": "mtc-training-platform",
+  "title": "MTC training platform",
+  "summary": "A training platform in Arabic and English for a Saudi training company: course catalogue and calendar, enrolment, attendance, certificates and a back office for the staff.",
+  "kind": "Client work",
+  "year": "2026",
+  "status": "In progress",
+  "featured": true,
+  "order": 1,
+  "role": "One of two developers. My part is the interface kit and the page shells, the course catalogue and the content pages, the learner's account, and the admin areas for users, settings and analytics.",
+  "stack": [
+    "Next.js",
+    "React",
+    "Tailwind CSS",
+    "Node.js",
+    "Express",
+    "Prisma",
+    "MySQL",
+    "Playwright"
+  ],
+  "description": [
+    "Mosook Training (MTC) is a training company in Saudi Arabia. The platform is its public site and its back office in one: people find a course in the catalogue or the calendar and ask to enrol, the staff review the order, and the learner later finds the course, the attendance and the certificate in their own area.",
+    "It is built by a team of two and is still in development; it has not launched yet. The pictures come from a local copy with made-up sample data.",
+    "The web application is Next.js on top of an Express API with a MySQL database. Arabic is the default language and every page also exists in English."
+  ],
+  "highlights": [
+    {
+      "title": "Arabic first",
+      "text": "Pages are designed from right to left and mirrored for English, not the other way round. Both languages share one set of components, in a light and a dark theme."
+    },
+    {
+      "title": "One design kit for the whole platform",
+      "text": "Colours, type and spacing come from one generated set of tokens, and thirty shared components carry them through the public site, the learner area and the back office."
+    },
+    {
+      "title": "From enrolment to certificate",
+      "text": "A learner asks to enrol and the staff review the request before payment. Attendance is recorded on each course day from the learner's QR code, and a finished course ends in a certificate that anyone can check on a public page."
+    },
+    {
+      "title": "Tested at three levels",
+      "text": "178 files of API tests, 115 files of unit tests for the web application and 69 browser test files, which also check the pages for accessibility problems."
+    }
+  ],
+  "facts": [
+    {
+      "value": "71",
+      "label": "pages"
+    },
+    {
+      "value": "195",
+      "label": "API routes"
+    },
+    {
+      "value": "46",
+      "label": "database tables"
+    },
+    {
+      "value": "2",
+      "label": "languages"
+    }
+  ],
+  "images": [
+    {
+      "src": "/images/projects/mtc-training-platform/01-home.jpg",
+      "alt": "The home page of the training platform in English: a dark blue banner with the headline, two buttons, a ticker of coming courses and a search box",
+      "caption": "The home page. The ticker under the banner lists the courses that start next.",
+      "device": "desktop",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "src": "/images/projects/mtc-training-platform/02-home-arabic.jpg",
+      "alt": "The same home page in Arabic, laid out from right to left, with the navigation, the headline and the ticker mirrored",
+      "caption": "Arabic is the default language. Every page is laid out from right to left and mirrored for English.",
+      "device": "desktop",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "src": "/images/projects/mtc-training-platform/03-enrolment-and-attendance.jpg",
+      "alt": "A learner's enrolment page: the course dates and venue, a table of course days with their attendance, and a QR code for attendance with buttons to download it or show it full screen",
+      "caption": "The learner's side of a course: the days, the attendance for each day, and the QR code that is scanned at the door. The name is sample data.",
+      "device": "desktop",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "src": "/images/projects/mtc-training-platform/04-certificate-check.jpg",
+      "alt": "The public certificate verification page with the result \"Valid\" and the details of the certificate: number, holder, course, dates, and an identity number shown as its last four digits only",
+      "caption": "Anyone can check a certificate on a public page. The identity number is masked; the holder here is sample data.",
+      "device": "desktop",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "src": "/images/projects/mtc-training-platform/05-calendar.jpg",
+      "alt": "The course calendar in month view, with filters for field, level and city above it and three courses on their start dates",
+      "caption": "The course calendar: year, month, week and day views, filtered by field, level and city.",
+      "device": "desktop",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "src": "/images/projects/mtc-training-platform/06-course-page.jpg",
+      "alt": "A course page: dates, venue, duration, language and seats, the course outcomes, and an enrolment box with a sale price and the time left on the offer",
+      "caption": "A course page with its facts, its outcomes and the enrolment box.",
+      "device": "desktop",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "src": "/images/projects/mtc-training-platform/07-calendar-dark.jpg",
+      "alt": "The course calendar in year view in the dark theme: twelve months, the last four with their courses",
+      "caption": "The calendar in year view, in the dark theme.",
+      "device": "desktop",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "src": "/images/projects/mtc-training-platform/08-home-phone.jpg",
+      "alt": "The home page of the training platform on a phone",
+      "caption": "The home page on a phone.",
+      "device": "phone",
+      "width": 780,
+      "height": 1688
+    },
+    {
+      "src": "/images/projects/mtc-training-platform/09-enrolment-phone.jpg",
+      "alt": "The enrolment page on a phone, with the course summary and the attendance QR code",
+      "caption": "The enrolment page on a phone.",
+      "device": "phone",
+      "width": 780,
+      "height": 1688
+    }
+  ],
+  "links": {}
+}

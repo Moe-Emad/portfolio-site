@@ -1,0 +1,98 @@
+{
+  "slug": "jpro-website",
+  "title": "Jpro website",
+  "summary": "The website of an accounting tuition centre in Malaysia: courses, multi-step registration, a blog, an admin area and a chatbot that answers from the centre's own facts.",
+  "kind": "Client work",
+  "year": "2026",
+  "status": "Live",
+  "featured": true,
+  "order": 3,
+  "role": "Co-developer: the course pages, the registration flows, the chatbot and the admin area.",
+  "stack": [
+    "Next.js",
+    "React",
+    "TypeScript",
+    "Tailwind CSS",
+    "Upstash Redis",
+    "Groq API",
+    "Node.js"
+  ],
+  "description": [
+    "Jpro Sdn Bhd is a professional accounting tuition centre in Malaysia that teaches the ACCA, CIMA and CPA programmes. The site presents each programme and its papers, takes registrations and exam bookings, and gives the staff a small admin area for blog posts and timetables.",
+    "Registration is a guided flow of four or five steps per programme that ends in a formatted e-mail to the centre. A chatbot answers the common questions about fees, schedules and enrolment at any hour."
+  ],
+  "highlights": [
+    {
+      "title": "A chatbot that stays on its facts",
+      "text": "Common questions are answered from fixed text without calling a model at all. For the rest, the question is matched against hand-written notes about the centre, and the model may answer only from what was found."
+    },
+    {
+      "title": "Guided registration",
+      "text": "Each programme has its own multi-step form with its terms and declaration, plus a separate flow for booking computer-based exams."
+    },
+    {
+      "title": "Content the staff can change",
+      "text": "The admin area has a post editor with a preview and a timetable upload per qualification, stored in Redis so the site needs no database server."
+    },
+    {
+      "title": "Ready for search engines",
+      "text": "A sitemap, robots rules, pages generated ahead of time for every course, a dark mode and analytics."
+    }
+  ],
+  "facts": [
+    {
+      "value": "3",
+      "label": "programmes: ACCA, CIMA, CPA"
+    },
+    {
+      "value": "4",
+      "label": "registration and booking flows"
+    }
+  ],
+  "images": [
+    {
+      "src": "/images/projects/jpro-website/01-home.jpg",
+      "alt": "The home page of the Jpro website with the headline We Make What Matters Happen and buttons to register or get in contact",
+      "caption": "The home page, with the chatbot waiting in the corner.",
+      "device": "desktop",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "src": "/images/projects/jpro-website/02-acca-courses.jpg",
+      "alt": "The ACCA course page of the Jpro website listing the papers of the programme",
+      "caption": "The ACCA programme and its papers.",
+      "device": "desktop",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "src": "/images/projects/jpro-website/03-registration.jpg",
+      "alt": "The first step of the CIMA registration form on the Jpro website",
+      "caption": "Registration is a guided flow of several short steps.",
+      "device": "desktop",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "src": "/images/projects/jpro-website/04-faq.jpg",
+      "alt": "The page of frequently asked questions on the Jpro website",
+      "caption": "Frequently asked questions.",
+      "device": "desktop",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "src": "/images/projects/jpro-website/05-home-phone.jpg",
+      "alt": "The home page of the Jpro website on a phone",
+      "caption": "The home page on a phone.",
+      "device": "phone",
+      "width": 780,
+      "height": 1688
+    }
+  ],
+  "links": {
+    "live": "https://www.jprotraining.my/",
+    "liveLabel": "Visit jprotraining.my"
+  }
+}

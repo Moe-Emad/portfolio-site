@@ -1,0 +1,54 @@
+{
+  "name": "portfolio",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "engines": {
+    "node": ">=22.18"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "node tools/build/build.mjs",
+    "preview": "vite preview",
+    "lint": "eslint . --max-warnings 0",
+    "hooks": "node tools/dev/install-hooks.cjs",
+    "secrets": "node tools/dev/secret-scan.cjs history",
+    "test:tools": "node --test \"tools/**/*.test.cjs\"",
+    "locks": "node tools/dev/lock-check.cjs",
+    "gate": "node tools/dev/gate.cjs",
+    "test:browser": "node tools/dev/browser-tests.cjs",
+    "test:unit": "node --test \"src/**/*.test.js\" \"src/**/*.test.ts\"",
+    "typecheck": "tsc --noEmit",
+    "og-image": "node tools/build/og-image.mjs",
+    "cms-config": "node tools/build/pages-cms.cjs",
+    "pictures": "node tools/build/picture-sizes.cjs",
+    "weight": "node tools/dev/page-weight.cjs"
+  },
+  "dependencies": {
+    "@emailjs/browser": "^4.4.1",
+    "@fontsource-variable/readex-pro": "5.3.0",
+    "@fontsource/rakkas": "5.3.0",
+    "@tailwindcss/vite": "^4.1.12",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "tailwindcss": "^4.1.12"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.14.0",
+    "@eslint/js": "^9.33.0",
+    "@playwright/test": "1.64.1",
+    "@types/node": "22.20.5",
+    "@types/react": "^19.1.10",
+    "@types/react-dom": "^19.1.7",
+    "@vitejs/plugin-react": "^5.0.0",
+    "eslint": "^9.33.0",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-react-refresh": "^0.4.20",
+    "globals": "^16.3.0",
+    "playwright-core": "1.64.1",
+    "sharp": "0.35.5",
+    "typescript": "5.9.3",
+    "typescript-eslint": "8.73.0",
+    "vite": "^7.1.2"
+  }
+}

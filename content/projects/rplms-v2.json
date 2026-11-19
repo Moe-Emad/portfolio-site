@@ -1,0 +1,124 @@
+{
+  "slug": "rplms-v2",
+  "title": "RPLMS v2",
+  "summary": "A rental and property-management platform with four dashboards, modernized step by step from my earlier Laravel project.",
+  "kind": "Modernization",
+  "year": "2026",
+  "status": "In progress",
+  "featured": true,
+  "order": 2,
+  "role": "Everything: the plan, the security and dependency work, the fixes, the new features, the tests and the deployment guide.",
+  "stack": [
+    "Laravel",
+    "PHP",
+    "MariaDB",
+    "Alpine.js",
+    "Tailwind CSS",
+    "Vue",
+    "Vite",
+    "Pest",
+    "Playwright",
+    "axe",
+    "GitHub Actions",
+    "gitleaks"
+  ],
+  "description": [
+    "RPLMS is a platform for renting and managing properties: listings with search, filters and comparison, wishlists, tour scheduling, service packages for agents, live chat between users and agents, a blog and PDF invoices. It has four areas: the public site, a user dashboard, an agent dashboard and an admin dashboard.",
+    "Version 1 was a Laravel 10 project. Version 2 is that same code brought up to date in the open, one small pull request at a time: first the dependencies and the secrets, then the bugs and the security gaps, then the features a modern listing site has. The old folder, its database and its repository stayed untouched as the backup the whole time."
+  ],
+  "highlights": [
+    {
+      "title": "Safety before features",
+      "text": "The first items pinned every dependency, removed keys and a database dump from the code, and added git hooks that refuse secrets. Only then did the bug fixes start."
+    },
+    {
+      "title": "One gate for every change",
+      "text": "A single command runs the code style, all tests, the hook tests, the secret scan, the dependency audits and the build. It runs before every push and again on GitHub."
+    },
+    {
+      "title": "Tests that are proven to test",
+      "text": "Each new test is run once without its fix to see it fail, then with the fix to see it pass, and the pull request says so."
+    },
+    {
+      "title": "Features of a modern listing site",
+      "text": "Search on a map, saved searches with a daily e-mail of new matches, a photo carousel and lightbox, agent profiles, a mortgage calculator and a live chat with unread counts and read receipts."
+    }
+  ],
+  "facts": [
+    {
+      "value": "558",
+      "label": "automated tests"
+    },
+    {
+      "value": "70",
+      "label": "tracked work items"
+    },
+    {
+      "value": "10 to 13",
+      "label": "Laravel version"
+    },
+    {
+      "value": "4",
+      "label": "dashboards"
+    }
+  ],
+  "images": [
+    {
+      "src": "/images/projects/rplms-v2/01-home.jpg",
+      "alt": "The home page of RPLMS: the RPLMS logo and menu over a large photo of a house, with the heading \"Find your next home in Malaysia\", the count of 407 properties to rent or buy, tabs for Rent, Buy and Agents, and a search box with filters",
+      "caption": "The home page: one search box for the whole country, with filters for the type, the rooms, the rent and the amenities.",
+      "device": "desktop",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "src": "/images/projects/rplms-v2/02-property-page.jpg",
+      "alt": "A property page of RPLMS: title, price, a photo grid and a card to book a tour with the agent",
+      "caption": "The property page: photos, price per square foot and a contact card that stays in view.",
+      "device": "desktop",
+      "width": 1366,
+      "height": 860
+    },
+    {
+      "src": "/images/projects/rplms-v2/03-admin-dashboard.jpg",
+      "alt": "The admin dashboard of RPLMS with counts of properties, agents and messages, and charts of properties and income per month",
+      "caption": "The admin dashboard, counted from the database on every visit.",
+      "device": "desktop",
+      "width": 1440,
+      "height": 1035
+    },
+    {
+      "src": "/images/projects/rplms-v2/04-map-search.jpg",
+      "alt": "Search results of RPLMS shown on a map of Malaysia with numbered clusters of listings",
+      "caption": "Search on a map: 212 listings grouped into clusters.",
+      "device": "desktop",
+      "width": 786,
+      "height": 559
+    },
+    {
+      "src": "/images/projects/rplms-v2/05-agent-profile.jpg",
+      "alt": "An agent profile page of RPLMS with photo, contact details, areas and listings",
+      "caption": "An agent profile with the agent's listings and a filter.",
+      "device": "desktop",
+      "width": 1366,
+      "height": 900
+    },
+    {
+      "src": "/images/projects/rplms-v2/06-saved-searches.jpg",
+      "alt": "The list of saved searches in the user dashboard of RPLMS",
+      "caption": "Saved searches: new matches arrive by e-mail once a day.",
+      "device": "desktop",
+      "width": 1280,
+      "height": 928
+    },
+    {
+      "src": "/images/projects/rplms-v2/07-phone-property.jpg",
+      "alt": "A property page of RPLMS on a phone with a photo gallery and a contact bar at the bottom",
+      "caption": "The same property page on a phone.",
+      "device": "phone",
+      "width": 390,
+      "height": 844
+    }
+  ],
+  "links": {}
+}

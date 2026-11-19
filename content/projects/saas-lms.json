@@ -1,0 +1,49 @@
+{
+  "slug": "saas-lms",
+  "title": "SaaS LMS",
+  "summary": "A learning platform for one teacher or a whole organisation. The architecture is written down; the build has just begun.",
+  "kind": "Own product",
+  "year": "2026",
+  "status": "In progress",
+  "featured": false,
+  "draft": true,
+  "order": 8,
+  "role": "Architecture, the decision records and the foundation of the application.",
+  "stack": [
+    "Next.js",
+    "React",
+    "TypeScript",
+    "Tailwind CSS",
+    "Supabase"
+  ],
+  "description": [
+    "A multi-tenant learning management system meant to work equally well for a single teacher and for a large educational organisation. So far it is a design and a foundation: the specification, the architecture and eighteen recorded decisions, on top of a Next.js and Supabase scaffold.",
+    "I list it here for the thinking, not for screens: there are none to show yet."
+  ],
+  "highlights": [
+    {
+      "title": "Four layers of permission",
+      "text": "Routing, the server, row-level security in the database and the paid plan each check access on their own, so one mistake does not open the door."
+    },
+    {
+      "title": "Roles per organisation",
+      "text": "A person's role belongs to their membership of an organisation, not to their account, and students join by invitation only."
+    },
+    {
+      "title": "Decisions on record",
+      "text": "Each architectural choice is written down with its reasons and the options that lost, before the code that depends on it."
+    }
+  ],
+  "facts": [
+    {
+      "value": "18",
+      "label": "decision records"
+    },
+    {
+      "value": "13",
+      "label": "planned phases"
+    }
+  ],
+  "images": [],
+  "links": {}
+}

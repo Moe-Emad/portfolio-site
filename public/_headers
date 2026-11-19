@@ -1,0 +1,16 @@
+# Headers for every file of the site. Read by Cloudflare Pages and Netlify; other hosts ignore this file
+# (docs/deploy.md, section 3).
+
+/*
+  # The browser must not guess the type of a file.
+  X-Content-Type-Options: nosniff
+  # Nobody may show this site inside a frame of theirs.
+  X-Frame-Options: DENY
+  # Other sites learn only that a visitor came from here, not from which page.
+  Referrer-Policy: strict-origin-when-cross-origin
+  # The site uses none of these.
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=()
+
+# The names of these files change whenever their content does, so a browser may keep them for a year.
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable

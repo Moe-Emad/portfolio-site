@@ -1,0 +1,42 @@
+[
+  {
+    "title": "Online shop",
+    "tech": "Angular, Spring Boot",
+    "summary": "Catalogue, search, cart, checkout and order history, built while learning the stack."
+  },
+  {
+    "title": "Purchasing system",
+    "tech": "Python, Django",
+    "summary": "Purchase orders and quotations for a coursework assignment."
+  },
+  {
+    "title": "CPU scheduling simulator",
+    "tech": "Java",
+    "summary": "Simulates CPU scheduling algorithms for an operating systems assignment."
+  },
+  {
+    "title": "NFA and regular grammar converter",
+    "tech": "JavaScript",
+    "summary": "Converts an NFA to a regular grammar and back, and shows the result."
+  },
+  {
+    "title": "Hospital queue system",
+    "tech": "MATLAB",
+    "summary": "Models a hospital queue with several well-known queueing algorithms."
+  },
+  {
+    "title": "Student management system",
+    "tech": "Java",
+    "summary": "Keeps student records in a desktop application."
+  },
+  {
+    "title": "Bus ticketing system",
+    "tech": "Python",
+    "summary": "Books and manages bus tickets from the command line."
+  },
+  {
+    "title": "Thirty mini projects",
+    "tech": "HTML, CSS, JavaScript",
+    "summary": "One small interface a day for thirty days."
+  }
+]
