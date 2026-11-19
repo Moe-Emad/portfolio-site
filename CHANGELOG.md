@@ -54,3 +54,4 @@ and do not link here.
 - A8: The withdrawn picomatch advisory is off the accepted list; the gate fails on an accepted advisory npm no longer reports, so the list cannot go stale (#7)
 - D5: The README documents the site itself; working notes stay off the public repository, and a docs test keeps them out (#9)
 - B7: The build starts Vite with Node.js instead of npx, so the npm settings of the host print no warnings (#11)
+- B8: vercel.json gives the live site the headers and caching of public/_headers, installs with npm ci and builds without npm; the deploy guide has a section on Vercel (#13)

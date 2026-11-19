@@ -31,6 +31,7 @@ issue and pull request numbers do not link here. From D4 on, the numbers are tho
 | B5 | #10 | Placeholder content and unused files | Sample figures nobody measured on the page; 4.4 MB of unused files served publicly | `fix/b5-untrue-and-leftover-content` | #28 | done |
 | B6 | #71 | /work/ shows the list of work instead of "page not found" | Every project lives under /work/, so a visitor who shortens the address expects the list there | `fix/b6-work-page` | #72 | done |
 | B7 | #10 | The build starts Vite without npx, so the host's npm settings print no warnings | The build machine of Vercel sets an npm setting npm 11 does not know; every start of npm printed a warning, two of them from our build | `fix/b7-build-without-npx` | #11 | done |
+| B8 | #12 | Headers, caching and the install and build commands on Vercel | The live site is on Vercel, which reads vercel.json, not public/_headers; its install and build commands were left to the defaults | `fix/b8-vercel-settings` | #13 | done |
 
 ## F - features and the look
 
@@ -90,6 +91,9 @@ New findings that are outside the item being worked on go here first, then becom
 - The Jpro site answers on jprotraining.my and on jprotraining.com. The project page links to jprotraining.my (the
   one in its sitemap); change `links.live` in `content/projects/jpro-website.json` if the other one is the main
   address.
+- On this PC, a full `npm run test:browser` while other programs are busy can stop at the 30 s limit in a few tests,
+  different ones from run to run, all on the desktop size (seen in B8: 2, then 6). The same files pass on their own and
+  on GitHub. If it keeps happening, run the tests with fewer workers (`npm run test:browser -- --workers 2`).
 - AVIF copies of the screenshots: a trial on five pictures showed AVIF a quarter smaller than WebP (180 kB against
   247 kB), another 30 to 40 kB per page. F5 delivered WebP only; `src/lib/pictures.js` and `npm run pictures` are
   the two places to extend.
