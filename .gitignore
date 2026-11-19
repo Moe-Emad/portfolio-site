@@ -28,3 +28,6 @@ coverage/
 Thumbs.db
 *.log
 *.local
+
+# Notes kept on this PC only
+/local/

@@ -1,12 +1,12 @@
 # Changelog
 
 One line per merged pull request, with the tracker item and the PR number. The plan is in
-`docs/tracking/CODE-TRACKER.md`. The numbers up to F27 (#86) are pull requests of the private working repository
-where that work was done; D4 brought it here.
+`docs/tracking/CODE-TRACKER.md`. The numbers up to F27 (#86) come from before this repository was published (D4)
+and do not link here.
 
 ## Unreleased
 
-- Baseline: the original portfolio imported from its own repository at `583fd75`, without `.env`.
+- Baseline: the first version of the site (`583fd75`).
 - A1: project files and working rules - pitfalls, tracker, changelog, README, .gitignore, .env.example (#20)
 - A2: git hooks - gitleaks on staged changes, .env and .sql refused, no AI attribution, no direct push to main (#21)
 - A3: dependencies - 16 npm advisories fixed inside the current majors (now 0), installs run no package scripts, lock file check (#22)
@@ -14,11 +14,11 @@ where that work was done; D4 brought it here.
 - B2: lint is clean - Hero component renamed so its hook is valid, unused import and missing dependency fixed (#24)
 - A4: npm run gate - every check in one command, run by the pre-push hook and by GitHub on every pull request; Dependabot; LF line endings (#25)
 - A5: browser tests - Playwright and axe on desktop and phone sizes, run by GitHub on every pull request (#27)
-- B5: invented counters, tutorial testimonials and 8.2 MB of unused public files removed; a test keeps public/ clean (#28)
+- B5: placeholder counters and testimonials and 8.2 MB of unused public files removed; a test keeps public/ clean (#28)
 - B4: navigation - dead menu link removed, the main button is a real link, skip link, favicon type; browser tests follow every in-page link (#30)
 - B3: contact form - visible and announced success and error, field messages, bot trap, a notice when it is not set up; EmailJS loads on first send (#31)
 - F1: content in JSON files (profile, experience, skills, projects) with a schema the gate checks; TypeScript for new code (#32)
-- F2: a design of its own - two-script sign on Egyptian blue, light and dark theme, phone menu, own fonts; the tutorial 3D scene and 8 packages removed, JavaScript 1,415 kB to 225 kB (#33)
+- F2: a design of its own - two-script sign on Egyptian blue, light and dark theme, phone menu, own fonts; the 3D scene and 8 packages removed, JavaScript 1,415 kB to 225 kB (#33)
 - F3: a page per project with 26 real screenshots, a technology filter on the work list, a not-found page (#34)
 - F4: every page written to real HTML at build time; title, description, share picture and structured data per page; sitemap.xml and robots.txt (#35)
 - D1: README - setup on a fresh Windows PC, daily start, changing the content, tests, troubleshooting; a test keeps the docs in step with the project (#36)
@@ -35,7 +35,7 @@ where that work was done; D4 brought it here.
 - A6: The picomatch advisory GHSA-fc5q-39xc-vjpf, which has no fixed version yet, is on the reviewed list with its reason (#55)
 - F14: Relic's page shows the deeper analysis: nine pictures of a real run on an old PHP project, answers with their sources, pacing to the AI service's limit (#56)
 - F15: Athelvoid's page shows the reworked site and an admin area behind a real sign-in, with nine new pictures (#58)
-- D3: The tracker names the new private repos of the reworked Relic and Athelvoid (#60)
+- D3: The tracker is up to date on the reworked Relic and Athelvoid (#60)
 - F16: Experience lists the MTC and Jpro work and the current job, links each job to its project page, and matches the CV (#62)
 - F17: A project can be a draft, kept in content but left out of the site; SaaS LMS is a draft for now (#64)
 - F18: The page uses the width of wide screens; text keeps a readable line length (#66)
