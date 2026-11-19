@@ -1,5 +1,6 @@
 # Headers for every file of the site. Read by Cloudflare Pages and Netlify; other hosts ignore this file
-# (docs/deploy.md, section 3).
+# (docs/deploy.md, section 4). vercel.json gives Vercel, the host of the live site, the same headers; a test
+# (tools/dev/vercel.test.cjs) keeps the two in step.
 
 /*
   # The browser must not guess the type of a file.
