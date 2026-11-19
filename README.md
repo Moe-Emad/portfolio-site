@@ -35,6 +35,7 @@ about the work, and a page for every project.
 | Accessibility | Browser tests run the axe rules on every page in both themes, on a desktop and a phone size, and use the site by keyboard. |
 | The look | All colours are tokens for the two themes at the top of `src/index.css`: Egyptian blue and saffron. |
 | Contact form | [EmailJS](https://www.emailjs.com), loaded only when a message is sent. |
+| Speed of real visits | [Vercel Speed Insights](https://vercel.com/docs/speed-insights) measures the Core Web Vitals of visits to the live site. Its script loads after the page, and only in the build Vercel makes for production. |
 
 ## Run it locally
 

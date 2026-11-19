@@ -122,6 +122,18 @@ test('the page asks no other server for anything', async ({ page }) => {
   expect(outside, 'requests to other servers (fonts, scripts, trackers)').toEqual([]);
 });
 
+// Speed Insights (tracker F28) lives at an address only Vercel serves; any other build must not ask for it.
+test('outside Vercel the page loads no Speed Insights script', async ({ page }) => {
+  const vercel = [];
+  page.on('request', (request) => {
+    if (new URL(request.url()).pathname.startsWith('/_vercel/')) vercel.push(request.url());
+  });
+  await open(page);
+  await page.waitForLoadState('networkidle');
+  expect(vercel).toEqual([]);
+  expect(await page.locator('script[src*="speed-insights"]').count()).toBe(0);
+});
+
 test('the fonts are served by the site and both are in use', async ({ page }) => {
   await open(page);
   await page.evaluate(() => document.fonts.ready);
