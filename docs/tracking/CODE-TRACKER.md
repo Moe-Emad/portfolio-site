@@ -64,6 +64,7 @@ issue and pull request numbers do not link here. From D4 on, the numbers are tho
 | F25 | #81 | More about each project in the list of work | Under each project's text a large area beside its picture was empty | `feat/f25-project-details` | #82 | done |
 | F26 | #83 | A new headline under the name | The old line, "every change tested and written down", described the process instead of the work | `feat/f26-headline` | #84 | done |
 | F27 | #85 | A sharp first picture of Molok El-Sook | Its first picture was 800 px wide and shown about 920 px wide, so it was stretched (found in F25) | `feat/f27-molok-picture` | #86 | done |
+| F28 | #14 | Speed Insights on the live site | Nothing measured how fast the live site is for real visitors; the budgets measure a test build | `feat/f28-speed-insights` | #15 | done |
 
 ## D - docs and developer setup
 
