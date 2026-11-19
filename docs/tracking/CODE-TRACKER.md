@@ -68,7 +68,7 @@ issue and pull request numbers refer to that repository. From D4 on, the numbers
 | D1 | #18 | README for a fresh Windows PC | Setup should not depend on memory | `docs/d1-readme` | #36 | done |
 | D2 | #19 | Deploy guide and checklist | The site has never been deployed; nothing about hosting is written down | `docs/d2-deploy-guide` | #37 | done |
 | D3 | #59 | The tracker says where the reworked Relic and Athelvoid live | Both were pushed to new private repos; the findings still said "not pushed" and left the choice open | `docs/d3-rework-repos` | #60 | done |
-| D4 | #1 | Publish the code of the site | Every project is private, so an employer could read none of the code; the working repository cannot be made public as it is | `chore/d4-publish` | - | in progress |
+| D4 | #1 | Publish the code of the site | Every project is private, so an employer could read none of the code; the working repository cannot be made public as it is | `chore/d4-publish` | #2 | done |
 
 ## Findings noted for later
 
