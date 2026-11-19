@@ -18,6 +18,7 @@ issue and pull request numbers refer to that repository. From D4 on, the numbers
 | A5 | #5 | Browser tests: Playwright smoke tests and axe checks | Page, form and CSS changes need a real browser, on desktop and phone sizes | `chore/a5-browser-tests` | #27 | done |
 | A6 | #54 | Record the picomatch advisory that has no fix yet | A new advisory without a fixed version stopped the gate for every item | `chore/a6-picomatch-advisory` | #55 | done |
 | A7 | #4 | The weekly minor and patch updates, and a lock check that knows bundled packages | Dependabot's update (#3) failed the lock check: Tailwind CSS 4.3 brings a package that carries six others inside its own download | `chore/a7-dependency-updates` | #5 | done |
+| A8 | #6 | Remove the withdrawn picomatch advisory, and keep the accepted list from going stale | The advisory accepted in A6 was withdrawn on 2026-11-18; the gate only failed on new advisories, so nothing noticed | `chore/a8-withdrawn-advisory` | #7 | done |
 
 ## B - bugs and security
 
@@ -77,10 +78,6 @@ New findings that are outside the item being worked on go here first, then becom
 
 - The other pictures of Molok El-Sook (02 to 06) are still the 800 px pictures of the game's `demo/` folder. They
   are shown smaller, in the gallery of its page, so they are sharp enough; new ones at 1440 px would match the rest.
-- picomatch advisory GHSA-fc5q-39xc-vjpf (A6) is on the accepted list in `tools/dev/known-advisories.json` because no
-  fixed version existed on 2026-11-17. The advisory was withdrawn on 2026-11-18, and `npm audit` no longer reports
-  it (found in A7). The entry can go: a next A item, which could also make the gate name an accepted advisory that
-  npm no longer reports, so the list cannot go stale again.
 - JavaScript is at 93 kB of its 95 kB budget (`tests/browser/weight.spec.js`) since A7: React DOM 19.3 is about
   10.5 kB larger in the bundle than 19.1. The next change that adds JavaScript reaches the budget; decide then
   whether to trim or to raise it.

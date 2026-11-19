@@ -1,6 +1,4 @@
 {
-  "//": "npm advisories that have no fix inside the current major versions. The gate (tools/dev/gate.cjs) accepts these and fails on any other. Remove an entry when its upgrade is done.",
-  "npm": {
-    "GHSA-fc5q-39xc-vjpf": "picomatch, ReDoS through crafted glob patterns, high. Checked 2026-11-17: the advisory covers every published version (<=4.0.7, the newest), so there is nothing to update to; npm only offers a downgrade of Vite across a major version. Here picomatch runs inside Vite and the lint tools while building and checking, on patterns from this repo, never on input from a visitor, and is not part of the published site. Remove this entry and update when a fixed picomatch is out."
-  }
+  "//": "npm advisories that have no fix inside the current major versions. The gate (tools/dev/gate.cjs) accepts these and fails on any other, and also on an entry npm audit no longer reports (fixed or withdrawn, A8). Remove an entry when its upgrade is done.",
+  "npm": {}
 }
