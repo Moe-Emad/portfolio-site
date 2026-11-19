@@ -28,6 +28,23 @@ The original was measured from a build of the untouched backup (the original rep
 method. Its 2,908 kB of 3D data are the models of the room (1,632 kB) and a lighting map the 3D library fetched
 from another server (1,276 kB).
 
+## Measured on 2026-11-19, A7 (React 19.3 and the other minor updates)
+
+Only packages changed in A7, so only the code is compared. Both rows were measured on the same day with
+`npm run weight`, on a desktop and a phone size, which gave the same figures.
+
+| | HTML of `/` | HTML of `/work/rplms-v2/` | CSS | JavaScript |
+|---|---|---|---|---|
+| Before A7 | 9 kB | 5 kB | 8 kB | 82 kB |
+| After A7 | 9 kB | 5 kB | 8 kB | 93 kB |
+
+The 11 kB are React DOM: its browser part is about 10.5 kB larger in the bundle in 19.3 than in 19.1. The budget is
+95 kB, so 2 kB are left for the next change that adds JavaScript.
+
+Pictures are left out of this table. The scroll of `npm run weight` is faster than the pictures below the first
+screen load, so it counts two to five of the seven on the home page, differently from run to run, in both versions.
+Brought into view one by one, all seven load in both. This is noted in the tracker.
+
 The page today weighs about a twentieth of the original, and it shows its text before any JavaScript arrives.
 
 ## Measured on 2026-11-17, after F5
