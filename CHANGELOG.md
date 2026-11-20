@@ -79,3 +79,4 @@ and do not link here.
 - F47: The dark theme is a blueprint: deep blueprint blue, white and pale-blue text, a faint grid of drawing paper on the ground, bands that stand apart (#57)
 - F48: Lines draw themselves as their block comes into view while its text stands still; the figures no longer count up; gentler lean and lift (#59)
 - F49: The tabs of the work list name their kind without a count; the line under them says how many projects are shown (#61)
+- F50: Captions stand under the screens; a phone screen is drawn as a phone; the cover of a project page is never stretched past its pixels (#63)
