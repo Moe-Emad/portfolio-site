@@ -89,10 +89,10 @@ New findings that are outside the item being worked on go here first, then becom
 
 - The other pictures of Molok El-Sook (02 to 06) are still the 800 px pictures of the game's `demo/` folder. They
   are shown smaller, in the gallery of its page, so they are sharp enough; new ones at 1440 px would match the rest.
-- JavaScript is at 96,652 B of its 95 kB budget (97,280 B; `tests/browser/weight.spec.js` adds up the main bundle
-  and a 1.5 kB chunk) since F33, which added 170 B; 628 B are left. Most of the growth came with React DOM 19.3 in
-  A7, about 10.5 kB larger in the bundle than 19.1. The next change that adds JavaScript reaches the budget; decide
-  then whether to trim or to raise it.
+- JavaScript is at 96,640 B of its 95 kB budget (97,280 B; `tests/browser/weight.spec.js` adds up the main bundle
+  and a 1.5 kB chunk) since F34, which took 12 B off (F33 had added 170 B); 640 B are left. Most of the growth came
+  with React DOM 19.3 in A7, about 10.5 kB larger in the bundle than 19.1. The next change that adds JavaScript
+  reaches the budget; decide then whether to trim or to raise it.
 - The picture column of `npm run weight` depends on timing. Its scroll (steps of three quarters of a screen every
   120 ms) is faster than the pictures below the first screen load, so it counts two to five of the seven on the home
   page, differently from run to run (found in A7). Brought into view one by one, all seven load. A fix: bring each

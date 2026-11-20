@@ -1,8 +1,8 @@
-// Pictures and section titles further down the page appear as they come into view (tracker F20).
+// Pictures further down the page appear as they come into view (tracker F20).
 // The server and a browser without JavaScript draw everything in place. In the browser, an element that starts
-// below the first screen is marked data-reveal="waiting" (the stylesheet hides a picture by clipping it, and the rule
-// under a title by scaling it to nothing) and then data-reveal="shown" once a tenth of it is in view. Text itself is
-// never hidden. With "reduce motion" nothing is marked, so nothing waits.
+// below the first screen is marked data-reveal="waiting" (the stylesheet hides a picture by clipping it) and then
+// data-reveal="shown" once a tenth of it is in view. Text itself is never hidden. With "reduce motion" nothing is
+// marked, so nothing waits.
 import { useEffect, useRef } from 'react';
 
 /** True when the browser can watch elements and the visitor has not asked for less motion. */

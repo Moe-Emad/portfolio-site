@@ -1799,20 +1799,8 @@ a:hover {
 }
 
 /* ---------- Life and motion (tracker F20) ----------
-   One opening moment in the first screen; further down, pictures unroll into view and the rule under a section
-   title draws itself. Text is never hidden or faded. Only without "reduce motion"; src/lib/reveal.ts marks what
-   waits, so without JavaScript everything is in place. */
-
-/* The rule under a section title: in place for everyone, drawn when it comes into view. */
-.section__title::after {
-  display: block;
-  width: 3.5rem;
-  height: 4px;
-  margin-top: 0.9rem;
-  background: var(--saffron);
-  content: "";
-  transform-origin: left;
-}
+   One opening moment in the first screen; further down, pictures unroll into view. Text is never hidden or faded.
+   Only without "reduce motion"; src/lib/reveal.ts marks what waits, so without JavaScript everything is in place. */
 
 @media (prefers-reduced-motion: no-preference) {
   .hero__role {
@@ -1883,14 +1871,6 @@ a:hover {
   .project:hover .shot {
     box-shadow: 0 22px 44px -24px rgb(12 20 64 / 0.45);
     transform: translateY(-5px);
-  }
-
-  .section__title[data-reveal]::after {
-    transition: transform 0.9s cubic-bezier(0.6, 0, 0.2, 1) 0.2s;
-  }
-
-  .section__title[data-reveal="waiting"]::after {
-    transform: scaleX(0);
   }
 }
 
@@ -1989,20 +1969,15 @@ a:hover {
 
 /* ---------- On paper ---------- */
 
-/* A printed page shows everything in place (tracker B9). What still waits below the screen is not clipped,
-   lowered or scaled on paper, and nothing moves while the page is laid out for print. These rules come last, so
-   they win over the waiting rules above, which have the same weight. */
+/* A printed page shows everything in place (tracker B9). What still waits below the screen is not clipped or
+   lowered on paper, and nothing moves while the page is laid out for print. These rules come last, so they win
+   over the waiting rules above, which have the same weight. */
 @media print {
   [data-animate][data-reveal] > *,
   .shot[data-reveal],
   .shot[data-reveal] picture {
     clip-path: none;
     translate: none;
-    transition: none;
-  }
-
-  .section__title[data-reveal]::after {
-    transform: none;
     transition: none;
   }
 }
