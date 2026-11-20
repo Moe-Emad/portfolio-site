@@ -65,3 +65,4 @@ and do not link here.
 - F33: The phone screens of a project page stand beside the wide screens, no row of the gallery is half empty, and its pictures are loaded as wide as they are shown (#29)
 - F34: Section titles stand without the saffron bar under them and no longer wait while the page scrolls; a browser test finds no drawing under any section title (#31)
 - F35: The skills and a project page list their tools as a plain line of text, like the rows of the work list, without chips, pills or a hover (#33)
+- F36: The line above the name, the description of the home page and the link preview say "Software engineer based in Egypt" (#35)
