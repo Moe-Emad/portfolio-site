@@ -53,15 +53,18 @@ export default function Hero() {
               {profile.nameArabic}
             </span>
           </h1>
-          <p className="hero__role">{roleLine(profile.role, profile.location)}</p>
-          <p className="hero__headline">{profile.headline}</p>
-          <div className="hero__actions">
-            <a href="#work" className="button button--sign">
-              See the work
-            </a>
-            <a href="#contact" className="hero__link">
-              Get in touch
-            </a>
+          {/* The caption, the headline and the way on: on a tablet they stand beside the star as one block. */}
+          <div className="hero__lead">
+            <p className="hero__role">{roleLine(profile.role, profile.location)}</p>
+            <p className="hero__headline">{profile.headline}</p>
+            <div className="hero__actions">
+              <a href="#work" className="button button--sign">
+                See the work
+              </a>
+              <a href="#contact" className="hero__link">
+                Get in touch
+              </a>
+            </div>
           </div>
         </div>
         <div ref={drawing} className="hero__drawing">

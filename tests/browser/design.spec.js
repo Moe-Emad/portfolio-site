@@ -829,3 +829,40 @@ test('the first screen has the role under the name and one button, with Get in t
   });
   expect(look).toEqual({ button: false, underline: 'underline', border: '0px' });
 });
+
+// The star on a phone (tracker F46): small and at full strength under the buttons, in the band, at the right. Before,
+// it was enlarged behind the name at 22 % opacity, its lines across the name, the role and the headline.
+test('on a phone the star stands under the buttons at full strength and crosses no text', async ({ page }, testInfo) => {
+  test.skip(!isPhone(testInfo), 'a wide screen has the star beside the name');
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await open(page);
+  const found = await page.locator('#top').evaluate((hero) => {
+    const drawing = hero.querySelector('.hero__drawing');
+    const box = (element) => element.getBoundingClientRect();
+    const star = box(drawing);
+    const texts = [...hero.querySelectorAll('h1, .hero__role, .hero__headline, .hero__actions')].map((element) => ({ name: element.className || element.tagName, box: box(element) }));
+    const crossed = texts.filter(({ box: text }) => star.left < text.right && star.right > text.left && star.top < text.bottom && star.bottom > text.top).map(({ name }) => name);
+    return {
+      opacity: getComputedStyle(drawing).opacity,
+      crossed,
+      belowButtons: star.top >= box(hero.querySelector('.hero__actions')).bottom,
+      inBand: star.bottom <= box(hero).bottom + 1,
+      onScreen: star.left >= 0 && star.right <= document.documentElement.clientWidth,
+    };
+  });
+  expect(found).toEqual({ opacity: '1', crossed: [], belowButtons: true, inBand: true, onScreen: true });
+
+  // A tablet has room beside the text: there the star stands beside the headline and the buttons, under the name.
+  await page.setViewportSize({ width: 768, height: 1024 });
+  const tablet = await page.locator('#top').evaluate((hero) => {
+    const box = (selector) => hero.querySelector(selector).getBoundingClientRect();
+    const star = box('.hero__drawing');
+    return {
+      opacity: getComputedStyle(hero.querySelector('.hero__drawing')).opacity,
+      besideText: ['.hero__role', '.hero__headline', '.hero__actions'].every((selector) => star.left >= box(selector).right),
+      underName: star.top >= box('h1').bottom,
+      inBand: star.bottom <= box('.hero__grid').bottom + 1,
+    };
+  });
+  expect(tablet).toEqual({ opacity: '1', besideText: true, underName: true, inBand: true });
+});

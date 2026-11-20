@@ -578,22 +578,53 @@ a:hover {
   text-decoration-thickness: 2px;
 }
 
-/* The drawing. Phone: large and faint behind the text. Wide screens: beside it, at full strength. */
+/* The drawing. Phone and tablet: small and at full strength in the band under the buttons, at the right, so the
+   name stands on clean blue (tracker F46). Wide screens: large, beside the text. */
 .hero__drawing {
-  position: absolute;
-  top: 50%;
-  right: -38%;
-  width: min(120vw, 34rem);
-  opacity: 0.22;
-  transform: translateY(-50%);
+  width: min(64vw, 16rem);
+  margin: 2.25rem 0 0 auto;
   pointer-events: none;
+}
+
+/* A tablet has room beside the role, the headline and the buttons: the star stands there, under the name, its foot
+   level with the buttons. The text box steps aside (display: contents), so the name and the block under it share one
+   grid with the star. */
+@media (min-width: 40rem) and (max-width: 63.99rem) {
+  .hero__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    column-gap: 2rem;
+  }
+
+  .hero__text {
+    display: contents;
+  }
+
+  .sign {
+    grid-column: 1 / -1;
+  }
+
+  .hero__lead,
+  .hero__drawing {
+    grid-row: 2;
+    align-self: end;
+  }
+
+  .hero__drawing {
+    grid-column: 2;
+    width: min(32vw, 14rem);
+    margin: 1.5rem 0 0;
+  }
 }
 
 @media (min-width: 64rem) {
   .hero__drawing {
+    position: absolute;
+    top: 50%;
     right: -4rem;
     width: min(46vw, 39rem);
-    opacity: 1;
+    margin: 0;
+    transform: translateY(-50%);
   }
 
   .hero__text {
@@ -671,6 +702,13 @@ a:hover {
   fill: var(--on-blue-muted);
   font-family: var(--font-sans);
   font-size: 5px;
+}
+
+/* The small star of a phone writes its notes larger, so 45° and r can still be read (about 10 px). */
+@media (max-width: 63.99rem) {
+  .star__notes text {
+    font-size: 8px;
+  }
 }
 
 .star__notes .star__centre {
