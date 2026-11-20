@@ -273,6 +273,71 @@ test('on a wide screen the picture of each row is loaded at least as wide as it 
   }
 });
 
+// The gallery leaves no empty half rows (tracker F33): from a tablet width on, the phone screens stand beside the
+// wide screens instead of in a row of their own, and when the wide screens are an odd number the first one spans
+// the row. Measured at rest ("reduce motion"), so no picture is still on its way into place.
+test.describe('the gallery of a project page', () => {
+  for (const width of [1920, 1440, 1280, 1024]) {
+    test(`at ${width} px the phone screens stand beside the wide screens and no row of wide screens is half empty`, async ({ page }, testInfo) => {
+      test.skip(testInfo.project.name === 'phone', 'about wide screens; a phone shows the gallery in one column');
+      await page.setViewportSize({ width, height: 1000 });
+      await page.emulateMedia({ reducedMotion: 'reduce' });
+      for (const project of projects) {
+        await page.goto(`/work/${project.slug}/`);
+        await expect(page.locator('.gallery')).toBeVisible();
+        const layout = await page.evaluate(() => {
+          const rect = (element) => element.getBoundingClientRect();
+          const grid = document.querySelector('.gallery__desktop');
+          const gap = parseFloat(getComputedStyle(grid).columnGap) || 0;
+          // A row: the wide screens that start at the same height.
+          const rows = new Map();
+          for (const shot of grid.querySelectorAll(':scope > .shot')) {
+            const top = Math.round(rect(shot).top);
+            rows.set(top, [...(rows.get(top) ?? []), rect(shot).width]);
+          }
+          return {
+            width: rect(grid).width,
+            bottom: rect(grid).bottom,
+            rows: [...rows.values()].map((widths) => widths.reduce((sum, one) => sum + one, 0) + gap * (widths.length - 1)),
+            phones: [...document.querySelectorAll('.gallery__phone .shot')].map((shot) => rect(shot).top),
+          };
+        });
+        for (const [index, used] of layout.rows.entries()) {
+          expect(used, `${project.title} at ${width} px: the width used by row ${index + 1} of the wide screens`).toBeGreaterThan(layout.width - 2);
+        }
+        for (const top of layout.phones) {
+          expect(top, `${project.title} at ${width} px: a phone screen starts below the wide screens`).toBeLessThan(layout.bottom);
+        }
+      }
+    });
+  }
+
+  test('on a wide screen every picture of the gallery is loaded at least as wide as it is shown', async ({ page }, testInfo) => {
+    test.skip(testInfo.project.name === 'phone', 'about wide screens');
+    await page.setViewportSize({ width: 1920, height: 1000 });
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    for (const project of projects) {
+      await page.goto(`/work/${project.slug}/`);
+      const pictures = page.locator('.gallery .shot img');
+      await expect(pictures).toHaveCount(project.images.length - 1);
+      for (let index = 0; index < project.images.length - 1; index += 1) {
+        const picture = pictures.nth(index);
+        await picture.scrollIntoViewIfNeeded();
+        await expect.poll(() => picture.evaluate((image) => image.complete && image.currentSrc !== ''), { timeout: 15000 }).toBe(true);
+        // naturalWidth of a picture chosen from a srcset is already scaled by "sizes", so the file is opened on its own.
+        const [file, shown, full, src] = await picture.evaluate(async (image) => {
+          const copy = new Image();
+          copy.src = image.currentSrc;
+          await copy.decode();
+          return [copy.naturalWidth, image.getBoundingClientRect().width, Number(image.getAttribute('width')), image.currentSrc];
+        });
+        // A picture that was taken smaller than it is shown can only be loaded whole.
+        expect(file, `${src}: a file ${file} px wide, shown ${Math.round(shown)} px wide`).toBeGreaterThanOrEqual(Math.min(Math.floor(shown), full));
+      }
+    }
+  });
+});
+
 test('"All work" on a project page leads to the list of work', async ({ page }) => {
   await page.goto(`/work/${projects[0].slug}/`);
   await page.getByRole('link', { name: 'All work' }).click();

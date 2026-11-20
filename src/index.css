@@ -1303,28 +1303,73 @@ a:hover {
   font-size: 0.875rem;
 }
 
+/* The screens of a project, with no row left half empty (tracker F33). On a phone: one column. From 52rem the wide
+   screens are two to a row, and the first of an odd number spans the row. When there are phone screens too, they
+   stand in a narrow column beside the wide screens, one under the other; their width grows with the screen, so two
+   phones are about as tall as three rows of wide screens, and a single phone stays in view while they scroll past.
+   The wide screens then take one column up to 80rem and two from there. The sizes of the pictures are in
+   src/components/ProjectPage.tsx (GALLERY_SIZES): change both together. */
 .gallery {
+  --phone-width: clamp(12rem, 16vw, 19rem);
+
   margin-top: 3.5rem;
 }
 
-.gallery__desktop {
+.gallery__body {
   display: grid;
   gap: 1.75rem;
   margin-top: 1.25rem;
 }
 
-@media (min-width: 52rem) {
-  .gallery__desktop {
-    grid-template-columns: repeat(2, 1fr);
-    align-items: start;
-  }
+.gallery__desktop {
+  display: grid;
+  gap: 1.75rem;
+  align-items: start;
 }
 
 .gallery__phone {
   display: flex;
   flex-wrap: wrap;
   gap: 1.75rem;
-  margin-top: 1.75rem;
+}
+
+@media (min-width: 52rem) {
+  .gallery__desktop {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .gallery__desktop > :first-child:nth-last-child(odd) {
+    grid-column: 1 / -1;
+  }
+
+  .gallery[data-beside] .gallery__body {
+    grid-template-columns: minmax(0, 1fr) var(--phone-width);
+    align-items: start;
+  }
+
+  .gallery[data-beside] .gallery__desktop {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .gallery[data-beside] .gallery__phone {
+    flex-direction: column;
+  }
+
+  .gallery[data-beside] .gallery__phone .shot {
+    width: 100%;
+  }
+
+  /* Below the bar at the top: 4rem high on a wide screen, nearly 6rem where its links wrap. */
+  .gallery[data-beside] .gallery__phone:has(> :only-child) {
+    position: sticky;
+    top: 6rem;
+  }
+}
+
+@media (min-width: 80rem) {
+  .gallery[data-beside] .gallery__desktop {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 .case__next {
