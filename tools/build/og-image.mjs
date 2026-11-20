@@ -8,6 +8,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { chromium } from 'playwright-core';
+import { roleLine } from '../../src/lib/profile.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
 const profile = JSON.parse(fs.readFileSync(path.join(ROOT, 'content', 'profile.json'), 'utf8'));
@@ -37,7 +38,7 @@ body { width: 1200px; height: 630px; overflow: hidden; background: #1034a6; colo
 svg { position: absolute; right: -60px; top: 65px; width: 500px; height: 500px; }
 </style></head><body>
 <div class="text">
-  <p class="role">${profile.role} in ${profile.location}</p>
+  <p class="role">${roleLine(profile.role, profile.location)}</p>
   <div class="sign"><span class="first">${first}</span><span>${rest.join(' ')}</span><span class="arabic" lang="ar" dir="rtl">${profile.nameArabic}</span></div>
 </div>
 <p class="line">Web applications built and brought up to date, with a test behind every change.</p>

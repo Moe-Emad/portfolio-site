@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import type { RefObject } from 'react';
 import { content } from '../content/index.ts';
+import { roleLine } from '../lib/profile.js';
 import StarDrawing from './StarDrawing.tsx';
 
 /** The drawing leans a little towards the mouse (tracker F20): only with a mouse, and not with "reduce motion". */
@@ -42,9 +43,7 @@ export default function Hero() {
     <section ref={hero} id="top" className="hero" aria-labelledby="hero-name">
       <div className="wrap hero__grid">
         <div className="hero__text">
-          <p className="hero__role">
-            {profile.role} in {profile.location}
-          </p>
+          <p className="hero__role">{roleLine(profile.role, profile.location)}</p>
           <h1 id="hero-name" className="sign">
             <span className="sign__first">{first}</span>{' '}
             {rest.length > 0 && <span className="sign__rest">{rest.join(' ')}</span>}{' '}

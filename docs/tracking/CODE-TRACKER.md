@@ -74,6 +74,7 @@ issue and pull request numbers do not link here. From D4 on, the numbers are tho
 | F33 | #27 | The gallery of a project page leaves no empty half rows | Phone screens stood in a row of their own beside a large empty area, and an odd number of wide screens left half a row empty | `feat/f33-gallery-rows` | #29 | done |
 | F34 | #30 | Section titles stand without a saffron bar under them | The same short bar under every title is the look of many stock templates and spent the accent colour on decoration; the lists under the titles already open with a hairline | `feat/f34-section-titles` | #31 | done |
 | F35 | #32 | Tools are listed as plain text, without chips or pills | The skills showed boxed chips that changed under the mouse although they are not links, and a project page round pills; the rows of the work list already gave the tools as a plain line | `feat/f35-plain-tool-lists` | #33 | done |
+| F36 | #34 | The line above the name says Software engineer based in Egypt | Asked for, and the way the introduction under "How I work" already says it; the words now come from one place for the page, its description and the link preview | `feat/f36-based-in` | #35 | done |
 
 ## D - docs and developer setup
 
@@ -95,6 +96,9 @@ New findings that are outside the item being worked on go here first, then becom
   and a 1.5 kB chunk) since F34, which took 12 B off (F33 had added 170 B); 640 B are left. Most of the growth came
   with React DOM 19.3 in A7, about 10.5 kB larger in the bundle than 19.1. The next change that adds JavaScript
   reaches the budget; decide then whether to trim or to raise it.
+- The picture of link previews (`public/og-image.png`, F36) says "Web applications built and brought up to date, with
+  a test behind every change." under the name, while the home page has said "From the database to the last pixel, I
+  build web apps that just work." since F26. The headline could take its place there (`tools/build/og-image.mjs`).
 - The picture column of `npm run weight` depends on timing. Its scroll (steps of three quarters of a screen every
   120 ms) is faster than the pictures below the first screen load, so it counts two to five of the seven on the home
   page, differently from run to run (found in A7). Brought into view one by one, all seven load. A fix: bring each

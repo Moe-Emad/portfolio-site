@@ -41,6 +41,14 @@ const visibleText = (html) =>
     .replace(/&amp;/g, '&')
     .replace(/\s+/g, ' ');
 
+// The line above the name says where the developer is based (tracker F36), on the page and in its description.
+test('the home page says "based in" the country of the profile, above the name and in its description', () => {
+  const html = read('index.html');
+  const role = /<p class="hero__role">([\s\S]*?)<\/p>/.exec(html)?.[1] ?? '';
+  expect(role.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim()).toBe(`${profile.role} based in ${profile.location}`);
+  expect(meta(html, 'name', 'description')).toContain(`${profile.name}, ${profile.role.toLowerCase()} based in ${profile.location}.`);
+});
+
 // The dev server shows the head of index.html as it is; the build replaces it with each page's own head. The home
 // page must be described the same way in both, so a new headline is never left half changed (tracker F26).
 test('the description in index.html is the one the build writes for the home page', () => {

@@ -2,6 +2,7 @@
 // keep, the picture and text of a link preview, and structured data. Pure functions: the build calls them once
 // per page (src/entry-server.tsx) and the unit tests check them.
 import { content, projectBySlug } from './content/index.ts';
+import { roleLine } from './lib/profile.js';
 import { pageTitle } from './page-title.ts';
 import { WORK_PATH, matchRoute, projectPath } from './routes.ts';
 
@@ -94,7 +95,7 @@ export function pageHead(path: string): PageHead {
 
   return {
     title,
-    description: `${profile.name}, ${profile.role.toLowerCase()} in ${profile.location}. ${profile.headline}`,
+    description: `${profile.name}, ${roleLine(profile.role.toLowerCase(), profile.location)}. ${profile.headline}`,
     path: '/',
     image: { ...SHARE_IMAGE, alt: `${profile.name}, ${profile.role}` },
     index: true,
