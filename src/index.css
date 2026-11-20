@@ -46,7 +46,6 @@
   --success: #0b6f66;
   --button-border: transparent;
   --pressed-border: #1034a6;
-  --active-row: #e3e9fa;
 }
 
 :root[data-theme="dark"] {
@@ -66,7 +65,6 @@
   --success: #7fe3d4;
   --button-border: #9db2ff;
   --pressed-border: #9db2ff;
-  --active-row: #1b2873;
 }
 
 /* ---------- Base ---------- */
@@ -347,6 +345,10 @@ a:hover {
 /* ---------- The command palette ---------- */
 
 .palette {
+  /* The palette is drawn inside the bar at the top, but it is a page of its own: it takes the focus colour of the
+     page, not the saffron of the bar (tracker F29). */
+  --focus: var(--title);
+
   width: min(38rem, calc(100vw - 2rem));
   max-height: 78vh;
   margin: 12vh auto auto;
@@ -372,7 +374,7 @@ a:hover {
 .palette__input {
   width: 100%;
   padding: 1rem 1.2rem;
-  border-bottom: 1px solid var(--line);
+  border-bottom: 2px solid var(--line);
   background: transparent;
   color: inherit;
   font-size: 1.0625rem;
@@ -383,8 +385,12 @@ a:hover {
   opacity: 1;
 }
 
+/* While the palette is open the keyboard is always in this field: the line under it turns the colour of the
+   titles instead of a ring around it. The outline stays, transparent: in forced-colours mode it is drawn. */
 .palette__input:focus-visible {
-  outline-offset: -3px;
+  outline: 2px solid transparent;
+  outline-offset: -2px;
+  border-bottom-color: var(--focus);
 }
 
 .palette__list {
@@ -404,10 +410,15 @@ a:hover {
   cursor: pointer;
 }
 
-/* The highlighted command: a tinted row with a saffron edge, so it does not rely on colour alone. */
+/* The highlighted command is drawn in ink: the text colour as its ground, the surface as its text. It stands out
+   from the palette by far more than 3:1 in both themes (tracker F29). */
 .palette__list li[aria-selected="true"] {
-  background: var(--active-row);
-  box-shadow: inset 3px 0 0 var(--saffron);
+  background: var(--ink);
+  color: var(--surface);
+}
+
+.palette__list li[aria-selected="true"] .palette__kind {
+  color: inherit;
 }
 
 .palette__kind {

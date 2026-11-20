@@ -145,3 +145,55 @@ for (const colorScheme of ['light', 'dark']) {
     expect(await axeFindings(page)).toEqual([]);
   });
 }
+
+// Where the keyboard is, without saffron (tracker F29): the search field is underlined and the chosen command is
+// drawn in ink. Both marks stand out from the palette by at least 3:1, the contrast WCAG asks of such a mark.
+
+/** Relative luminance of a computed colour such as "rgb(16, 52, 166)". */
+function luminance(colour) {
+  const [r, g, b] = colour.match(/[\d.]+/g).slice(0, 3).map((part) => {
+    const value = Number(part) / 255;
+    return value <= 0.03928 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4;
+  });
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+}
+
+function contrast(one, two) {
+  const [light, dark] = [luminance(one), luminance(two)].sort((a, b) => b - a);
+  return (light + 0.05) / (dark + 0.05);
+}
+
+const SAFFRONS = ['rgb(255, 200, 61)', 'rgb(255, 216, 112)'];
+
+for (const colorScheme of ['light', 'dark']) {
+  test(`in the ${colorScheme} theme the field and the chosen command stand out by 3:1, without saffron`, async ({ page }) => {
+    await page.emulateMedia({ colorScheme });
+    await open(page);
+    await page.keyboard.press('Control+k');
+    await expect(field(page)).toBeFocused();
+    await page.keyboard.press('ArrowDown');
+    await expect(chosen(page)).toHaveText(/^How I work/);
+
+    const look = await page.evaluate(() => {
+      const style = (selector) => getComputedStyle(document.querySelector(selector));
+      const box = style('.palette');
+      const input = style('.palette__input');
+      const row = style('.palette__list [aria-selected="true"]');
+      return {
+        surface: box.backgroundColor,
+        line: input.borderBottomColor,
+        lineWidth: parseFloat(input.borderBottomWidth),
+        input: [input.outlineColor, input.borderBottomColor, input.boxShadow].join(' '),
+        row: row.backgroundColor,
+        rowMarks: [row.boxShadow, row.outlineColor, row.borderLeftColor].join(' '),
+      };
+    });
+    for (const saffron of SAFFRONS) {
+      expect(look.input, 'the search field').not.toContain(saffron);
+      expect(look.rowMarks, 'the chosen command').not.toContain(saffron);
+    }
+    expect(look.lineWidth, 'the line under the field').toBeGreaterThanOrEqual(2);
+    expect(contrast(look.line, look.surface), 'the line under the field').toBeGreaterThanOrEqual(3);
+    expect(contrast(look.row, look.surface), 'the chosen command').toBeGreaterThanOrEqual(3);
+  });
+}
