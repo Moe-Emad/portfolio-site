@@ -310,27 +310,55 @@ test.describe('the smaller and earlier work', () => {
   });
 });
 
-// Content rises into place as you scroll (tracker F23).
+// While scrolling, lines draw themselves (tracker F48, after F23): a block that carries a rule draws it from left to
+// right as it comes into view, and its text stands still all the time. The figures never count up.
 test.describe('scrolling', () => {
-  test('blocks further down wait below the screen and rise into place as they come into view', async ({ page }) => {
+  const RULED = ['#experience .job', '#skills .skill-group', '#work .archive > li'];
+
+  test('a rule further down draws across as it comes into view, and the text of its block never moves', async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'no-preference' });
     await open(page);
-    for (const selector of ['#experience .job', '#skills .skill-group', '#work .archive > li', '#method .steps > li']) {
+    for (const selector of RULED) {
       const block = page.locator(selector).first();
       await expect(block, selector).toHaveAttribute('data-reveal', 'waiting');
+      const still = (element) =>
+        [...element.querySelectorAll('*')].every((child) => {
+          const style = getComputedStyle(child);
+          return style.clipPath === 'none' && (style.translate === 'none' || style.translate === '0px') && style.opacity === '1';
+        });
+      const drawn = (element) => getComputedStyle(element).getPropertyValue('--drawn').trim();
+      expect(await block.evaluate(still), `${selector}: its text waits in place`).toBe(true);
+      expect(await block.evaluate(drawn), `${selector}: its rule is not drawn yet`).toBe('0%');
       await block.scrollIntoViewIfNeeded();
       await expect(block, selector).toHaveAttribute('data-reveal', 'shown');
+      await expect.poll(() => block.evaluate(drawn), { message: `${selector}: its rule is drawn` }).toBe('100%');
+      expect(await block.evaluate(still), `${selector}: its text did not move`).toBe(true);
     }
   });
 
-  test('the figures of the record count up to their real value', async ({ page }) => {
+  test('the figures show their real value from the start and never count', async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'no-preference' });
     await open(page);
-    const figures = page.locator('#method .record dt');
-    const real = await figures.allInnerTexts();
+    await expect(page.locator('[data-count]')).toHaveCount(0);
+    const figures = page.locator('#method .record dt, #work .project__facts dt');
+    const before = await figures.allTextContents();
     await page.locator('#method .record').scrollIntoViewIfNeeded();
-    await expect(figures.first()).toHaveAttribute('data-counted', 'true');
-    await expect(figures).toHaveText(real);
+    await page.waitForTimeout(600);
+    expect(await figures.allTextContents()).toEqual(before);
+    expect(await page.locator('[data-counted]').count()).toBe(0);
+  });
+
+  test('under the mouse the picture of a project lifts gently', async ({ page }, testInfo) => {
+    test.skip(isPhone(testInfo), 'a phone has no mouse');
+    await page.emulateMedia({ reducedMotion: 'no-preference' });
+    await open(page);
+    const row = page.locator('#work .project').first();
+    await row.locator('.shot').scrollIntoViewIfNeeded();
+    await row.hover({ position: { x: 20, y: 20 } });
+    await page.waitForTimeout(600);
+    const lift = await row.locator('.shot').evaluate((shot) => new DOMMatrix(getComputedStyle(shot).transform).m42);
+    expect(lift, 'lifted, but by 3 px at most').toBeGreaterThanOrEqual(-3);
+    expect(lift, 'lifted, but by 3 px at most').toBeLessThan(0);
   });
 
   test('with "reduce motion" no block waits and the figures do not count', async ({ page }) => {
@@ -368,6 +396,9 @@ test.describe('printing', () => {
         };
         for (const block of document.querySelectorAll('[data-animate][data-reveal="waiting"]')) {
           for (const child of block.children) check(child, `${block.className} > ${child.tagName.toLowerCase()}`, getComputedStyle(child));
+          // A rule that is still to be drawn (F48) is whole on paper.
+          const rule = getComputedStyle(block).borderImageSource;
+          if (rule !== 'none') found.push(`${block.className}: its rule is drawn by ${rule}`);
         }
         for (const shot of document.querySelectorAll('.shot[data-reveal="waiting"]')) {
           check(shot, 'shot', getComputedStyle(shot));

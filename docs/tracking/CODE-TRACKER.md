@@ -86,6 +86,7 @@ issue and pull request numbers do not link here. From D4 on, the numbers are tho
 | F45 | #52 | The first screen has one button, and the role stands under the name | A line over the name and a pair of equal buttons are the pattern of countless templates, and the two buttons competed for the one main way on | `feat/f45-first-screen` | #53 | done |
 | F46 | #54 | On a phone the star stands under the buttons, at full strength | On a phone the star was enlarged behind the name at 22 % opacity, its lines across the name, the role and the headline, and too faint to read as a drawing | `feat/f46-phone-star` | #55 | done |
 | F47 | #56 | A blueprint dark theme | The dark theme was navy with lavender text, a generic dark mode, and its tinted bands differed from the ground by 1.06 | `feat/f47-blueprint` | #57 | done |
+| F48 | #58 | Lines draw themselves instead of text rising | Almost every block of text rose into place while scrolling and the figures counted up, rewriting their text while it was read: the motion of a template, not of a drawing | `feat/f48-draw-motion` | - | in review |
 
 ## D - docs and developer setup
 
@@ -103,10 +104,10 @@ New findings that are outside the item being worked on go here first, then becom
 
 - The other pictures of Molok El-Sook (02 to 06) are still the 800 px pictures of the game's `demo/` folder. They
   are shown smaller, in the gallery of its page, so they are sharp enough; new ones at 1440 px would match the rest.
-- JavaScript is at 96,640 B of its 95 kB budget (97,280 B; `tests/browser/weight.spec.js` adds up the main bundle
-  and a 1.5 kB chunk) since F34, which took 12 B off (F33 had added 170 B); 640 B are left. Most of the growth came
-  with React DOM 19.3 in A7, about 10.5 kB larger in the bundle than 19.1. The next change that adds JavaScript
-  reaches the budget; decide then whether to trim or to raise it.
+- JavaScript is at 96,424 B of its 95 kB budget (97,280 B; `tests/browser/weight.spec.js` adds up the main bundle
+  and a 1.5 kB chunk) since F48, which took the count-up of the figures out; 856 B are left. Most of the growth came
+  with React DOM 19.3 in A7, about 10.5 kB larger in the bundle than 19.1. A change that adds more than that reaches
+  the budget; decide then whether to trim or to raise it.
 - The picture column of `npm run weight` depends on timing. Its scroll (steps of three quarters of a screen every
   120 ms) is faster than the pictures below the first screen load, so it counts two to five of the seven on the home
   page, differently from run to run (found in A7). Brought into view one by one, all seven load. A fix: bring each

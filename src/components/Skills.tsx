@@ -14,7 +14,7 @@ export default function Skills() {
         <p className="section__lead">The tools I work with, by what they are for.</p>
         <div className="skills">
           {content.skills.map((group) => (
-            <div key={group.group} className="skill-group" data-animate="rise">
+            <div key={group.group} className="skill-group" data-animate="draw">
               <div className="skill-group__about">
                 <h3>{group.group}</h3>
                 <p>{group.note}</p>

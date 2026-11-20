@@ -33,7 +33,7 @@ export default function Method() {
   return (
     <section id="method" className="section section--tinted" aria-labelledby="method-title">
       <div className="wrap method">
-        <div className="method__about" data-animate="rise">
+        <div className="method__about">
           <SectionTitle id="method-title">
             How I work
           </SectionTitle>
@@ -44,19 +44,19 @@ export default function Method() {
 
         <ol className="steps">
           {STEPS.map((step) => (
-            <li key={step.title} data-animate="rise">
+            <li key={step.title}>
               <h3>{step.title}</h3>
               <p>{step.text}</p>
             </li>
           ))}
         </ol>
 
-        <div className="record" aria-labelledby="record-title" data-animate="rise">
+        <div className="record" aria-labelledby="record-title" data-animate="draw">
           <h3 id="record-title">The record of this site</h3>
           <dl>
             {figures.map((figure) => (
               <div key={figure.label}>
-                <dt data-count>{figure.value}</dt>
+                <dt>{figure.value}</dt>
                 <dd>{figure.label}</dd>
               </div>
             ))}

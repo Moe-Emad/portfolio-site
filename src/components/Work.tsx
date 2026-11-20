@@ -37,18 +37,18 @@ const MAX_POINTS = 4;
 
 /**
  * What a row says beyond its one sentence (tracker F25), all from the project's own content: its measured figures
- * (whole numbers count up as they come into view), my part, and the titles of the points its page looks at closer.
+ * (shown at their real value from the start, F48), my part, and the titles of the points its page looks at closer.
  * The points are shown only where the text column is wide enough to sit beside its picture (see index.css).
  */
 function ProjectDetails({ project }: { project: Project }) {
   const points = project.highlights.slice(0, MAX_POINTS);
   return (
-    <div className="project__details" data-animate="rise">
+    <div className="project__details">
       {project.facts.length > 0 && (
         <dl className="project__facts">
           {project.facts.map((fact) => (
             <div key={fact.label}>
-              <dt data-count={/^\d+$/.test(fact.value) || undefined}>{fact.value}</dt>
+              <dt>{fact.value}</dt>
               <dd>{fact.label}</dd>
             </div>
           ))}
@@ -119,7 +119,7 @@ export default function Work({ page = false }: { page?: boolean }) {
   return (
     <section id="work" className="section" aria-labelledby="work-title">
       <div className="wrap">
-        <div className="work-head" data-animate="rise">
+        <div className="work-head">
           <div>
             <SectionTitle id="work-title" pageTitle={page}>
               Selected work
@@ -155,7 +155,7 @@ export default function Work({ page = false }: { page?: boolean }) {
         </div>
         <ul className="archive">
           {content.archive.map((entry) => (
-            <li key={entry.title} data-animate="rise">
+            <li key={entry.title} data-animate="draw">
               <span className="archive__name">{entry.title}</span>
               <span className="archive__summary">{entry.summary}</span>
               <span className="archive__tech">{entry.tech}</span>
