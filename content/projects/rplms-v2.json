@@ -1,6 +1,6 @@
 {
   "slug": "rplms-v2",
-  "title": "RPLMS v2",
+  "title": "RPLMS",
   "summary": "A rental and property-management platform with four dashboards, modernized step by step from my earlier Laravel project.",
   "kind": "Modernization",
   "year": "2026",
@@ -24,7 +24,7 @@
   ],
   "description": [
     "RPLMS is a platform for renting and managing properties: listings with search, filters and comparison, wishlists, tour scheduling, service packages for agents, live chat between users and agents, a blog and PDF invoices. It has four areas: the public site, a user dashboard, an agent dashboard and an admin dashboard.",
-    "Version 1 was a Laravel 10 project. Version 2 is that same code brought up to date in the open, one small pull request at a time: first the dependencies and the secrets, then the bugs and the security gaps, then the features a modern listing site has. The old folder, its database and its repository stayed untouched as the backup the whole time."
+    "It started as my earlier Laravel project and now runs on Laravel 13. The same code was brought up to date in the open, one small pull request at a time: first the dependencies and the secrets, then the bugs and the security gaps, then the features a modern listing site has. The old folder, its database and its repository stayed untouched as the backup the whole time."
   ],
   "highlights": [
     {
@@ -54,7 +54,7 @@
       "label": "tracked work items"
     },
     {
-      "value": "10 to 13",
+      "value": "13",
       "label": "Laravel version"
     },
     {
