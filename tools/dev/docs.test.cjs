@@ -114,6 +114,18 @@ test('the deploy guide names every setting of .env.example, and the security hea
   assert.match(read('.node-version'), /^22\s*$/, 'hosts read the Node.js version from .node-version');
 });
 
+// The README describes the motion the site has (tracker D6). Since F48 the text below the first screen stands
+// still and only its rules draw themselves; the stylesheet says so over its motion, and the README must not say
+// that blocks rise into place.
+test('the README describes the motion of the site: further down, rules draw and the text stands still', () => {
+  assert.match(read('src/index.css'), /Text below the first screen is never hidden, faded or moved\./, 'the rule of the stylesheet');
+  const point = read('README.md').match(/^- \*\*Motion[\s\S]*?(?=\n- \*\*|\n\n)/m)?.[0];
+  assert.ok(point, 'the README has a point on motion');
+  assert.doesNotMatch(point, /\bblocks? rises?\b|\brises? into place\b/i, 'the README says that text rises while scrolling');
+  assert.match(point, /rules draw themselves/i, 'the README names the rules that draw themselves');
+  assert.match(point, /text stands still/i, 'the README says that the text stands still');
+});
+
 test('the README leads to the deploy guide', () => {
   assert.match(read('README.md'), /\]\(docs\/deploy\.md\)/);
 });
