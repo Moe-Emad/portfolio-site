@@ -76,6 +76,23 @@ test.describe('the menu', () => {
     await expect(work).toBeHidden();
   });
 
+  // Before F43 the open menu was a panel of about 420 px that ended in the middle of the screen, over the first screen.
+  test('on a phone the open menu fills the screen from the bar to the bottom', async ({ page }, testInfo) => {
+    test.skip(!isPhone(testInfo), 'the wide layout has no menu');
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await open(page);
+    await page.getByRole('button', { name: 'Menu' }).click();
+    const nav = page.locator('.site-nav');
+    await expect(nav).toBeVisible();
+    const found = await nav.evaluate((element) => {
+      const bar = document.querySelector('.site-header').getBoundingClientRect();
+      const box = element.getBoundingClientRect();
+      return { bar: Math.round(bar.bottom), top: Math.round(box.top), bottom: Math.round(box.bottom), screen: window.innerHeight };
+    });
+    expect(found.top, 'starts at the bar').toBe(found.bar);
+    expect(found.bottom, 'reaches the bottom of the screen').toBeGreaterThanOrEqual(found.screen);
+  });
+
   test('on a wide screen the sections are always visible and there is no Menu button', async ({ page }, testInfo) => {
     test.skip(isPhone(testInfo), 'the phone layout folds the sections into a menu');
     await open(page);

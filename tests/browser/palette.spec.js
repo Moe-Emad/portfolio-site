@@ -197,3 +197,28 @@ for (const colorScheme of ['light', 'dark']) {
     expect(contrast(look.row, look.surface), 'the chosen command').toBeGreaterThanOrEqual(3);
   });
 }
+
+// Keys only where there are keys (tracker F43): where the main pointer is a finger, the palette leaves out its line of
+// keys and the Search button its "Ctrl K"; with a mouse and a keyboard both are shown.
+test('the keys are named only where there is a keyboard', async ({ page }, testInfo) => {
+  await open(page);
+  const touch = await page.evaluate(() => matchMedia('(pointer: coarse)').matches);
+  // The phone size of the tests is a touch screen, the desktop size has a mouse: otherwise this test proves nothing.
+  expect(touch).toBe(testInfo.project.name === 'phone');
+  const hint = page.locator('.palette-button kbd');
+  if (!touch) await page.setViewportSize({ width: 1280, height: 800 });
+  await page.getByRole('button', { name: 'Search' }).click();
+  await expect(palette(page)).toBeVisible();
+  const keys = page.locator('.palette__keys');
+  if (touch) {
+    await expect(keys).toBeHidden();
+    await expect(hint).toBeHidden();
+    // Also on a wide touch screen, where the Search button has room for its hint.
+    await page.keyboard.press('Escape');
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await expect(hint).toBeHidden();
+  } else {
+    await expect(keys).toBeVisible();
+    await expect(hint).toBeVisible();
+  }
+});
