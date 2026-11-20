@@ -2,8 +2,8 @@ import { StrictMode } from 'react';
 import { createRoot, hydrateRoot } from 'react-dom/client';
 // The two typefaces are served by the site itself: no request to another server.
 import '@fontsource-variable/readex-pro/wght.css';
-import '@fontsource/rakkas/latin-400.css';
-import '@fontsource/rakkas/arabic-400.css';
+// Rakkas with a range for each of its files, the Arabic one cut down to the letters of the content (tracker F56).
+import './fonts/rakkas.css';
 import './index.css';
 import App from './App.tsx';
 import { checkContent, content, loadProject } from './content/index.ts';

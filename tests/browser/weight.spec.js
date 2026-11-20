@@ -208,6 +208,87 @@ test('every page names the fonts of its first view in its head, and uses each of
   }
 });
 
+/** The faces of Rakkas in the stylesheet of the page: { range, file } with the file below the build folder. */
+const rakkasFaces = (page) =>
+  page.evaluate(() =>
+    [...document.styleSheets]
+      .flatMap((sheet) => [...sheet.cssRules])
+      .filter((rule) => rule instanceof CSSFontFaceRule && rule.style.getPropertyValue('font-family').replace(/["']/g, '') === 'Rakkas')
+      .map((rule) => ({ range: rule.style.getPropertyValue('unicode-range'), file: new URL(/url\("?([^")]+)"?\)/.exec(rule.style.getPropertyValue('src'))[1], location.href).pathname })),
+  );
+
+/** Whether a unicode-range ("U+600-6FF, U+200C") holds a character. */
+const inRange = (range, code) =>
+  range.split(',').some((part) => {
+    const [low, high] = part.trim().replace(/^U\+/i, '').split('-');
+    return code >= parseInt(low, 16) && code <= parseInt(high ?? low, 16);
+  });
+
+const WHOLE_ARABIC = 'node_modules/@fontsource/rakkas/files/rakkas-arabic-400-normal.woff2';
+
+test('each face of Rakkas has the range of its letters, and the Arabic file holds only the letters the site shows', async ({ page }) => {
+  // Tracker F56. Without a range a face counts for every character: the browser fetched the Arabic file for the
+  // Latin name in the bar, before the Latin one. The Arabic file was the whole of it, for ten letters.
+  await page.goto('/');
+  const faces = await rakkasFaces(page);
+  for (const face of faces) expect(face.range, `the face of ${face.file}`).not.toBe('');
+  const arabic = faces.filter((face) => inRange(face.range, 0x0645));
+  const latin = faces.filter((face) => inRange(face.range, 0x0041));
+  expect(arabic, 'faces for the letter م').toHaveLength(1);
+  expect(latin, 'faces for the letter A').toHaveLength(1);
+  expect(arabic[0].file).not.toBe(latin[0].file);
+  const size = fs.statSync(path.join(BUILD, arabic[0].file)).size;
+  expect(size, `${arabic[0].file}: ${size} B`).toBeLessThan(fs.statSync(WHOLE_ARABIC).size / 3);
+});
+
+test('every Arabic text of the site looks the same with the Arabic file of the build as with the whole font', async ({ page }) => {
+  // Tracker F56. An Arabic letter changes its shape with its neighbours: the cut-down file must keep every form.
+  // Both are drawn with the faces of Rakkas as the stylesheet of the site declares them, only the Arabic file
+  // differs: the space between two Arabic words comes from the Latin face there, by its range.
+  await page.goto('/');
+  const faces = await rakkasFaces(page);
+  const [arabic] = faces.filter((face) => inRange(face.range, 0x0645));
+  const texts = [
+    ...new Set(
+      ['content/profile.json', ...projectFiles.map((project) => `content/projects/${project.slug}.json`)].flatMap((file) =>
+        Object.values(JSON.parse(fs.readFileSync(file, 'utf8'))).filter((value) => typeof value === 'string' && /[؀-ۿ]/.test(value)),
+      ),
+    ),
+  ];
+  expect(texts.length, 'Arabic texts in the content').toBeGreaterThan(1);
+  // A blank page: the policy of the site allows fonts from the site only, and these come as data.
+  await page.goto('about:blank');
+  const family = (name, arabicFile) =>
+    faces
+      .map((face) => {
+        const file = face === arabic ? arabicFile : path.join(BUILD, face.file);
+        return `@font-face { font-family: '${name}'; src: url(data:font/woff2;base64,${fs.readFileSync(file).toString('base64')}) format('woff2'); unicode-range: ${face.range}; }`;
+      })
+      .join(' ');
+  await page.setContent(
+    `<style>${family('Whole', WHOLE_ARABIC)} ${family('Site', path.join(BUILD, arabic.file))} body { margin: 0; background: #fff; }
+      p { font-size: 56px; margin: 0; padding: 8px; line-height: 1.5; width: 600px; }</style>
+     <p dir="rtl" lang="ar"></p>`,
+  );
+  // One element at one place for both: on a phone screen a pixel of the page is 2.625 real pixels, so text half a
+  // real pixel lower would be smoothed differently.
+  const draw = async (fontFamily, text) => {
+    await page.locator('p').evaluate((element, [name, words]) => {
+      element.style.fontFamily = `'${name}', monospace`;
+      element.textContent = words;
+    }, [fontFamily, text]);
+    // Loads every face of the family that the text needs; document.fonts.ready alone resolves before a load starts.
+    await page.evaluate(([name, words]) => document.fonts.load(`56px '${name}'`, words), [fontFamily, text]);
+    return page.locator('p').screenshot();
+  };
+  for (const text of texts) {
+    const whole = await draw('Whole', text);
+    // The fonts are really in use: the stand-in typeface draws the text differently.
+    expect(Buffer.compare(whole, await draw('No such font', text)), `"${text}" with the whole font is drawn by a stand-in`).not.toBe(0);
+    expect(Buffer.compare(whole, await draw('Site', text)), `"${text}" is drawn differently`).toBe(0);
+  }
+});
+
 test('the pictures may be kept by the browser for a year: their addresses change with them', () => {
   // Tracker F54. Before, every visit asked the host about every picture again.
   const headers = fs.readFileSync(path.join(BUILD, '_headers'), 'utf8');
