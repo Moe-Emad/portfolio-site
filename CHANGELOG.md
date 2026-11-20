@@ -75,3 +75,4 @@ and do not link here.
 - F43: The phone menu fills the screen with the sections in the display face; touch screens see no key hints in the palette or on the Search button (#49)
 - F44: The picture of link previews says the headline of the home page; its page is made from content/profile.json (#51)
 - F45: The first screen has one button, See the work, with Get in touch as a plain link; the role line stands under the name (#53)
+- F46: On a phone the star stands under the buttons at full strength, beside the text on a tablet; the name stands on clean blue (#55)
