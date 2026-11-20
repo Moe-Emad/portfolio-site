@@ -58,3 +58,4 @@ and do not link here.
 - F28: Vercel Speed Insights measures real visits to the live site; it loads after the page and only in the production build on Vercel (#15)
 - B9: A printed page shows every block: what still waits below the screen is in place on paper; a browser test prints pages without scrolling (#17)
 - B10: After a failed send the first field and its label come out from under the bar at the top (#19)
+- F29: The palette marks the search field with a line and the chosen command in ink, at least 3:1 in both themes, without saffron (#21)
