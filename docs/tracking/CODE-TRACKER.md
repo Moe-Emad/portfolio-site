@@ -102,6 +102,7 @@ issue and pull request numbers do not link here. From D4 on, the numbers are tho
 | D3 | #59 | The tracker is up to date on the reworked Relic and Athelvoid | The findings about them were out of date | `docs/d3-rework-repos` | #60 | done |
 | D4 | #1 | Publish the code of the site | An employer could read none of the code behind the projects; the code of the site itself can be shown | `chore/d4-publish` | #2 | done |
 | D5 | #8 | A README about the site, and public docs without working notes | The README was a setup manual, not documentation of the site; some docs carried working notes that do not belong in a public repository | `docs/d5-public-docs` | #9 | done |
+| D6 | #70 | The README describes the motion of the site as it is today | The README said blocks rise into place while scrolling, the motion before F48; since then the text further down stands still and its rules draw themselves | `docs/d6-readme-motion` | #71 | done |
 
 ## Findings noted for later
 
@@ -112,9 +113,6 @@ New findings that are outside the item being worked on go here first, then becom
 - JavaScript is at 94,220 B of its 95 kB budget (97,280 B) since F51; 3,060 B are left. React DOM is about 65 kB of
   it. The next thing to trim: the text of every project is in the main bundle (about 11 kB compressed, the draft
   included), although the home page shows only a part of each and a project page only its own.
-- The README still describes the motion of before F48 under "Motion in CSS only": the name rising and blocks
-  rising into place while scrolling. Since F48 lines draw themselves as their block comes into view and the text
-  stands still (found in B12).
 - The Jpro site answers on jprotraining.my and on jprotraining.com. The project page links to jprotraining.my (the
   one in its sitemap); change `links.live` in `content/projects/jpro-website.json` if the other one is the main
   address.
