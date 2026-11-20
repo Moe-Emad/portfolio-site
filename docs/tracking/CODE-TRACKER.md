@@ -35,6 +35,7 @@ issue and pull request numbers do not link here. From D4 on, the numbers are tho
 | B9 | #16 | A printed page shows every block | A block not yet scrolled to stayed clipped on paper, so a page printed or saved as a PDF lost text and pictures | `fix/b9-print-every-block` | #17 | done |
 | B10 | #18 | After a failed send the label of the first field stays in view | The form put the cursor in a field just under the bar and its label stayed hidden behind the bar | `fix/b10-form-label-in-view` | #19 | done |
 | B11 | #64 | A Content-Security-Policy: the site runs only its own scripts | Without a policy the browser runs any script that finds its way into a page, and lets it load code from anywhere and send data anywhere | `fix/b11-content-security-policy` | #65 | done |
+| B12 | #68 | npm run weight counts every picture of a page, the same on every run | It counted four of the seven pictures of the home page on a desktop and three on a phone: its quick scroll never got near the bottom of a page that scrolls smoothly | `fix/b12-weight-every-picture` | #69 | done |
 
 ## F - features and the look
 
@@ -111,10 +112,9 @@ New findings that are outside the item being worked on go here first, then becom
 - JavaScript is at 94,220 B of its 95 kB budget (97,280 B) since F51; 3,060 B are left. React DOM is about 65 kB of
   it. The next thing to trim: the text of every project is in the main bundle (about 11 kB compressed, the draft
   included), although the home page shows only a part of each and a project page only its own.
-- The picture column of `npm run weight` depends on timing. Its scroll (steps of three quarters of a screen every
-  120 ms) is faster than the pictures below the first screen load, so it counts two to five of the seven on the home
-  page, differently from run to run (found in A7). Brought into view one by one, all seven load. A fix: bring each
-  picture into view and wait for it, as the browser tests do.
+- The README still describes the motion of before F48 under "Motion in CSS only": the name rising and blocks
+  rising into place while scrolling. Since F48 lines draw themselves as their block comes into view and the text
+  stands still (found in B12).
 - The Jpro site answers on jprotraining.my and on jprotraining.com. The project page links to jprotraining.my (the
   one in its sitemap); change `links.live` in `content/projects/jpro-website.json` if the other one is the main
   address.

@@ -2,10 +2,12 @@
 // may weigh. The budgets are a little above today's figures (docs/page-weight.md): they catch a change that makes
 // a page much heavier, not every extra byte.
 import fs from 'node:fs';
+import { createRequire } from 'node:module';
 import path from 'node:path';
 import zlib from 'node:zlib';
 import { expect, test } from '@playwright/test';
 
+const { measurePage } = createRequire(import.meta.url)('../../tools/dev/page-weight.cjs');
 const BUILD = process.env.E2E_BUILD;
 const gzip = (file) => zlib.gzipSync(fs.readFileSync(file)).length;
 const assets = fs.readdirSync(path.join(BUILD, 'assets')).map((name) => path.join(BUILD, 'assets', name));
@@ -80,6 +82,29 @@ test('pictures below the first screen wait until they are needed', async ({ page
   await expect(page.locator('.case__cover img')).toHaveAttribute('loading', 'eager');
   const gallery = await page.locator('.gallery img').evaluateAll((images) => images.map((image) => image.loading));
   expect(new Set(gallery)).toEqual(new Set(['lazy']));
+});
+
+test('npm run weight counts every picture of the page, also when the pictures are slow', async ({ page }) => {
+  // Tracker B12. The tool counted four of the seven pictures of the home page on a desktop and three on a phone:
+  // it never got far enough down to load the others. Every picture is held back for a moment here, as on a slow
+  // connection, so that a walk that does not wait for them is caught on every run.
+  await page.route(/\.(webp|jpe?g|png)$/, async (route) => {
+    await new Promise((resolve) => setTimeout(resolve, 300));
+    await route.continue();
+  });
+  const measured = await measurePage(page, '/');
+
+  const shown = await page.locator('img').evaluateAll((images) =>
+    images.map((image) => ({
+      src: image.getAttribute('src'),
+      loaded: image.complete && image.naturalWidth > 0 ? new URL(image.currentSrc).pathname : null,
+    })),
+  );
+  expect(shown.length, 'pictures on the home page').toBeGreaterThan(5);
+  for (const picture of shown) {
+    expect(picture.loaded, `${picture.src} has loaded`).not.toBeNull();
+    expect(measured.pictures, `${picture.src} is counted`).toContain(picture.loaded);
+  }
 });
 
 test('the files with a changing name may be kept by the browser for a year', () => {

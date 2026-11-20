@@ -3,11 +3,10 @@
 // Page weight (tracker F5): what a visitor downloads for a page, measured in a real browser.
 //   npm run weight                 the home page and one project page, on a desktop and a phone size
 //   npm run weight -- /work/relic/ another page
-// It builds the site into dist-e2e/ (as the browser tests do), serves it on port 4321, opens each page, scrolls
-// to the bottom so that every picture loads, and adds up the bytes by kind. Text files are also shown as they
-// travel from a real host, compressed (the local server sends them as they are).
+// It builds the site into dist-e2e/ (as the browser tests do), serves it on port 4321, opens each page, brings
+// every picture into view and waits until it has loaded, and adds up the bytes by kind. Text files are also shown
+// as they travel from a real host, compressed (the local server sends them as they are).
 // Prints a table to paste into docs/page-weight.md. Read-only apart from dist-e2e/.
-/* global document, window -- the function handed to page.evaluate() runs in the browser */
 const path = require('node:path');
 const zlib = require('node:zlib');
 const { spawn, spawnSync } = require('node:child_process');
@@ -29,35 +28,82 @@ const kindOf = (url, type) => {
   return 'HTML';
 };
 
-async function measure(browser, address, size) {
-  const context = await browser.newContext(SIZES[size]);
-  const page = await context.newPage();
+/**
+ * Brings every picture a visitor would see into view, one after the other, and waits until each has loaded
+ * (tracker B12). Scrolling the window in quick steps missed the lower pictures: the page scrolls smoothly, so each
+ * step only started a gliding scroll that the next one replaced, and the page never got near the bottom.
+ */
+async function loadEveryPicture(page) {
+  const pictures = page.locator('img');
+  const count = await pictures.count();
+  for (let i = 0; i < count; i++) {
+    const picture = pictures.nth(i);
+    // A hidden picture (a closed menu, another tab) is not loaded by a visitor's browser either.
+    if (!(await picture.isVisible())) continue;
+    await picture.scrollIntoViewIfNeeded();
+    await picture.evaluate((image) =>
+      image.complete
+        ? undefined
+        : new Promise((resolve) => {
+            image.addEventListener('load', resolve, { once: true });
+            image.addEventListener('error', resolve, { once: true });
+          }),
+    );
+  }
+}
+
+/** Waits until no request of the page has been open for half a second; gives up after 15 seconds. */
+async function untilQuiet(page, openRequests) {
+  const giveUpAt = Date.now() + 15_000;
+  let quietSince = Date.now();
+  while (Date.now() < giveUpAt) {
+    if (openRequests() > 0) quietSince = Date.now();
+    else if (Date.now() - quietSince >= 500) return;
+    await page.waitForTimeout(50);
+  }
+}
+
+/**
+ * Opens the address in the page, loads the whole page and adds up what it downloaded, by kind. `pictures` lists
+ * the address of every picture counted. Used by `npm run weight` and by a browser test (tracker B12).
+ */
+async function measurePage(page, address) {
   const totals = { HTML: 0, CSS: 0, JavaScript: 0, fonts: 0, pictures: 0 };
   const compressed = { HTML: 0, CSS: 0, JavaScript: 0 };
+  const pictures = [];
   let requests = 0;
+  let open = 0;
   const pending = [];
+  page.on('request', () => (open += 1));
+  page.on('requestfinished', () => (open -= 1));
+  page.on('requestfailed', () => (open -= 1));
   page.on('response', (response) => {
     pending.push(
       response
         .body()
         .then((body) => {
-          const kind = kindOf(new URL(response.url()).pathname, response.headers()['content-type'] || '');
+          const pathname = new URL(response.url()).pathname;
+          const kind = kindOf(pathname, response.headers()['content-type'] || '');
           totals[kind] += body.length;
           if (kind in compressed) compressed[kind] += zlib.gzipSync(body).length;
+          if (kind === 'pictures') pictures.push(pathname);
           requests += 1;
         })
         .catch(() => {}),
     );
   });
-  await page.goto(BASE + address, { waitUntil: 'networkidle' });
-  await page.evaluate(async () => {
-    for (let y = 0; y < document.documentElement.scrollHeight; y += window.innerHeight * 0.75) {
-      window.scrollTo(0, y);
-      await new Promise((resolve) => setTimeout(resolve, 120));
-    }
-  });
-  await page.waitForLoadState('networkidle');
+  await page.goto(address, { waitUntil: 'networkidle' });
+  await loadEveryPicture(page);
+  // Then whatever the pictures set off: the 'networkidle' of page.goto() was met long ago and would not wait.
+  await untilQuiet(page, () => open);
   await Promise.all(pending);
+  return { requests, totals, compressed, pictures };
+}
+
+async function measure(browser, address, size) {
+  const context = await browser.newContext(SIZES[size]);
+  const page = await context.newPage();
+  const { requests, totals, compressed } = await measurePage(page, BASE + address);
   await context.close();
   // What travels: text compressed, fonts and pictures as they are.
   const travels = compressed.HTML + compressed.CSS + compressed.JavaScript + totals.fonts + totals.pictures;
@@ -113,4 +159,4 @@ if (require.main === module) {
   );
 }
 
-module.exports = { kindOf };
+module.exports = { kindOf, measurePage };
