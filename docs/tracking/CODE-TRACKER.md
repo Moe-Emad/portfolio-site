@@ -124,7 +124,7 @@ New findings that are outside the item being worked on go here first, then becom
   247 kB), another 30 to 40 kB per page. F5 delivered WebP only; `src/lib/pictures.js` and `npm run pictures` are
   the two places to extend.
 - The screenshots were taken at one pixel per point: the wide screens are 1440 px. Since F50 the cover is never
-  stretched on an ordinary screen, but on a sharp screen (two pixels per point, most laptops sold today) the cover is
-  drawn from about 2,650 pixels' worth of room out of 1,440, and the pictures of the work list and the gallery are
-  enlarged too. Taking the pictures again at twice the size (2880 px) would make them sharp everywhere; each project
+  stretched on an ordinary screen, but a sharp screen (two pixels per point, most laptops sold today) has about 2,650
+  pixels across for the cover at 1440 px and the picture has 1,440, so it is enlarged there, as are the pictures of
+  the work list and the gallery. Taking the pictures again at twice the size (2880 px) would make them sharp everywhere; each project
   has to be running for that, and the WebP copies (`npm run pictures`) would grow.
