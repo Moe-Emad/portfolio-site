@@ -226,25 +226,70 @@ test.describe('motion', () => {
   });
 });
 
-// Smaller and earlier work as a sheet of cells (tracker F22).
+// Smaller and earlier work as a register (tracker F41), like the list of sheets in a set of drawings: one entry
+// under another between hairlines, each with its name, what it is and its tools, set smaller than the main work. It
+// replaces the sheet of cells of F22, which had the same star in every cell and a hover on cells that are not links.
 test.describe('the smaller and earlier work', () => {
-  test.use({ viewport: { width: 1920, height: 1080 } });
-
-  test('is a sheet of cells, four across on a wide screen, each with its name, description and tools', async ({ page }) => {
-    await page.goto('/');
-    const sheet = page.locator('#work .archive');
-    const columns = await sheet.evaluate((element) => getComputedStyle(element).gridTemplateColumns.split(' ').length);
-    expect(columns).toBe(4);
-    const cells = sheet.locator(':scope > li');
-    const count = await cells.count();
-    expect(count).toBeGreaterThan(3);
-    for (let index = 0; index < count; index += 1) {
-      const cell = cells.nth(index);
-      await expect(cell.locator('.archive__name')).not.toBeEmpty();
-      await expect(cell.locator('.archive__summary')).not.toBeEmpty();
-      await expect(cell.locator('.archive__tech')).not.toBeEmpty();
-      await expect(cell.locator('svg.archive__mark')).toHaveAttribute('aria-hidden', 'true');
+  test('is a register: one entry under another, each with its name, what it is and its tools', async ({ page }, testInfo) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await open(page);
+    const entries = page.locator('#work .archive > li');
+    expect(await entries.count()).toBeGreaterThan(3);
+    await expect(page.locator('#work .archive svg, #work .archive img')).toHaveCount(0);
+    const rowName = await page.locator('#work .project__title').first().evaluate((title) => parseFloat(getComputedStyle(title).fontSize));
+    const found = await entries.evaluateAll((items) =>
+      items.map((item) => {
+        const box = (selector) => {
+          const element = item.querySelector(selector);
+          const rect = element.getBoundingClientRect();
+          return { top: rect.top, right: rect.right, bottom: rect.bottom, left: rect.left, text: element.textContent.trim() };
+        };
+        const own = item.getBoundingClientRect();
+        const name = getComputedStyle(item.querySelector('.archive__name'));
+        return {
+          top: own.top,
+          bottom: own.bottom,
+          hairline: parseFloat(getComputedStyle(item).borderBottomWidth),
+          size: parseFloat(name.fontSize),
+          face: name.fontFamily,
+          name: box('.archive__name'),
+          summary: box('.archive__summary'),
+          tools: box('.archive__tech'),
+        };
+      }),
+    );
+    for (const [index, entry] of found.entries()) {
+      const what = entry.name.text;
+      for (const part of ['name', 'summary', 'tools']) expect(entry[part].text, `${what}: ${part}`).not.toBe('');
+      if (index > 0) expect(entry.top, `${what} stands under the entry before it`).toBeGreaterThanOrEqual(found[index - 1].bottom - 1);
+      expect(entry.hairline, `${what}: a hairline under it`).toBeGreaterThan(0);
+      expect(entry.face, `${what}: the name in the text face`).not.toMatch(/^"?Rakkas\b/);
+      expect(entry.size, `${what}: a name smaller than the name of a project row`).toBeLessThanOrEqual(0.6 * rowName);
+      if (isPhone(testInfo)) {
+        expect(entry.summary.top, `${what}: what it is, under the name`).toBeGreaterThanOrEqual(entry.name.bottom - 1);
+        expect(entry.tools.top, `${what}: the tools, under what it is`).toBeGreaterThanOrEqual(entry.summary.bottom - 1);
+      } else {
+        expect(entry.summary.left, `${what}: what it is, beside the name`).toBeGreaterThanOrEqual(entry.name.right);
+        expect(entry.tools.left, `${what}: the tools, beside what it is`).toBeGreaterThanOrEqual(entry.summary.right);
+        expect(Math.abs(entry.summary.top - entry.name.top), `${what}: on one line`).toBeLessThan(8);
+      }
     }
+  });
+
+  test('nothing about an entry changes under the mouse, since it is not a link', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await open(page);
+    const entry = page.locator('#work .archive > li').first();
+    await entry.scrollIntoViewIfNeeded();
+    const look = (item) =>
+      [item, ...item.querySelectorAll('*')]
+        .flatMap((element) => [getComputedStyle(element), getComputedStyle(element, '::before'), getComputedStyle(element, '::after')])
+        .map((style) => [style.backgroundColor, style.color, style.borderTopColor, style.transform, style.rotate, style.stroke, style.content].join(' '))
+        .join(' | ');
+    const still = await entry.evaluate(look);
+    await entry.hover();
+    await page.waitForTimeout(300);
+    expect(await entry.evaluate(look)).toBe(still);
   });
 });
 

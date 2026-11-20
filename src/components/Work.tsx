@@ -8,16 +8,6 @@ import SectionTitle from './SectionTitle.tsx';
 
 type Kind = Project['kind'];
 
-/** The small eight-pointed star of the first screen, in the corner of each cell of the earlier work. */
-function StarMark() {
-  return (
-    <svg className="archive__mark" viewBox="-12 -12 24 24" aria-hidden="true" focusable="false">
-      <path d="M0 -10 L10 0 L0 10 L-10 0 Z" />
-      <path d="M-7.07 -7.07 L7.07 -7.07 L7.07 7.07 L-7.07 7.07 Z" />
-    </svg>
-  );
-}
-
 // The tabs of the list, in this order, named as a group would be (tracker F19).
 const KIND_TABS: { kind: Kind; label: string }[] = [
   { kind: 'Client work', label: 'Client work' },
@@ -158,7 +148,7 @@ export default function Work({ page = false }: { page?: boolean }) {
           ))}
         </div>
 
-        {/* A sheet of cells joined by hairlines, like a drawing sheet (tracker F22). */}
+        {/* A register, like the list of sheets in a set of drawings (tracker F41): one line per piece. */}
         <div className="archive__head">
           <h3 className="archive__title">Smaller and earlier work</h3>
           <p className="archive__lead">Coursework, course builds and early experiments: {content.archive.length} pieces.</p>
@@ -166,7 +156,6 @@ export default function Work({ page = false }: { page?: boolean }) {
         <ul className="archive">
           {content.archive.map((entry) => (
             <li key={entry.title} data-animate="rise">
-              <StarMark />
               <span className="archive__name">{entry.title}</span>
               <span className="archive__summary">{entry.summary}</span>
               <span className="archive__tech">{entry.tech}</span>
