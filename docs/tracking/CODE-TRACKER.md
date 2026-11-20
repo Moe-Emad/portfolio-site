@@ -93,7 +93,7 @@ issue and pull request numbers do not link here. From D4 on, the numbers are tho
 | F50 | #62 | Each screen in a frame of its own kind, and covers no wider than their pixels | Every screenshot stood in the same card with its caption inside, a phone screen as a tall rectangle; the 1440 px cover of a project page was stretched to 1664 px on a wide screen and looked soft | `feat/f50-screen-frames` | #63 | done |
 | F51 | #66 | The content is checked when the site is built, not in every visit | The JavaScript was 873 B under its budget; every visit repeated in the browser the check of the content that the build and the tests had already made | `feat/f51-content-check-at-build` | #67 | done |
 | F52 | #72 | AVIF copies of the screenshots | The pictures were the largest part of every page and came only as WebP; AVIF holds the same screenshot about a fifth smaller, as close to the original | `feat/f52-avif-copies` | #73 | done |
-| F53 | #74 | Each page loads only the project text it shows | The script of every page carried the whole file of every project, the draft included (about 10 kB compressed), while the home page shows a card of each and a project page only its own text; the JavaScript was 3 kB under its budget | `feat/f53-project-text-per-page` | #PR | done |
+| F53 | #74 | Each page loads only the project text it shows | The script of every page carried the whole file of every project, the draft included (about 10 kB compressed), while the home page shows a card of each and a project page only its own text; the JavaScript was 3 kB under its budget | `feat/f53-project-text-per-page` | #75 | done |
 
 ## D - docs and developer setup
 
