@@ -138,25 +138,28 @@ test('the menu of a project page leads to the sections of the home page', async 
   await expect(page.locator('#contact')).toBeInViewport();
 });
 
-// The head of "Selected work" (tracker F19): tabs by kind of work, each with its count.
-test('the tabs show the projects of one kind with their count, and All brings them back', async ({ page }) => {
+// The head of "Selected work" (tracker F19): tabs by kind of work. Each tab is named by its kind alone; the count is
+// said once, in the line under the tabs (tracker F49).
+test('the tabs show the projects of one kind, the line under them says how many, and All brings them back', async ({ page }) => {
   await page.goto('/');
   const rows = page.locator('#work .project');
   const tabs = page.getByRole('group', { name: 'Show the work of one kind' });
   await expect(rows).toHaveCount(projects.length);
-  await expect(tabs.getByRole('button', { name: `All ${projects.length}`, exact: true })).toHaveAttribute('aria-pressed', 'true');
+  await expect(tabs.getByRole('button', { name: 'All', exact: true })).toHaveAttribute('aria-pressed', 'true');
+  const names = await tabs.getByRole('button').allInnerTexts();
+  expect(names.filter((name) => /\d/.test(name)), 'tabs that carry a figure').toEqual([]);
   await expect(page.locator('#work [role="status"]')).toHaveText(`All ${projects.length} projects.`);
 
   const expected = projects.filter((project) => project.kind === 'Client work');
   expect(expected.length, 'client projects for this test').toBeGreaterThan(1);
-  const button = tabs.getByRole('button', { name: `Client work ${expected.length}`, exact: true });
+  const button = tabs.getByRole('button', { name: 'Client work', exact: true });
   await button.click();
   await expect(button).toHaveAttribute('aria-pressed', 'true');
   await expect(rows).toHaveCount(expected.length);
   for (const project of expected) await expect(page.locator(`#work a[href="/work/${project.slug}/"]`)).toBeVisible();
   await expect(page.locator('#work [role="status"]')).toHaveText(`${expected.length} of ${projects.length} projects: client work.`);
 
-  await tabs.getByRole('button', { name: `All ${projects.length}`, exact: true }).click();
+  await tabs.getByRole('button', { name: 'All', exact: true }).click();
   await expect(rows).toHaveCount(projects.length);
   // No technology buttons any more: search (Ctrl K) finds projects by technology.
   await expect(page.getByRole('group', { name: 'Show the projects built with' })).toHaveCount(0);

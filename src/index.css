@@ -789,8 +789,9 @@ a:hover {
   border-top: 1px solid var(--line);
 }
 
-/* The head of the list (tracker F19): title and introduction, and tabs by kind of work with their counts. On a
-   wide screen the tabs stand on the right, level with the end of the introduction. */
+/* The head of the list (tracker F19): title and introduction, and tabs by kind of work, each named by its kind alone;
+   the line under them says how many projects are shown (F49). On a wide screen the tabs stand on the right, level
+   with the end of the introduction. */
 .work-head {
   display: grid;
   gap: 2rem 4rem;
@@ -812,9 +813,6 @@ a:hover {
 
 .kinds button {
   position: relative;
-  display: inline-flex;
-  align-items: baseline;
-  gap: 0.4rem;
   min-height: 2.75rem;
   padding: 0.55rem 0 0.7rem;
   color: var(--muted);
@@ -848,13 +846,6 @@ a:hover {
 
 .kinds button[aria-pressed="true"]::after {
   transform: scaleX(1);
-}
-
-.kinds__count {
-  color: var(--muted);
-  font-size: 0.8125rem;
-  font-variant-numeric: tabular-nums;
-  font-weight: 500;
 }
 
 .kinds__status {
