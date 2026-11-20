@@ -461,6 +461,65 @@ test.describe('lists of tools', () => {
   }
 });
 
+// Two corner radii (tracker F37): a small one for what is clicked or typed into and for the focus ring, a large one
+// for frames (screenshots, the palette, the side card). Both are tokens at the top of src/index.css.
+test.describe('corners', () => {
+  const RADII = ['border-radius', 'border-top-left-radius', 'border-top-right-radius', 'border-bottom-right-radius', 'border-bottom-left-radius'];
+
+  test('every radius in the stylesheet, in any state, is one of the two tokens', async ({ page }) => {
+    await open(page);
+    const found = await page.evaluate((properties) => {
+      const problems = [];
+      const walk = (rules) => {
+        for (const rule of rules) {
+          if (rule.cssRules) walk(rule.cssRules);
+          if (!rule.style) continue;
+          const shorthand = rule.style.getPropertyValue(properties[0]).trim();
+          const values = shorthand ? [[properties[0], shorthand]] : properties.slice(1).map((property) => [property, rule.style.getPropertyValue(property).trim()]);
+          for (const [property, value] of values) {
+            if (['', '0', '0px', 'var(--radius)', 'var(--radius-frame)'].includes(value)) continue;
+            problems.push(`${rule.selectorText}: ${property} ${value}`);
+          }
+        }
+      };
+      for (const sheet of document.styleSheets) walk(sheet.cssRules);
+      return [...new Set(problems)];
+    }, RADII);
+    expect(found).toEqual([]);
+  });
+
+  for (const path of ['/', '/work/mtc-training-platform/']) {
+    test(`on ${path} every corner is square, small or large`, async ({ page }) => {
+      await page.goto(path);
+      await expect(page.locator('h1')).toBeVisible();
+      const { small, large, found } = await page.evaluate(() => {
+        const root = getComputedStyle(document.documentElement);
+        const small = root.getPropertyValue('--radius').trim();
+        const large = root.getPropertyValue('--radius-frame').trim();
+        const allowed = new Set(['0px', small, large]);
+        const problems = [];
+        // The palette is in the page while closed, so its rows and keys are counted too.
+        for (const element of document.querySelectorAll('*')) {
+          for (const pseudo of [null, '::before', '::after']) {
+            const style = getComputedStyle(element, pseudo);
+            if (pseudo && style.content === 'none') continue;
+            for (const corner of ['borderTopLeftRadius', 'borderTopRightRadius', 'borderBottomRightRadius', 'borderBottomLeftRadius']) {
+              if (!allowed.has(style[corner])) {
+                const name = `${element.tagName.toLowerCase()}${element.className && typeof element.className === 'string' ? `.${element.className.trim().split(/\s+/).join('.')}` : ''}${pseudo ?? ''}`;
+                problems.push(`${name}: ${style[corner]}`);
+              }
+            }
+          }
+        }
+        return { small, large, found: [...new Set(problems)] };
+      });
+      expect(small, 'the small radius').toBe('4px');
+      expect(large, 'the large radius').toBe('10px');
+      expect(found).toEqual([]);
+    });
+  }
+});
+
 // Skills as rows by group, without counts (tracker F24); their tools as a line of text since F35.
 test.describe('the skills', () => {
   test.use({ viewport: { width: 1920, height: 1080 } });

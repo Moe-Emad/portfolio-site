@@ -75,6 +75,7 @@ issue and pull request numbers do not link here. From D4 on, the numbers are tho
 | F34 | #30 | Section titles stand without a saffron bar under them | The same short bar under every title is the look of many stock templates and spent the accent colour on decoration; the lists under the titles already open with a hairline | `feat/f34-section-titles` | #31 | done |
 | F35 | #32 | Tools are listed as plain text, without chips or pills | The skills showed boxed chips that changed under the mouse although they are not links, and a project page round pills; the rows of the work list already gave the tools as a plain line | `feat/f35-plain-tool-lists` | #33 | done |
 | F36 | #34 | The line above the name says Software engineer based in Egypt | Asked for, and the way the introduction under "How I work" already says it; the words now come from one place for the page, its description and the link preview | `feat/f36-based-in` | #35 | done |
+| F37 | #36 | Two corner radii instead of five | Fully round buttons stood beside 4 px buttons in the first view, and five radii without a rule read as parts from different kits | `feat/f37-two-radii` | #37 | done |
 
 ## D - docs and developer setup
 
