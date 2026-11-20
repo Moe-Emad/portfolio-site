@@ -3,7 +3,16 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import test from 'node:test';
-import { contentProblems, experienceProblems, formatPeriod, profileProblems, projectProblems, shownProjects, sortProjects } from './schema.ts';
+import {
+  contentProblems,
+  experienceProblems,
+  formatPeriod,
+  profileProblems,
+  projectCard,
+  projectProblems,
+  shownProjects,
+  sortProjects,
+} from './schema.ts';
 import type { Project } from './schema.ts';
 
 const ROOT = path.resolve(import.meta.dirname, '..', '..');
@@ -209,6 +218,47 @@ test('projects are shown by their order, then by title', () => {
     { ...GOOD_PROJECT, title: 'A', order: 2 },
   ] as Project[];
   assert.deepEqual(sortProjects(projects).map((project) => project.title), ['C', 'A', 'B']);
+});
+
+test('the card of a project holds what the list of work needs, not the text of its page', () => {
+  // Tracker F53: every page carries the cards; only the page of a project loads its whole file.
+  const cover = { src: '/images/a.jpg', alt: 'The home page', device: 'desktop', width: 1440, height: 900 };
+  const gallery = { src: '/images/b.jpg', alt: 'A form', caption: 'The form', device: 'phone', width: 390, height: 844 };
+  const project = {
+    ...GOOD_PROJECT,
+    titleArabic: 'مشروع',
+    facts: [{ value: '12', label: 'pages' }],
+    highlights: [
+      { title: 'A point', text: 'Why it matters.' },
+      { title: 'Another point', text: 'Why that matters too.' },
+    ],
+    images: [cover, gallery],
+    links: { live: 'https://example.com' },
+  } as Project;
+  assert.deepEqual(projectCard(project), {
+    slug: 'sample-project',
+    title: 'Sample project',
+    titleArabic: 'مشروع',
+    summary: 'One line about it.',
+    kind: 'Own product',
+    year: '2026',
+    status: 'Prototype',
+    featured: false,
+    order: 1,
+    role: 'Everything.',
+    stack: ['React'],
+    facts: [{ value: '12', label: 'pages' }],
+    highlights: [{ title: 'A point' }, { title: 'Another point' }],
+    images: [cover],
+  });
+});
+
+test('a draft has no card: the site carries nothing of it', () => {
+  assert.equal(projectCard({ ...GOOD_PROJECT, draft: true } as Project), null);
+  for (const [file, raw] of projectFiles()) {
+    const project = raw as Project;
+    assert.equal(projectCard(project) === null, project.draft === true, file);
+  }
 });
 
 test('a period reads as months, and an open end as Present', () => {

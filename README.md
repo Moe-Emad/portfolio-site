@@ -30,7 +30,7 @@ about the work, and a page for every project.
 |---|---|
 | Stack | React 19, TypeScript, Vite 7 and Tailwind CSS 4. No animation or 3D library. |
 | Real HTML for every page | At build time `tools/build/build.mjs` writes every page to its own HTML file, with its own title, description, share picture and structured data; React takes it over in the browser. The text is there before any JavaScript arrives, for visitors, search engines and link previews alike. |
-| Content as data | Every text, job, skill and project is a JSON file in `content/`, checked against a schema (`src/content/schema.ts`) by the tests and by the build, so a broken file cannot go online. |
+| Content as data | Every text, job, skill and project is a JSON file in `content/`, checked against a schema (`src/content/schema.ts`) by the tests and by the build, so a broken file cannot go online. The script of every page carries a short card of each project, cut from its file at build time; the whole text of a project is loaded only by its own page. |
 | An admin panel without a server | [Pages CMS](https://pagescms.org) edits the files in `content/` through forms and saves each change as a commit. There is no database and no admin page on the site ([docs/admin.md](docs/admin.md)). |
 | Pictures sized for the screen | Every screenshot has AVIF and WebP copies in several widths, so a phone downloads a picture of its own size, in the smallest format its browser can show. A weight budget per page is held by the tests ([docs/page-weight.md](docs/page-weight.md)). |
 | Accessibility | Browser tests run the axe rules on every page in both themes, on a desktop and a phone size, and use the site by keyboard. |

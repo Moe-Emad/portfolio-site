@@ -76,6 +76,21 @@ export interface Project {
   links: { live?: string; liveLabel?: string };
 }
 
+/**
+ * What every page needs of a project (tracker F53): the list of work, the palette, the link to the next project and
+ * the head of its page. The paragraphs, the text of the points, the other pictures and the links are on its own page
+ * only, which loads the whole file.
+ */
+export type ProjectCard = Pick<
+  Project,
+  'slug' | 'title' | 'titleArabic' | 'summary' | 'kind' | 'year' | 'status' | 'featured' | 'order' | 'role' | 'stack' | 'facts'
+> & {
+  /** The titles of the points, without their text. */
+  highlights: { title: string }[];
+  /** The first picture only, the cover. */
+  images: ProjectImage[];
+};
+
 export interface ArchiveEntry {
   title: string;
   tech: string;
@@ -86,7 +101,8 @@ export interface Content {
   profile: Profile;
   experience: Job[];
   skills: SkillGroup[];
-  projects: Project[];
+  /** The cards of the projects the site shows, in their order. */
+  projects: ProjectCard[];
   archive: ArchiveEntry[];
 }
 
@@ -349,13 +365,38 @@ export function contentProblems(raw: {
 }
 
 /** Projects in the order the site shows them. */
-export function sortProjects(projects: Project[]): Project[] {
+export function sortProjects<T extends Pick<Project, 'order' | 'title'>>(projects: T[]): T[] {
   return [...projects].sort((a, b) => a.order - b.order || a.title.localeCompare(b.title));
 }
 
 /** The projects the site shows: drafts left out (tracker F17), in their order. */
-export function shownProjects(projects: Project[]): Project[] {
+export function shownProjects<T extends Pick<Project, 'order' | 'title' | 'draft'>>(projects: T[]): T[] {
   return sortProjects(projects.filter((project) => project.draft !== true));
+}
+
+/**
+ * The card of a project (tracker F53), cut from its file when the site is built (vite.config.js). null for a
+ * draft: the site leaves it out (F17), so its text is not sent to anyone's browser either.
+ */
+export function projectCard(project: Project): ProjectCard | null {
+  if (project.draft === true) return null;
+  const { slug, title, titleArabic, summary, kind, year, status, featured, order, role, stack, facts } = project;
+  return {
+    slug,
+    title,
+    titleArabic,
+    summary,
+    kind,
+    year,
+    status,
+    featured,
+    order,
+    role,
+    stack,
+    facts,
+    highlights: project.highlights.map((point) => ({ title: point.title })),
+    images: project.images.slice(0, 1),
+  };
 }
 
 /** "2021-06" and null become "Jun 2021 - Present". */
@@ -369,6 +410,6 @@ export function formatPeriod(start: string, end?: string | null): string {
 }
 
 /** "Modernization, 2026, in progress" - what kind of work it was, when, and where it stands. */
-export function projectMeta(project: Project): string {
+export function projectMeta(project: Pick<Project, 'kind' | 'year' | 'status'>): string {
   return [project.kind, project.year, project.status.toLowerCase()].filter(Boolean).join(', ');
 }

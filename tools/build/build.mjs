@@ -7,6 +7,9 @@
 //        /work/<slug>/     -> work/<slug>/index.html
 //        unknown address   -> 404.html
 //      plus robots.txt, and sitemap.xml when VITE_SITE_URL is set.
+//      The content is checked first; a broken file stops the build before a page is written.
+//      The page of a project names the script with the text of its project in its head (tracker F53), found in
+//      the manifest Vite writes for this; the manifest itself is not left in the build folder.
 // So the server sends real HTML: search engines and link previews read the text, the page shows before any
 // JavaScript runs, and any static host can serve the folder as it is.
 import { spawnSync } from 'node:child_process';
@@ -59,6 +62,18 @@ export function fillTemplate(template, { path: pagePath, head, app }) {
   ).replace(ROOT_TAG, `<div id="root" data-path="${pagePath}">${app}</div>`);
 }
 
+/**
+ * The tag that asks the browser for the script made from a content file, so that it loads together with the
+ * script of the page instead of after it (tracker F53). '' when there is no such file. manifest: Vite's manifest
+ * of the build, keyed by the source file ("content/projects/relic.json").
+ */
+export function preloadTag(manifest, source) {
+  const file = source ? manifest[source]?.file : undefined;
+  if (!file) return '';
+  // crossorigin as on the page's own <script type="module">: the browser can then use the file it fetched early.
+  return `<link rel="modulepreload" crossorigin href="/${file}" />`;
+}
+
 async function main() {
   const outDir = option('outDir', 'dist');
   const mode = option('mode', '');
@@ -66,18 +81,23 @@ async function main() {
   const out = path.join(ROOT, outDir);
   const ssrDir = `${outDir}-ssr`;
   const ssr = path.join(ROOT, ssrDir);
+  const manifestFile = path.join(out, '.vite', 'manifest.json');
 
-  runVite(['build', '--outDir', outDir, '--emptyOutDir', '--logLevel', 'warn', ...modeArgs]);
+  runVite(['build', '--outDir', outDir, '--emptyOutDir', '--manifest', '--logLevel', 'warn', ...modeArgs]);
   runVite(['build', '--ssr', 'src/entry-server.tsx', '--outDir', ssrDir, '--emptyOutDir', '--logLevel', 'warn', ...modeArgs]);
 
   try {
     const server = await import(pathToFileURL(path.join(ssr, 'entry-server.js')).href);
+    await server.checkContent();
+    const manifest = JSON.parse(fs.readFileSync(manifestFile, 'utf8'));
     const template = fs.readFileSync(path.join(out, 'index.html'), 'utf8');
     const pages = server.pages();
     for (const page of pages) {
       const file = path.join(out, page.file);
+      const { app, head, projectFile } = await server.render(page.path);
+      const preload = preloadTag(manifest, projectFile);
       fs.mkdirSync(path.dirname(file), { recursive: true });
-      fs.writeFileSync(file, fillTemplate(template, { path: page.path, ...server.render(page.path) }));
+      fs.writeFileSync(file, fillTemplate(template, { path: page.path, app, head: preload ? `${head}\n    ${preload}` : head }));
     }
     const files = server.siteFiles();
     for (const { file, text } of files) fs.writeFileSync(path.join(out, file), text);
@@ -88,6 +108,7 @@ async function main() {
     }
   } finally {
     fs.rmSync(ssr, { recursive: true, force: true });
+    fs.rmSync(path.dirname(manifestFile), { recursive: true, force: true });
   }
 }
 
