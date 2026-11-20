@@ -17,17 +17,16 @@ const KIND_TABS: { kind: Kind; label: string }[] = [
   { kind: 'Earlier work', label: 'Earlier work' },
 ];
 
-/** The kinds that have at least one project, with their counts. */
-function kindTabs(projects: Project[]): { kind: Kind; label: string; count: number }[] {
-  return KIND_TABS.map((tab) => ({ ...tab, count: projects.filter((project) => project.kind === tab.kind).length })).filter(
-    (tab) => tab.count > 0,
-  );
+/** The kinds that have at least one project. */
+function kindTabs(projects: Project[]): { kind: Kind; label: string }[] {
+  return KIND_TABS.filter((tab) => projects.some((project) => project.kind === tab.kind));
 }
 
-function Tab({ label, count, pressed, onPress }: { label: string; count: number; pressed: boolean; onPress: () => void }) {
+/** A tab is named by its kind alone; the line under the tabs says how many projects are shown (tracker F49). */
+function Tab({ label, pressed, onPress }: { label: string; pressed: boolean; onPress: () => void }) {
   return (
     <button type="button" aria-pressed={pressed} onClick={onPress}>
-      <span className="kinds__label">{label}</span> <span className="kinds__count">{count}</span>
+      {label}
     </button>
   );
 }
@@ -131,9 +130,9 @@ export default function Work({ page = false }: { page?: boolean }) {
           </div>
           <div className="work-head__tabs">
             <div className="kinds" role="group" aria-label="Show the work of one kind">
-              <Tab label="All" count={total} pressed={kind === null} onPress={() => setKind(null)} />
+              <Tab label="All" pressed={kind === null} onPress={() => setKind(null)} />
               {tabs.map((tab) => (
-                <Tab key={tab.kind} label={tab.label} count={tab.count} pressed={kind === tab.kind} onPress={() => setKind(tab.kind)} />
+                <Tab key={tab.kind} label={tab.label} pressed={kind === tab.kind} onPress={() => setKind(tab.kind)} />
               ))}
             </div>
             <p className="kinds__status" role="status">

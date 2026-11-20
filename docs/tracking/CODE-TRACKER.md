@@ -87,6 +87,7 @@ issue and pull request numbers do not link here. From D4 on, the numbers are tho
 | F46 | #54 | On a phone the star stands under the buttons, at full strength | On a phone the star was enlarged behind the name at 22 % opacity, its lines across the name, the role and the headline, and too faint to read as a drawing | `feat/f46-phone-star` | #55 | done |
 | F47 | #56 | A blueprint dark theme | The dark theme was navy with lavender text, a generic dark mode, and its tinted bands differed from the ground by 1.06 | `feat/f47-blueprint` | #57 | done |
 | F48 | #58 | Lines draw themselves instead of text rising | Almost every block of text rose into place while scrolling and the figures counted up, rewriting their text while it was read: the motion of a template, not of a drawing | `feat/f48-draw-motion` | #59 | done |
+| F49 | #60 | The tabs of the work list name their kind without a count | Every tab carried the number of its projects (two of them 1), the look of a shop's filter bar, while the line under the tabs already said the number; at 1024 px the wider tabs pushed the title of the section onto two lines | `feat/f49-tab-names` | #61 | done |
 
 ## D - docs and developer setup
 
