@@ -791,10 +791,6 @@ a:hover {
     padding-block: 3rem;
   }
 
-  .project__title {
-    font-size: 1.9rem;
-  }
-
   .project__summary {
     font-size: 1.0625rem;
   }
@@ -806,14 +802,18 @@ a:hover {
   font-size: 0.9rem;
 }
 
+/* The name is the top of its row (tracker F40): in the display face, as on the project's page, and at least one and a
+   half times the size of anything else in the row. */
 .project__title {
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
-  gap: 0.2rem 0.9rem;
-  font-size: 1.6rem;
-  font-weight: 600;
-  line-height: 1.2;
+  gap: 0.1rem 0.6em;
+  color: var(--title);
+  font-family: var(--font-display);
+  font-size: clamp(1.9rem, 1.2rem + 1.5vw, 2.4rem);
+  font-weight: 400;
+  line-height: 1.1;
 }
 
 /* One link per project, stretched over the whole row: a large target, announced once. */
@@ -848,10 +848,7 @@ a:hover {
 }
 
 .project__title-arabic {
-  color: var(--title);
-  font-family: var(--font-display);
-  font-size: 1.55rem;
-  font-weight: 400;
+  font-size: 0.85em;
 }
 
 .project__summary {
@@ -949,16 +946,17 @@ a:hover {
   margin-top: 1.25rem;
 }
 
+/* The labels are the quiet part; what they label, my part and the points, is in ink (tracker F40). */
 .project__notes h4 {
-  color: var(--ink);
-  font-size: 0.9375rem;
+  color: var(--muted);
+  font-size: 0.875rem;
   font-weight: 600;
 }
 
 .project__part p {
   max-width: 60ch;
   margin-top: 0.3rem;
-  color: var(--muted);
+  color: var(--ink);
   font-size: 0.9375rem;
   line-height: 1.55;
 }

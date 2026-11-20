@@ -614,7 +614,8 @@ test.describe('figures', () => {
           const rem = parseFloat(getComputedStyle(document.documentElement).fontSize);
           for (const value of frame.querySelectorAll('dt')) {
             const look = getComputedStyle(value);
-            if (look.fontFamily.startsWith('"Rakkas"')) problems.push(`${value.textContent}: in the display face`);
+            // The browser gives the first name of the font with or without quotes.
+            if (/^"?Rakkas\b/.test(look.fontFamily)) problems.push(`${value.textContent}: in the display face`);
             if (parseFloat(look.fontSize) > 1.6 * rem) problems.push(`${value.textContent}: ${look.fontSize}, larger than 1.6rem`);
           }
           return problems;
@@ -706,4 +707,42 @@ test.describe('the first screen of a project page', () => {
     });
     expect(side).toEqual({ background: 'rgba(0, 0, 0, 0)', radius: '0px', sides: ['Top'] });
   });
+});
+
+// A row of the work list has one clear top (tracker F40): the name of its project, in the display face as on the
+// project's page, at least one and a half times the size of any other text of the row. My part, what the row says I
+// did, is in ink; its label is the muted part.
+test('each row of the work list has its name on top and my part in ink', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await open(page);
+  const rows = page.locator('#work .project');
+  expect(await rows.count()).toBeGreaterThan(1);
+  for (const row of await rows.all()) {
+    const found = await row.evaluate((element) => {
+      const problems = [];
+      const title = element.querySelector('.project__title');
+      const name = title.textContent;
+      const titleStyle = getComputedStyle(title);
+      const size = parseFloat(titleStyle.fontSize);
+      if (!/^"?Rakkas\b/.test(titleStyle.fontFamily)) problems.push(`${name}: the name is in ${titleStyle.fontFamily}`);
+      // Every element of the row's text with words of its own, outside the name.
+      for (const other of element.querySelectorAll('.project__text *')) {
+        if (title.contains(other)) continue;
+        const words = [...other.childNodes].some((node) => node.nodeType === Node.TEXT_NODE && node.textContent.trim());
+        if (!words || other.closest('[hidden]') || getComputedStyle(other).display === 'none') continue;
+        const otherSize = parseFloat(getComputedStyle(other).fontSize);
+        if (size < 1.5 * otherSize) problems.push(`${name}: "${other.textContent.trim().slice(0, 30)}" is ${otherSize}px beside a name of ${size}px`);
+      }
+      const root = getComputedStyle(document.documentElement);
+      const probe = document.createElement('i');
+      document.body.append(probe);
+      probe.style.color = root.getPropertyValue('--ink');
+      const ink = getComputedStyle(probe).color;
+      probe.remove();
+      const part = getComputedStyle(element.querySelector('.project__part p')).color;
+      if (part !== ink) problems.push(`${name}: my part is in ${part}, not in ink (${ink})`);
+      return problems;
+    });
+    expect(found).toEqual([]);
+  }
 });
