@@ -730,10 +730,32 @@ test.describe('the skills', () => {
     const rows = page.locator('#skills .skill-group');
     await expect(rows).toHaveCount(groups.length);
     for (const [index, group] of groups.entries()) {
-      const row = rows.nth(index);
-      const columns = await row.evaluate((element) => getComputedStyle(element).gridTemplateColumns.split(' ').length);
-      expect(columns, group.group).toBe(2);
-      await expect(row.locator('ul > li')).toHaveText(group.skills);
+      await expect(rows.nth(index).locator('h3')).toHaveText(group.group);
+      await expect(rows.nth(index).locator('ul > li')).toHaveText(group.skills);
+    }
+  });
+
+  test('on a wide screen stand on the lines of Experience: name, note and tools', async ({ page }) => {
+    // Tracker F57. The tools ended near the middle of each row and left the right of the section empty; Experience
+    // above uses the width with the dates, the role and the points.
+    await page.goto('/');
+    const lefts = (selector) => page.locator(selector).evaluateAll((elements) => elements.map((element) => Math.round(element.getBoundingClientRect().left)));
+    const [date] = await lefts('#experience .job__period');
+    const [role] = await lefts('#experience .job__role');
+    const [points] = await lefts('#experience .job__points');
+    expect(new Set([date, role, points]).size, 'three columns in Experience').toBe(3);
+    expect(new Set(await lefts('#skills .skill-group h3')), 'the names of the groups').toEqual(new Set([date]));
+    expect(new Set(await lefts('#skills .skill-group p')), 'the notes').toEqual(new Set([role]));
+    expect(new Set(await lefts('#skills .skill-group ul')), 'the tools').toEqual(new Set([points]));
+  });
+
+  test('on a smaller screen keep the tools beside the name and the note', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await page.goto('/');
+    for (const row of await page.locator('#skills .skill-group').all()) {
+      const [name, note, tools] = await Promise.all(['h3', 'p', 'ul'].map((part) => row.locator(part).evaluate((element) => element.getBoundingClientRect())));
+      expect(Math.round(note.left), 'the note under the name').toBe(Math.round(name.left));
+      expect(tools.left, 'the tools to the right of the note').toBeGreaterThan(note.right);
     }
   });
 });

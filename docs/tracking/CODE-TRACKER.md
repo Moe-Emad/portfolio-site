@@ -97,6 +97,7 @@ issue and pull request numbers do not link here. From D4 on, the numbers are tho
 | F54 | #76 | Browsers keep the pictures, and fetch a changed one at once | The host sent every picture with max-age=0, so every visit asked about each picture again (nine round trips on a second visit to a project page); the pictures keep their names when replaced, so a long cache alone would show old ones | `feat/f54-picture-cache` | #77 | done |
 | F55 | #78 | The fonts of the first view are fetched with the stylesheet | The browser found the two typefaces only in the stylesheet and asked for Rakkas last: on a slow connection the name and the titles stood in a stand-in typeface for about 0.4 s and the page moved when it arrived | `feat/f55-font-preload` | #79 | done |
 | F56 | #80 | The Arabic font holds only the letters the site shows | Every page downloaded the whole Arabic file of Rakkas (26 kB) for ten letters, and its face, without a range, was taken for every character, Latin text included | `feat/f56-arabic-font-subset` | #81 | done |
+| F57 | #82 | Skills on the lines of Experience on a wide screen | At 1920 px the tools of each group ended near the middle of the row and the right of the section stayed empty, while Experience above uses the width in three columns | `feat/f57-skills-columns` | #PR | done |
 
 ## D - docs and developer setup
 
@@ -115,9 +116,6 @@ New findings that are outside the item being worked on go here first, then becom
 
 - The other pictures of Molok El-Sook (02 to 06) are still the 800 px pictures of the game's `demo/` folder. They
   are shown smaller, in the gallery of its page, so they are sharp enough; new ones at 1440 px would match the rest.
-- The Jpro site answers on jprotraining.my and on jprotraining.com. The project page links to jprotraining.my (the
-  one in its sitemap); change `links.live` in `content/projects/jpro-website.json` if the other one is the main
-  address.
 - On this PC, a full `npm run test:browser` while other programs are busy can stop at the 30 s limit in a few tests,
   different ones from run to run, all on the desktop size (seen in B8: 2, then 6). The same files pass on their own and
   on GitHub. If it keeps happening, run the tests with fewer workers (`npm run test:browser -- --workers 2`).
