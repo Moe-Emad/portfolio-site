@@ -808,3 +808,24 @@ test('each row of the work list has its name on top and my part in ink', async (
     expect(found).toEqual([]);
   }
 });
+
+// The first screen (tracker F45): the role line stands under the name, as the caption under a drawing, and there is
+// one way on as a button, to the work; "Get in touch" is a plain link beside it. Before, the role stood above the
+// name and two buttons, one filled and one outlined, stood side by side.
+test('the first screen has the role under the name and one button, with Get in touch as a link', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await open(page);
+  const hero = page.locator('#top');
+  const name = await hero.locator('h1').boundingBox();
+  const role = await hero.locator('.hero__role').boundingBox();
+  expect(role.y, 'the role line under the name').toBeGreaterThanOrEqual(name.y + name.height - 1);
+  await expect(hero.locator('.button')).toHaveCount(1);
+  await expect(hero.locator('.button')).toHaveText('See the work');
+  const contact = hero.getByRole('link', { name: 'Get in touch' });
+  await expect(contact).toHaveAttribute('href', '#contact');
+  const look = await contact.evaluate((link) => {
+    const style = getComputedStyle(link);
+    return { button: link.classList.contains('button'), underline: style.textDecorationLine, border: style.borderTopWidth };
+  });
+  expect(look).toEqual({ button: false, underline: 'underline', border: '0px' });
+});
