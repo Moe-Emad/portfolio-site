@@ -1664,6 +1664,23 @@ a:hover {
   width: 100%;
 }
 
+/* A name and an email address are a few words: on a wide screen they stand side by side, half the width of the form
+   each, and the message keeps the full width under them (tracker F42). */
+@media (min-width: 72rem) {
+  .form {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 1.5rem;
+  }
+
+  .form > * {
+    grid-column: 1 / -1;
+  }
+
+  .form > .field--half {
+    grid-column: auto;
+  }
+}
+
 .field label {
   display: block;
   margin-bottom: 0.4rem;

@@ -119,3 +119,33 @@ test('after a failed send, the first field and its label come out from under the
     .toBe(true);
   expect(last.label).toBeGreaterThanOrEqual(last.bar);
 });
+
+// The fields for a name and an email address hold a few words: on a wide screen they stand side by side, half the
+// width of the form each, and the message keeps the full width (tracker F42). Before, each was 924 px wide at 1920.
+test('on a wide screen the name and the email address stand side by side, the message under them', async ({ page }, testInfo) => {
+  const sizes = testInfo.project.name === 'phone' ? [null] : [{ width: 1920, height: 1080 }, { width: 1280, height: 800 }];
+  // The fields where they stand, not while the form rises into view.
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  for (const size of sizes) {
+    if (size) await page.setViewportSize(size);
+    await openForm(page);
+    const boxes = await page.locator('#contact form').evaluate((form) => {
+      const box = (element) => {
+        const rect = element.getBoundingClientRect();
+        return { top: Math.round(rect.top), right: Math.round(rect.right), bottom: Math.round(rect.bottom), left: Math.round(rect.left), width: Math.round(rect.width) };
+      };
+      const field = (id) => box(form.querySelector(`#${id}`));
+      return { form: box(form), name: field('name'), email: field('email'), message: field('message') };
+    });
+    const rem = 16;
+    if (size) {
+      expect(boxes.email.top, `${size.width}: on one line`).toBe(boxes.name.top);
+      expect(boxes.email.left, `${size.width}: the email address right of the name`).toBeGreaterThan(boxes.name.right);
+      for (const field of ['name', 'email']) expect(boxes[field].width, `${size.width}: ${field}`).toBeLessThanOrEqual(36 * rem);
+      expect(boxes.message.top, `${size.width}: the message under both`).toBeGreaterThan(boxes.name.bottom);
+      expect(boxes.message.width, `${size.width}: the message as wide as the form`).toBe(boxes.form.width);
+    } else {
+      expect(boxes.email.top, 'on a phone the email address under the name').toBeGreaterThan(boxes.name.bottom);
+    }
+  }
+});
