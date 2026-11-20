@@ -86,7 +86,7 @@ export default function ProjectPage({ project }: { project: Project }) {
         )}
 
         <div className="case__columns">
-          <div className="case__story" data-animate="rise">
+          <div className="case__story">
             <h2>What it is</h2>
             {project.description.map((paragraph) => (
               <p key={paragraph}>{paragraph}</p>
@@ -95,7 +95,7 @@ export default function ProjectPage({ project }: { project: Project }) {
             <h2>Worth a closer look</h2>
             <ul className="highlights">
               {project.highlights.map((highlight) => (
-                <li key={highlight.title} data-animate="rise">
+                <li key={highlight.title} data-animate="draw">
                   <h3>{highlight.title}</h3>
                   <p>{highlight.text}</p>
                 </li>
@@ -103,7 +103,7 @@ export default function ProjectPage({ project }: { project: Project }) {
             </ul>
           </div>
 
-          <aside className="case__side" aria-label="About this project" data-animate="rise">
+          <aside className="case__side" aria-label="About this project" data-animate="draw">
             <h2>My part</h2>
             <p>{project.role}</p>
             <h2>Built with</h2>

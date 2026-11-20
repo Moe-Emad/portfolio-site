@@ -202,12 +202,11 @@ test('each row of the list shows the figures of its project and my part in it', 
   for (const project of projects) {
     const row = page.locator('#work .project').filter({ has: page.locator(`a[href="/work/${project.slug}/"]`) });
     const figures = row.locator('.project__facts dt');
-    // The figures may still be counting up: the expectation waits until they show their real values.
+    // The figures show their real value from the start: they no longer count up (F48).
     await expect(figures).toHaveText(project.facts.map((fact) => fact.value));
     await expect(row.locator('.project__facts dd')).toHaveText(project.facts.map((fact) => fact.label));
-    // Only whole numbers count up: a range such as "10 to 13" must never run through 1013.
     for (const [index, fact] of project.facts.entries()) {
-      expect(await figures.nth(index).getAttribute('data-count'), `${project.title}: ${fact.value}`).toBe(/^\d+$/.test(fact.value) ? 'true' : null);
+      expect(await figures.nth(index).getAttribute('data-count'), `${project.title}: ${fact.value}`).toBeNull();
     }
     await expect(row.getByRole('heading', { name: 'My part', level: 4 })).toBeVisible();
     await expect(row.locator('.project__part p')).toHaveText(project.role);

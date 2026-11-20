@@ -8,7 +8,7 @@ function JobEntry({ job }: { job: Job }) {
   // A job about a project on this site links to its page (tracker F16).
   const project = job.project ? projectBySlug(job.project) : undefined;
   return (
-    <li className="job" data-animate="rise">
+    <li className="job" data-animate="draw">
       <p className="job__period">{formatPeriod(job.start, job.end)}</p>
       <div className="job__body">
         <h3 className="job__role">{job.role}</h3>

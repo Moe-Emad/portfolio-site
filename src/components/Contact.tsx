@@ -61,7 +61,7 @@ export default function Contact() {
   return (
     <section id="contact" className="section" aria-labelledby="contact-title">
       <div className="wrap contact">
-        <div className="contact__intro" data-animate="rise">
+        <div className="contact__intro">
           <SectionTitle id="contact-title">
             Get in touch
           </SectionTitle>
@@ -86,7 +86,7 @@ export default function Contact() {
         </div>
 
         {settings ? (
-          <form onSubmit={handleSubmit} noValidate className="form" data-animate="rise">
+          <form onSubmit={handleSubmit} noValidate className="form">
             <div className="field field--half">
               <label htmlFor="name">Your name</label>
               <input

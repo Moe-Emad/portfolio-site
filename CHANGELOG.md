@@ -77,3 +77,4 @@ and do not link here.
 - F45: The first screen has one button, See the work, with Get in touch as a plain link; the role line stands under the name (#53)
 - F46: On a phone the star stands under the buttons at full strength, beside the text on a tablet; the name stands on clean blue (#55)
 - F47: The dark theme is a blueprint: deep blueprint blue, white and pale-blue text, a faint grid of drawing paper on the ground, bands that stand apart (#57)
+- F48: Lines draw themselves as their block comes into view while its text stands still; the figures no longer count up; gentler lean and lift (#59)
