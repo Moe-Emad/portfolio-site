@@ -71,6 +71,7 @@ issue and pull request numbers do not link here. From D4 on, the numbers are tho
 | F30 | #22 | The points of a project page sit under a hairline, not beside a saffron stripe | A saffron stripe down the side of every point used the accent colour as decoration; the rest of the page separates its parts with hairlines | `feat/f30-highlight-hairlines` | #23 | done |
 | F31 | #24 | The footer says only the year and the name | The line also said how the site was built, which is for the repository, not the page | `feat/f31-footer-line` | #26 | done |
 | F32 | #25 | RPLMS is called RPLMS, and its figure gives Laravel 13 | The product is RPLMS; the version it runs on matters, not the way there | `feat/f32-rplms-name` | #28 | done |
+| F33 | #27 | The gallery of a project page leaves no empty half rows | Phone screens stood in a row of their own beside a large empty area, and an odd number of wide screens left half a row empty | `feat/f33-gallery-rows` | #29 | done |
 
 ## D - docs and developer setup
 

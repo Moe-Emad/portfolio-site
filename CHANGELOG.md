@@ -62,3 +62,4 @@ and do not link here.
 - F30: The points worth a closer look on a project page sit under a hairline instead of beside a saffron stripe; a browser test finds no stripe down one side of any block (#23)
 - F31: The footer says only the year and the name (#26)
 - F32: RPLMS is called RPLMS, its figure reads Laravel 13, and its description no longer speaks of versions 1 and 2; its address is unchanged (#28)
+- F33: The phone screens of a project page stand beside the wide screens, no row of the gallery is half empty, and its pictures are loaded as wide as they are shown (#29)
