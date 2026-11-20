@@ -82,7 +82,7 @@ issue and pull request numbers do not link here. From D4 on, the numbers are tho
 | F41 | #44 | Smaller and earlier work as a register | Eight equal cells with the same star in every corner and a hover on cells that are not links; their names in the display face competed with the main work since F40 | `feat/f41-register` | #45 | done |
 | F42 | #46 | Name and email side by side in the contact form on a wide screen | Each field took the full width of its column, 924 px at 1920 for a name, which made the form taller than the text beside it | `feat/f42-form-pair` | #47 | done |
 | F43 | #48 | The phone menu fills the screen, and touch screens see no keyboard hints | The open menu ended in the middle of a phone screen over the first screen; the palette named arrow keys, Enter and Esc on touch screens | `feat/f43-phone-menu` | #49 | done |
-| F44 | #50 | The link preview says the headline of the home page | The share picture still said the line of before F26 under the name, typed into its script, while the home page had a new headline | `feat/f44-share-line` | - | in review |
+| F44 | #50 | The link preview says the headline of the home page | The share picture still said the line of before F26 under the name, typed into its script, while the home page had a new headline | `feat/f44-share-line` | #51 | done |
 
 ## D - docs and developer setup
 

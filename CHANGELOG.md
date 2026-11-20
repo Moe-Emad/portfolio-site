@@ -73,3 +73,4 @@ and do not link here.
 - F41: The smaller and earlier work is a register: one entry under another between hairlines, name, what it is and tools on one line, without a star or a hover (#45)
 - F42: On a wide screen the name and the email address of the contact form stand side by side, the message under them at full width (#47)
 - F43: The phone menu fills the screen with the sections in the display face; touch screens see no key hints in the palette or on the Search button (#49)
+- F44: The picture of link previews says the headline of the home page; its page is made from content/profile.json (#51)
