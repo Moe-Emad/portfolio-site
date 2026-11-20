@@ -57,23 +57,27 @@
   --pressed-border: #1034a6;
 }
 
+/* The dark theme is a blueprint (tracker F47): a deep blueprint blue, white and pale-blue text and lines, and a faint
+   grid of drawing paper on the ground (see body below). The bands stand apart from the ground by at least 1.2. */
 :root[data-theme="dark"] {
   color-scheme: dark;
 
-  --ground: #070d33;
-  --surface: #0d1648;
-  --tint: #0b133f;
-  --ink: #edf0ff;
-  --muted: #aeb7e3;
-  --line: #27337d;
-  --field-border: #6f7bc0;
-  --title: #edf0ff;
-  --link: #9db2ff;
+  --ground: #0b1f47;
+  --surface: #10295c;
+  --tint: #13306a;
+  --ink: #f3f7ff;
+  --muted: #a9c2ea;
+  --line: #2d4c8a;
+  --field-border: #7fa3dc;
+  --title: #ffffff;
+  --link: #8dc3ff;
   --focus: #ffc83d;
   --error: #ffb4a9;
   --success: #7fe3d4;
-  --button-border: #9db2ff;
-  --pressed-border: #9db2ff;
+  --button-border: #8dc3ff;
+  --pressed-border: #8dc3ff;
+  --grid-minor: rgb(255 255 255 / 0.025);
+  --grid-major: rgb(255 255 255 / 0.045);
 }
 
 /* ---------- Base ---------- */
@@ -84,12 +88,28 @@ html {
 }
 
 body {
-  background: var(--ground);
+  background-color: var(--ground);
   color: var(--ink);
   font-family: var(--font-sans);
   font-size: 1.0625rem;
   line-height: 1.65;
   -webkit-font-smoothing: antialiased;
+}
+
+/* Drawing paper under the blueprint: a fine line every 24 px, a stronger one every 120 px. Bands and cards have solid
+   backgrounds, so the grid shows on the ground only. Faint enough that no text loses its contrast over a line (a
+   browser test checks; axe, which cannot measure over an image, measures with the grid taken away). */
+:root[data-theme="dark"] body {
+  background-image:
+    linear-gradient(var(--grid-major) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-major) 1px, transparent 1px),
+    linear-gradient(var(--grid-minor) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-minor) 1px, transparent 1px);
+  background-size:
+    120px 120px,
+    120px 120px,
+    24px 24px,
+    24px 24px;
 }
 
 /* The sticky bar must not cover the top of a section a link jumps to. */
