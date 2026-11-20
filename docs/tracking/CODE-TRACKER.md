@@ -69,6 +69,7 @@ issue and pull request numbers do not link here. From D4 on, the numbers are tho
 | F28 | #14 | Speed Insights on the live site | Nothing measured how fast the live site is for real visitors; the budgets measure a test build | `feat/f28-speed-insights` | #15 | done |
 | F29 | #20 | The palette shows where you are without saffron | The saffron ring and edge looked like a stock component and were faint in the light theme (below 3:1) | `feat/f29-palette-marks` | #21 | done |
 | F30 | #22 | The points of a project page sit under a hairline, not beside a saffron stripe | A saffron stripe down the side of every point used the accent colour as decoration; the rest of the page separates its parts with hairlines | `feat/f30-highlight-hairlines` | #23 | done |
+| F31 | #24 | The footer says only the year and the name | The line also said how the site was built, which is for the repository, not the page | `feat/f31-footer-line` | #26 | done |
 
 ## D - docs and developer setup
 
