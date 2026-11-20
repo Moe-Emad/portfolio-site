@@ -72,6 +72,7 @@ issue and pull request numbers do not link here. From D4 on, the numbers are tho
 | F31 | #24 | The footer says only the year and the name | The line also said how the site was built, which is for the repository, not the page | `feat/f31-footer-line` | #26 | done |
 | F32 | #25 | RPLMS is called RPLMS, and its figure gives Laravel 13 | The product is RPLMS; the version it runs on matters, not the way there | `feat/f32-rplms-name` | #28 | done |
 | F33 | #27 | The gallery of a project page leaves no empty half rows | Phone screens stood in a row of their own beside a large empty area, and an odd number of wide screens left half a row empty | `feat/f33-gallery-rows` | #29 | done |
+| F34 | #30 | Section titles stand without a saffron bar under them | The same short bar under every title is the look of many stock templates and spent the accent colour on decoration; the lists under the titles already open with a hairline | `feat/f34-section-titles` | #31 | done |
 
 ## D - docs and developer setup
 
