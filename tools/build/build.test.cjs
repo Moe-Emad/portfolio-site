@@ -57,6 +57,21 @@ test('the page of a project names the script of its text in its head; other page
   assert.equal(preloadTag(manifest, 'content/projects/missing.json'), '');
 });
 
+test('every page names the two fonts of its first view in its head; the build stops without them', async () => {
+  // Tracker F55: the browser fetches them together with the stylesheet instead of after it.
+  const { fontPreloadTags } = await import('./build.mjs');
+  const manifest = {
+    'node_modules/@fontsource/rakkas/files/rakkas-latin-400-normal.woff2': { file: 'assets/rakkas-latin-400-normal-aBIpl3Pb.woff2' },
+    'node_modules/@fontsource-variable/readex-pro/files/readex-pro-latin-wght-normal.woff2': { file: 'assets/readex-pro-latin-wght-normal--ekFhJJC.woff2' },
+    'node_modules/@fontsource/rakkas/files/rakkas-arabic-400-normal.woff2': { file: 'assets/rakkas-arabic-400-normal-DiwO1dK5.woff2' },
+  };
+  assert.deepEqual(fontPreloadTags(manifest), [
+    '<link rel="preload" as="font" type="font/woff2" crossorigin href="/assets/rakkas-latin-400-normal-aBIpl3Pb.woff2" />',
+    '<link rel="preload" as="font" type="font/woff2" crossorigin href="/assets/readex-pro-latin-wght-normal--ekFhJJC.woff2" />',
+  ]);
+  assert.throws(() => fontPreloadTags({}), /rakkas-latin-400-normal\.woff2 is not in the build/);
+});
+
 test('index.html has the markers, the root element and the theme script', () => {
   const html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
   assert.match(html, /<!--page-head-start-->[\s\S]*<title>[\s\S]*<!--page-head-end-->/);

@@ -28,6 +28,27 @@ The original was measured from a build of the first version (`583fd75`) with the
 from another server (1,276 kB). The last column counts every picture of the page; before B12 the tool missed the
 lower pictures, so the picture figures of the earlier columns are too low.
 
+## Measured on 2026-11-20, F55 (the fonts of the first view come with the stylesheet)
+
+The first view of every page uses two typefaces: Rakkas for the name in the bar and the titles, Readex Pro for the
+text. The browser found them only in the stylesheet, so it asked for them after the stylesheet had arrived, and for
+Rakkas only after Readex Pro had arrived; until then the page showed stand-in typefaces and moved a little when
+the real ones came in. Now the head of every page names the Latin files of both, and the browser fetches them
+together with the stylesheet. The bytes do not change.
+
+Measured over HTTP/2 as the host serves the site, with the connection slowed to about that of a phone outside
+(150 ms round trip, 9 Mbit/s), median of five loads each, times from the start of the page:
+
+| | Stylesheet there | Readex Pro there | Rakkas asked for | Rakkas there | Layout shift (home, desktop) |
+|---|---|---|---|---|---|
+| Before F55 | 402 ms | 663 ms | 666 ms | 847 ms | 0.0072 |
+| After F55 | 455 ms | 445 ms | 185 ms | 410 ms | 0 |
+
+The home page on a desktop; the Relic page and the phone size gave the same picture within 40 ms. Both fonts now
+arrive before the stylesheet, so the first view is drawn in its own typefaces from the start. The price: the
+stylesheet shares the slow connection with the fonts and arrives about 50 ms later, so the first view appears that
+much later, and does not change again.
+
 ## Measured on 2026-11-20, F54 (browsers keep the pictures)
 
 What a first visit downloads does not change. A second visit does: the host sent every picture with
@@ -263,7 +284,8 @@ repository. It was added in F52 (above).
 `tests/browser/weight.spec.js` holds the budgets, a little above today's figures: 95 kB of the JavaScript one page
 can load and 12 kB of CSS (compressed), 12 kB of HTML per page, 350 kB per picture and 160 kB per AVIF or WebP copy.
 It checks that the script of every page holds the cards of the projects but not the text of their pages, that no
-script holds anything of a draft, and that a project page loads its own file and no other, named in its head (F53).
+script holds anything of a draft, and that a project page loads its own file and no other, named in its head (F53),
+and that every page names the two fonts of its first view in its head and uses each of them once (F55).
 It also checks
 that every picture offers its AVIF copies first, then WebP, then the original (F52), that the browser takes an AVIF
 copy and a phone one no wider than 1,100 pixels, that pictures below the first screen wait until they are needed, and

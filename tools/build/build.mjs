@@ -8,6 +8,7 @@
 //        unknown address   -> 404.html
 //      plus robots.txt, and sitemap.xml when VITE_SITE_URL is set.
 //      The content is checked first; a broken file stops the build before a page is written.
+//      Every page names the fonts of its first view in its head (tracker F55).
 //      The page of a project names the script with the text of its project in its head (tracker F53), found in
 //      the manifest Vite writes for this; the manifest itself is not left in the build folder.
 // So the server sends real HTML: search engines and link previews read the text, the page shows before any
@@ -74,6 +75,29 @@ export function preloadTag(manifest, source) {
   return `<link rel="modulepreload" crossorigin href="/${file}" />`;
 }
 
+/**
+ * The fonts of every first view (tracker F55), as Vite's manifest names their source: Rakkas for the name in the
+ * bar and the titles, Readex Pro for the text. Their Latin parts; the Arabic parts load when Arabic text needs them.
+ */
+export const FIRST_VIEW_FONTS = [
+  'node_modules/@fontsource/rakkas/files/rakkas-latin-400-normal.woff2',
+  'node_modules/@fontsource-variable/readex-pro/files/readex-pro-latin-wght-normal.woff2',
+];
+
+/**
+ * The tags that ask the browser for the fonts of the first view together with the stylesheet: otherwise it finds
+ * them only in the stylesheet, and asked for Rakkas after Readex Pro had arrived. Stops the build when a font is
+ * not in the manifest (a new version of a font package may name its files differently).
+ */
+export function fontPreloadTags(manifest) {
+  return FIRST_VIEW_FONTS.map((source) => {
+    const file = manifest[source]?.file;
+    if (!file) throw new Error(`${source} is not in the build: the fonts named in the head of each page have changed (FIRST_VIEW_FONTS)`);
+    // crossorigin: a font is always fetched in that mode, so without it the browser would fetch it a second time.
+    return `<link rel="preload" as="font" type="font/woff2" crossorigin href="/${file}" />`;
+  });
+}
+
 async function main() {
   const outDir = option('outDir', 'dist');
   const mode = option('mode', '');
@@ -90,14 +114,15 @@ async function main() {
     const server = await import(pathToFileURL(path.join(ssr, 'entry-server.js')).href);
     await server.checkContent();
     const manifest = JSON.parse(fs.readFileSync(manifestFile, 'utf8'));
+    const fonts = fontPreloadTags(manifest);
     const template = fs.readFileSync(path.join(out, 'index.html'), 'utf8');
     const pages = server.pages();
     for (const page of pages) {
       const file = path.join(out, page.file);
       const { app, head, projectFile } = await server.render(page.path);
-      const preload = preloadTag(manifest, projectFile);
+      const tags = [head, ...fonts, preloadTag(manifest, projectFile)].filter(Boolean);
       fs.mkdirSync(path.dirname(file), { recursive: true });
-      fs.writeFileSync(file, fillTemplate(template, { path: page.path, app, head: preload ? `${head}\n    ${preload}` : head }));
+      fs.writeFileSync(file, fillTemplate(template, { path: page.path, app, head: tags.join('\n    ') }));
     }
     const files = server.siteFiles();
     for (const { file, text } of files) fs.writeFileSync(path.join(out, file), text);

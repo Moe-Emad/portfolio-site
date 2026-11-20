@@ -184,6 +184,30 @@ test('every address of a picture carries the fingerprint of its files', async ({
   }
 });
 
+test('every page names the fonts of its first view in its head, and uses each of them once', async ({ page }) => {
+  // Tracker F55. The browser fetches them together with the stylesheet, instead of finding them in it later. A
+  // font named but not used, or fetched twice (a "crossorigin" that does not match), would only cost bytes.
+  for (const address of ['/', '/work/', '/work/relic/']) {
+    await page.goto(address);
+    const named = await page
+      .locator('head link[rel="preload"][as="font"]')
+      .evaluateAll((links) => links.map((link) => ({ file: new URL(link.href).pathname, type: link.type, cors: link.crossOrigin })));
+    expect(
+      named.map((font) => path.basename(font.file).replace(/-[\w-]{8}\.woff2$/, '')),
+      `the fonts named in the head of ${address}`,
+    ).toEqual(['rakkas-latin-400-normal', 'readex-pro-latin-wght-normal']);
+    await page.evaluate(() => document.fonts.ready);
+    const fetched = await page.evaluate(() =>
+      performance.getEntriesByType('resource').filter((entry) => /\.woff2$/.test(entry.name)).map((entry) => new URL(entry.name).pathname),
+    );
+    for (const font of named) {
+      expect(font.type, font.file).toBe('font/woff2');
+      expect(font.cors, font.file).toBe('anonymous');
+      expect(fetched.filter((file) => file === font.file), `${font.file} on ${address}`).toHaveLength(1);
+    }
+  }
+});
+
 test('the pictures may be kept by the browser for a year: their addresses change with them', () => {
   // Tracker F54. Before, every visit asked the host about every picture again.
   const headers = fs.readFileSync(path.join(BUILD, '_headers'), 'utf8');
