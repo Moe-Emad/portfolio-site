@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react';
 import { content } from '../content/index.ts';
 import { projectMeta } from '../content/schema.ts';
 import type { Project } from '../content/schema.ts';
@@ -80,7 +81,8 @@ export default function ProjectPage({ project }: { project: Project }) {
 
       <div className="wrap case__body">
         {cover && (
-          <div className="case__cover" data-device={cover.device}>
+          // --pixels: the width of the picture, which the cover is never drawn wider than (tracker F50).
+          <div className="case__cover" data-device={cover.device} style={{ '--pixels': `${cover.width}px` } as CSSProperties}>
             <Shot image={cover} sizes={cover.device === 'phone' ? '19rem' : 'min(100vw, 72rem)'} first caption />
           </div>
         )}

@@ -17,12 +17,16 @@
 }
 
 /* ---------- Corners ----------
-   Two radii and no others (tracker F37): a small one for everything that is clicked or typed into, and for the
-   focus ring; a large one for frames: the screenshots and the palette. */
+   Two radii for the interface and no others (tracker F37): a small one for everything that is clicked or typed
+   into, and for the focus ring; a large one for frames: the wide screenshots and the palette.
+   A phone screen is drawn as a phone (F50), with the corners of a phone: its body, and its screen 7 px inside (the
+   1 px outline and 6 px between outline and screen), so the two curves run side by side. */
 
 :root {
   --radius: 4px;
   --radius-frame: 10px;
+  --radius-phone: 32px;
+  --radius-screen: 25px;
 }
 
 /* ---------- Colours ---------- */
@@ -1084,7 +1088,9 @@ a:hover {
   }
 }
 
-.shot {
+/* A screenshot (tracker F50): the picture in a frame of the screen's kind, and its caption under the frame as the
+   caption of a figure, not boxed in with it. A wide screen has a hairline frame with the large corner. */
+.shot__frame {
   overflow: hidden;
   border: 1px solid var(--line);
   border-radius: var(--radius-frame);
@@ -1102,15 +1108,27 @@ a:hover {
 }
 
 .shot figcaption {
-  padding: 0.7rem 1rem;
-  border-top: 1px solid var(--line);
+  padding-top: 0.65rem;
   color: var(--muted);
   font-size: 0.9rem;
   line-height: 1.5;
 }
 
+/* A phone screen is drawn as a phone: an outline with the corners of a phone, and the screen 6 px inside it with
+   corners that follow (the radii are tokens, see Corners at the top). */
 .shot[data-device="phone"] {
   width: min(100%, 19rem);
+}
+
+.shot[data-device="phone"] .shot__frame {
+  padding: 6px;
+  border-color: var(--muted);
+  border-radius: var(--radius-phone);
+}
+
+.shot[data-device="phone"] picture {
+  overflow: hidden;
+  border-radius: var(--radius-screen);
 }
 
 /* Smaller and earlier work as a register (tracker F41), like the list of sheets in a set of drawings: one entry under
@@ -1192,6 +1210,14 @@ a:hover {
 
 .case[data-cover="true"] .case__cover {
   margin-top: clamp(-7.5rem, -10vw, -4rem);
+}
+
+/* The cover is never drawn wider than its own pixels (tracker F50): stretched, a screenshot turns soft. On a wide
+   screen it keeps its width and hangs in the middle of the band. --pixels is set by ProjectPage.tsx; 2 px for the
+   frame. */
+.case__cover .shot {
+  max-width: calc(var(--pixels) + 2px);
+  margin-inline: auto;
 }
 
 .case__back a {
@@ -1925,12 +1951,16 @@ a:hover {
   }
 
   /* A picture further down unrolls from the left into its frame as it comes into view. The frame itself is not
-     clipped, so the browser can tell when it is in view. Under the mouse a project's picture lifts by 2 px (F48). */
+     clipped, so the browser can tell when it is in view. Under the mouse a project's picture lifts by 2 px (F48),
+     and its frame casts a light shadow that follows the frame's corners (F50). */
   .shot {
     transition:
       translate 1.1s cubic-bezier(0.2, 0.7, 0.2, 1),
-      transform 0.35s ease,
-      box-shadow 0.35s ease;
+      transform 0.35s ease;
+  }
+
+  .shot__frame {
+    transition: box-shadow 0.35s ease;
   }
 
   .shot[data-reveal] picture {
@@ -1950,8 +1980,11 @@ a:hover {
   }
 
   .project:hover .shot {
-    box-shadow: 0 14px 30px -22px rgb(12 20 64 / 0.35);
     transform: translateY(-2px);
+  }
+
+  .project:hover .shot__frame {
+    box-shadow: 0 14px 30px -22px rgb(12 20 64 / 0.35);
   }
 }
 
