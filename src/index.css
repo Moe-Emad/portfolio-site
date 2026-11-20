@@ -1213,10 +1213,11 @@ a:hover {
 }
 
 /* The cover is never drawn wider than its own pixels (tracker F50): stretched, a screenshot turns soft. On a wide
-   screen it keeps its width and hangs in the middle of the band. --pixels is set by ProjectPage.tsx; 2 px for the
-   frame. */
+   screen it keeps its width and hangs in the middle of the band. Nor wider than 90rem, the 1,440 points every cover
+   had: a screenshot taken at twice the size (F58) keeps the same place, and its extra pixels go to a sharp screen.
+   --pixels is set by ProjectPage.tsx; 2 px for the frame. */
 .case__cover .shot {
-  max-width: calc(var(--pixels) + 2px);
+  max-width: calc(min(var(--pixels), 90rem) + 2px);
   margin-inline: auto;
 }
 

@@ -311,6 +311,30 @@ test('the browser is given an AVIF copy that fits the screen, not the full pictu
   }
 });
 
+test('on a sharp desktop screen the cover is loaded as wide as its pixels; an ordinary one keeps the 1,440 px copy', async ({ browser }) => {
+  // Tracker F58. Two pixels per point, as on most laptops: the cover of the Jpro page, about 1,150 points wide, needs
+  // about 2,300 pixels. Taken at 1,440 px it was enlarged and soft.
+  const loaded = async (deviceScaleFactor) => {
+    const context = await browser.newContext({ viewport: { width: 1440, height: 900 }, deviceScaleFactor });
+    const page = await context.newPage();
+    await page.goto('/work/jpro-website/');
+    const cover = page.locator('.case__cover img');
+    await expect.poll(() => cover.evaluate((image) => image.complete && image.naturalWidth > 0)).toBe(true);
+    const found = await cover.evaluate(async (image) => {
+      const copy = new Image();
+      copy.src = image.currentSrc;
+      await copy.decode();
+      return { file: new URL(image.currentSrc).pathname, width: copy.naturalWidth, shown: image.getBoundingClientRect().width };
+    });
+    await context.close();
+    return found;
+  };
+  const sharp = await loaded(2);
+  expect(sharp.width, `${sharp.file} for ${Math.round(sharp.shown)} points at two pixels each`).toBeGreaterThanOrEqual(Math.floor(sharp.shown * 2));
+  const ordinary = await loaded(1);
+  expect(ordinary.width, `${ordinary.file} on an ordinary screen`).toBe(1440);
+});
+
 test('pictures below the first screen wait until they are needed', async ({ page }) => {
   await page.goto('/');
   await expect(page.locator('h1')).toBeVisible();

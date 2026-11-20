@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 'use strict';
 // Page weight (tracker F5): what a visitor downloads for a page, measured in a real browser.
-//   npm run weight                 the home page and one project page, on a desktop and a phone size
+//   npm run weight                 the home page and one project page, on a desktop (ordinary and sharp) and a phone
 //   npm run weight -- /work/relic/ another page
 // It builds the site into dist-e2e/ (as the browser tests do), serves it on port 4321, opens each page, brings
 // every picture into view and waits until it has loaded, and adds up the bytes by kind. Text files are also shown
@@ -17,6 +17,8 @@ const PORT = 4321;
 const BASE = `http://127.0.0.1:${PORT}`;
 const SIZES = {
   desktop: { viewport: { width: 1440, height: 900 }, deviceScaleFactor: 1 },
+  // Two pixels per point, as most laptops sold today (tracker F58).
+  'sharp desktop': { viewport: { width: 1440, height: 900 }, deviceScaleFactor: 2 },
   phone: devices['Pixel 7'],
 };
 

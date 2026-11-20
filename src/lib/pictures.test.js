@@ -27,6 +27,15 @@ test('a wide picture gets every narrower copy and one at full width, in each for
   ]);
 });
 
+test('a picture taken at twice the size gets the copies of a sharp screen too', () => {
+  // Tracker F58: 1,440 px for an ordinary desktop (what it got before), 2,200 px for a sharp one.
+  assert.deepEqual(
+    copies('/images/projects/a/01-home.jpg', 2880, 'avif').map((copy) => copy.width),
+    [640, 828, 1100, 1440, 2200, 2880],
+  );
+  assert.equal(copies('/images/projects/a/01-home.jpg', 2880, 'avif')[3].src, '/images/projects/a/01-home-1440.avif');
+});
+
 test('a copy is never wider than the picture', () => {
   assert.deepEqual(
     copies('/b.png', 800, 'avif').map((copy) => copy.width),
