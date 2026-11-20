@@ -39,7 +39,9 @@ export default function ProjectPage({ project }: { project: Project }) {
   return (
     <article className="case" data-cover={Boolean(cover)} aria-labelledby="case-title">
       <header className="case__head">
-        <div className="wrap">
+        {/* The band is a sheet with its title block at the bottom right (tracker F39): the figures beside the summary
+            on a wide screen, under it on a phone. */}
+        <div className="wrap case__sheet">
           <p className="case__back">
             <a href={WORK_PATH}>All work</a>
           </p>
@@ -61,6 +63,18 @@ export default function ProjectPage({ project }: { project: Project }) {
               </a>
             </p>
           )}
+          {project.facts.length > 0 && (
+            <div className="case__figures">
+              <dl className="facts">
+                {project.facts.map((fact) => (
+                  <div key={fact.label}>
+                    <dt>{fact.value}</dt>
+                    <dd>{fact.label}</dd>
+                  </div>
+                ))}
+              </dl>
+            </div>
+          )}
         </div>
       </header>
 
@@ -69,17 +83,6 @@ export default function ProjectPage({ project }: { project: Project }) {
           <div className="case__cover" data-device={cover.device}>
             <Shot image={cover} sizes={cover.device === 'phone' ? '19rem' : 'min(100vw, 72rem)'} first caption />
           </div>
-        )}
-
-        {project.facts.length > 0 && (
-          <dl className="facts" data-animate="rise">
-            {project.facts.map((fact) => (
-              <div key={fact.label}>
-                <dt>{fact.value}</dt>
-                <dd>{fact.label}</dd>
-              </div>
-            ))}
-          </dl>
         )}
 
         <div className="case__columns">
