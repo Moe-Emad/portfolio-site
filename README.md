@@ -1,6 +1,6 @@
 # Mohammed Emad - portfolio
 
-The personal site of Mohammed Emad, a software engineer in Egypt who builds full-stack web apps: one home page
+The personal site of Mohammed Emad, a software engineer based in Egypt who builds full-stack web apps: one home page
 about the work, and a page for every project.
 
 **Live site:** https://myportfolio-iota-navy-36.vercel.app
