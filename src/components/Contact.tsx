@@ -87,7 +87,7 @@ export default function Contact() {
 
         {settings ? (
           <form onSubmit={handleSubmit} noValidate className="form" data-animate="rise">
-            <div className="field">
+            <div className="field field--half">
               <label htmlFor="name">Your name</label>
               <input
                 type="text"
@@ -108,7 +108,7 @@ export default function Contact() {
               )}
             </div>
 
-            <div className="field">
+            <div className="field field--half">
               <label htmlFor="email">Your email address</label>
               <input
                 type="email"
