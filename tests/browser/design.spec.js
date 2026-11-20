@@ -196,9 +196,6 @@ test.describe('motion', () => {
     await expect(last).toHaveAttribute('data-reveal', 'waiting');
     await last.scrollIntoViewIfNeeded();
     await expect(last).toHaveAttribute('data-reveal', 'shown');
-    const title = page.locator('#experience .section__title');
-    await title.scrollIntoViewIfNeeded();
-    await expect(title).toHaveAttribute('data-reveal', 'shown');
   });
 
   test('the name rises into place when the page opens, and the Arabic name is written from the right', async ({ page }) => {
@@ -293,7 +290,7 @@ test.describe('printing', () => {
     .find((entry) => entry.draft !== true);
 
   for (const path of ['/', `/work/${project.slug}/`]) {
-    test(`${path} printed without scrolling hides no block, picture or title rule`, async ({ page }) => {
+    test(`${path} printed without scrolling hides no block or picture`, async ({ page }) => {
       await page.emulateMedia({ reducedMotion: 'no-preference' });
       await page.goto(path);
       await expect(page.locator('h1')).toBeVisible();
@@ -313,10 +310,6 @@ test.describe('printing', () => {
         for (const shot of document.querySelectorAll('.shot[data-reveal="waiting"]')) {
           check(shot, 'shot', getComputedStyle(shot));
           check(shot, 'shot picture', getComputedStyle(shot.querySelector('picture')));
-        }
-        for (const title of document.querySelectorAll('.section__title[data-reveal="waiting"]')) {
-          const rule = getComputedStyle(title, '::after').transform;
-          if (rule !== 'none') found.push(`rule under "${title.textContent}": transform ${rule}`);
         }
         return found;
       });
@@ -357,6 +350,49 @@ test.describe('side stripes', () => {
       expect(stripes).toEqual([]);
     });
   }
+});
+
+// Section titles stand on their own (tracker F34): no bar or other drawing under them. The lists under them open
+// with a hairline of their own, and the accent colour is kept for the sign.
+test.describe('section titles', () => {
+  for (const path of ['/', '/work/', '/work/no-such-project/']) {
+    test(`on ${path} no section title has a bar or other drawing under it`, async ({ page }) => {
+      await page.goto(path);
+      await expect(page.locator('h1')).toBeVisible();
+      const titles = page.locator('.section__title');
+      expect(await titles.count()).toBeGreaterThan(0);
+      const drawn = await titles.evaluateAll((elements) =>
+        elements.flatMap((element) => {
+          const found = [];
+          const name = `"${element.textContent.trim()}"`;
+          for (const pseudo of ['::before', '::after']) {
+            const content = getComputedStyle(element, pseudo).content;
+            if (content !== 'none' && content !== 'normal') found.push(`${name}: a drawing in ${pseudo}`);
+          }
+          const style = getComputedStyle(element);
+          if (parseFloat(style.borderBottomWidth) > 0) found.push(`${name}: a border at the bottom`);
+          if (style.textDecorationLine !== 'none') found.push(`${name}: text decoration ${style.textDecorationLine}`);
+          if (style.backgroundImage !== 'none') found.push(`${name}: a background image`);
+          return found;
+        }),
+      );
+      expect(drawn).toEqual([]);
+    });
+  }
+
+  test('a section title further down stands in place while the page scrolls', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'no-preference' });
+    await open(page);
+    // Something further down does wait, or the test would prove nothing.
+    await expect(page.locator('#work .project .shot').last()).toHaveAttribute('data-reveal', 'waiting');
+    for (const id of ['experience', 'skills', 'contact']) {
+      const title = page.locator(`#${id} .section__title`);
+      await expect(title, id).not.toHaveAttribute('data-reveal');
+      await title.scrollIntoViewIfNeeded();
+      await page.waitForTimeout(150);
+      await expect(title, id).not.toHaveAttribute('data-reveal');
+    }
+  });
 });
 
 // The footer says only the year and the name (tracker F31): how the site was built is for the repository.

@@ -72,6 +72,7 @@ issue and pull request numbers do not link here. From D4 on, the numbers are tho
 | F31 | #24 | The footer says only the year and the name | The line also said how the site was built, which is for the repository, not the page | `feat/f31-footer-line` | #26 | done |
 | F32 | #25 | RPLMS is called RPLMS, and its figure gives Laravel 13 | The product is RPLMS; the version it runs on matters, not the way there | `feat/f32-rplms-name` | #28 | done |
 | F33 | #27 | The gallery of a project page leaves no empty half rows | Phone screens stood in a row of their own beside a large empty area, and an odd number of wide screens left half a row empty | `feat/f33-gallery-rows` | #29 | done |
+| F34 | #30 | Section titles stand without a saffron bar under them | The same short bar under every title is the look of many stock templates and spent the accent colour on decoration; the lists under the titles already open with a hairline | `feat/f34-section-titles` | #31 | done |
 
 ## D - docs and developer setup
 
@@ -89,10 +90,10 @@ New findings that are outside the item being worked on go here first, then becom
 
 - The other pictures of Molok El-Sook (02 to 06) are still the 800 px pictures of the game's `demo/` folder. They
   are shown smaller, in the gallery of its page, so they are sharp enough; new ones at 1440 px would match the rest.
-- JavaScript is at 96,652 B of its 95 kB budget (97,280 B; `tests/browser/weight.spec.js` adds up the main bundle
-  and a 1.5 kB chunk) since F33, which added 170 B; 628 B are left. Most of the growth came with React DOM 19.3 in
-  A7, about 10.5 kB larger in the bundle than 19.1. The next change that adds JavaScript reaches the budget; decide
-  then whether to trim or to raise it.
+- JavaScript is at 96,640 B of its 95 kB budget (97,280 B; `tests/browser/weight.spec.js` adds up the main bundle
+  and a 1.5 kB chunk) since F34, which took 12 B off (F33 had added 170 B); 640 B are left. Most of the growth came
+  with React DOM 19.3 in A7, about 10.5 kB larger in the bundle than 19.1. The next change that adds JavaScript
+  reaches the budget; decide then whether to trim or to raise it.
 - The picture column of `npm run weight` depends on timing. Its scroll (steps of three quarters of a screen every
   120 ms) is faster than the pictures below the first screen load, so it counts two to five of the seven on the home
   page, differently from run to run (found in A7). Brought into view one by one, all seven load. A fix: bring each
