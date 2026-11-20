@@ -34,6 +34,7 @@ issue and pull request numbers do not link here. From D4 on, the numbers are tho
 | B8 | #12 | Headers, caching and the install and build commands on Vercel | The live site is on Vercel, which reads vercel.json, not public/_headers; its install and build commands were left to the defaults | `fix/b8-vercel-settings` | #13 | done |
 | B9 | #16 | A printed page shows every block | A block not yet scrolled to stayed clipped on paper, so a page printed or saved as a PDF lost text and pictures | `fix/b9-print-every-block` | #17 | done |
 | B10 | #18 | After a failed send the label of the first field stays in view | The form put the cursor in a field just under the bar and its label stayed hidden behind the bar | `fix/b10-form-label-in-view` | #19 | done |
+| B11 | #64 | A Content-Security-Policy: the site runs only its own scripts | Without a policy the browser runs any script that finds its way into a page, and lets it load code from anywhere and send data anywhere | `fix/b11-content-security-policy` | #65 | done |
 
 ## F - features and the look
 

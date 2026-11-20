@@ -60,10 +60,11 @@ export async function axeFindings(page, knownRules = []) {
   );
   // axe cannot measure text over a background image and leaves it out without a finding. The grid of the dark theme
   // (tracker F47) is such an image, so it is taken away while axe measures; the test "the dark theme is a blueprint"
-  // proves it is too faint to change the contrast of any text.
-  const plain = await page.addStyleTag({ content: 'body { background-image: none !important; }' });
+  // proves it is too faint to change the contrast of any text. It is taken away through the style of the body itself:
+  // the Content-Security-Policy (tracker B11) refuses a <style> block planted by a test as it would any other.
+  await page.evaluate(() => document.body.style.setProperty('background-image', 'none', 'important'));
   const results = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa']).analyze();
-  await plain.evaluate((element) => element.remove());
+  await page.evaluate(() => document.body.style.removeProperty('background-image'));
   return results.violations
     .filter((violation) => !knownRules.includes(violation.id))
     .map((violation) => `${violation.id} (${violation.impact}): ${violation.help} - ${violation.nodes.length} element(s), first: ${violation.nodes[0].target.join(' ')}`);
