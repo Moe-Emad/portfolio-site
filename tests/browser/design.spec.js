@@ -409,11 +409,63 @@ test.describe('the footer', () => {
   }
 });
 
-// Skills as rows of tags, without counts (tracker F24).
+// Tools are listed as plain text (tracker F35): one line separated by commas, as in the rows of the work list. No
+// chip or pill: no border, no background and no change under the mouse, since the names are not links.
+test.describe('lists of tools', () => {
+  const lists = [
+    { path: '/', what: 'a row of the skills', selector: '#skills .skill-group ul' },
+    { path: '/', what: 'a row of the work list', selector: '#work .project ul.stack' },
+    { path: '/work/mtc-training-platform/', what: 'a project page', selector: '.case__side ul' },
+  ];
+  const look = (item) => {
+    const style = getComputedStyle(item);
+    return [style.borderColor, style.backgroundColor, style.color, style.textDecorationLine, style.transform].join(' | ');
+  };
+
+  for (const { path, what, selector } of lists) {
+    test(`on ${what} the tools are one line of text, without chips or pills`, async ({ page }) => {
+      // Nothing rises into place, so the mouse finds the names where they stand.
+      await page.emulateMedia({ reducedMotion: 'reduce' });
+      await page.goto(path);
+      await expect(page.locator('h1')).toBeVisible();
+      const list = page.locator(selector).first();
+      await list.scrollIntoViewIfNeeded();
+      const items = list.locator('li');
+      expect(await items.count()).toBeGreaterThan(1);
+      const found = await items.evaluateAll((elements) =>
+        elements.flatMap((item, index) => {
+          const style = getComputedStyle(item);
+          const name = item.textContent;
+          const problems = [];
+          if (style.display !== 'inline') problems.push(`${name}: display ${style.display}`);
+          for (const side of ['Top', 'Right', 'Bottom', 'Left']) {
+            if (parseFloat(style[`border${side}Width`]) > 0) problems.push(`${name}: a border at the ${side.toLowerCase()}`);
+          }
+          if (style.backgroundColor !== 'rgba(0, 0, 0, 0)') problems.push(`${name}: background ${style.backgroundColor}`);
+          const after = getComputedStyle(item, '::after').content;
+          const expected = index < elements.length - 1 ? '", "' : 'none';
+          if (after !== expected) problems.push(`${name}: followed by ${after} instead of ${expected}`);
+          return problems;
+        }),
+      );
+      expect(found).toEqual([]);
+
+      // Nothing about a name changes under the mouse. A row of the work list is a link as a whole, whose area lies
+      // over the names, so the mouse is moved there without waiting for the name to be the topmost element.
+      const first = items.first();
+      const still = await first.evaluate(look);
+      await first.hover({ force: true });
+      await page.waitForTimeout(200);
+      expect(await first.evaluate(look)).toBe(still);
+    });
+  }
+});
+
+// Skills as rows by group, without counts (tracker F24); their tools as a line of text since F35.
 test.describe('the skills', () => {
   test.use({ viewport: { width: 1920, height: 1080 } });
 
-  test('are rows by group, each with its tools as tags, and no counts', async ({ page }) => {
+  test('are rows by group, each with its tools in a line, and no counts', async ({ page }) => {
     const groups = JSON.parse(fs.readFileSync('content/skills.json', 'utf8'));
     await page.goto('/');
     await expect(page.locator('#skills .skill-count')).toHaveCount(0);
@@ -424,7 +476,7 @@ test.describe('the skills', () => {
       const row = rows.nth(index);
       const columns = await row.evaluate((element) => getComputedStyle(element).gridTemplateColumns.split(' ').length);
       expect(columns, group.group).toBe(2);
-      await expect(row.locator('.skill-tags > li')).toHaveText(group.skills);
+      await expect(row.locator('ul > li')).toHaveText(group.skills);
     }
   });
 });
