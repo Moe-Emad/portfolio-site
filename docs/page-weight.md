@@ -1,9 +1,9 @@
 # Page weight
 
 What a visitor downloads for a page, measured in a real browser on two sizes: a desktop (1440 pixels wide) and a
-phone (Pixel 7). The whole page is scrolled, so every picture is counted, also those that load only when they
-come near. HTML, CSS and JavaScript are counted compressed (gzip), as a host sends them; fonts and pictures as
-they are.
+phone (Pixel 7). Every picture a visitor would see is brought into view and waited for, so each one is counted,
+also those that load only when they come near (since B12; picture figures measured before it may be too low). HTML,
+CSS and JavaScript are counted compressed (gzip), as a host sends them; fonts and pictures as they are.
 
 Measure again after a change that touches speed, and add the table here:
 
@@ -26,6 +26,37 @@ npm run weight
 
 The original was measured from a build of the first version (`583fd75`) with the same method. Its 2,908 kB of 3D data are the models of the room (1,632 kB) and a lighting map the 3D library fetched
 from another server (1,276 kB).
+
+## Measured on 2026-11-20, B12 (every picture counted)
+
+Before B12, `npm run weight` scrolled the window in quick steps. The page scrolls smoothly, so each step only
+started a gliding scroll that the next one replaced; the page never got near the bottom and the lower pictures were
+never asked for. On the home page it counted four of the seven pictures on a desktop and three on a phone, and on
+the RPLMS page it missed one picture on a phone. Now it brings each picture into view and waits for it. The pages
+did not change: both tables were measured on the same build, three runs before the fix and two after it, and the
+runs of each gave the same figures.
+
+Before (too few pictures):
+
+| Page | Size | Requests | HTML | CSS | JavaScript | Fonts | Pictures | Total as it travels |
+|---|---|---|---|---|---|---|---|---|
+| `/` | desktop | 10 | 9 kB | 9 kB | 91 kB | 74 kB | 136 kB | **318 kB** |
+| `/` | phone | 9 | 9 kB | 9 kB | 91 kB | 74 kB | 121 kB | **303 kB** |
+| `/work/rplms-v2/` | desktop | 13 | 5 kB | 9 kB | 91 kB | 74 kB | 190 kB | **369 kB** |
+| `/work/rplms-v2/` | phone | 12 | 5 kB | 9 kB | 91 kB | 74 kB | 210 kB | **389 kB** |
+
+After (every picture):
+
+| Page | Size | Requests | HTML | CSS | JavaScript | Fonts | Pictures | Total as it travels |
+|---|---|---|---|---|---|---|---|---|
+| `/` | desktop | 13 | 9 kB | 9 kB | 91 kB | 74 kB | 186 kB | **368 kB** |
+| `/` | phone | 13 | 9 kB | 9 kB | 91 kB | 74 kB | 272 kB | **454 kB** |
+| `/work/rplms-v2/` | desktop | 13 | 5 kB | 9 kB | 91 kB | 74 kB | 190 kB | **369 kB** |
+| `/work/rplms-v2/` | phone | 13 | 5 kB | 9 kB | 91 kB | 74 kB | 230 kB | **409 kB** |
+
+A phone takes more than a desktop for the same pictures: its screen has more than two real pixels per pixel of
+layout, so it asks for the sharper copies. The pictures below the first screen still wait until they come near;
+a visitor who does not scroll down downloads less.
 
 ## Measured on 2026-11-20, F51 (the content is checked when the site is built)
 
@@ -129,5 +160,6 @@ repository. It is noted in the tracker as a follow-up.
 `tests/browser/weight.spec.js` holds the budgets, a little above today's figures: 95 kB of JavaScript and 12 kB of
 CSS (compressed), 12 kB of HTML per page, 350 kB per picture and 160 kB per WebP copy. It also checks that a phone
 is given a copy no wider than 1,100 pixels, that pictures below the first screen wait until they are needed, and
-that the JavaScript carries no check of the content (F51).
+that the JavaScript carries no check of the content (F51). Another checks that `npm run weight` counts every
+picture of the home page, with the pictures held back as on a slow connection (B12).
 `tests/browser/design.spec.js` checks that no request goes to another server.
