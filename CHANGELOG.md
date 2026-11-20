@@ -67,3 +67,4 @@ and do not link here.
 - F35: The skills and a project page list their tools as a plain line of text, like the rows of the work list, without chips, pills or a hover (#33)
 - F36: The line above the name, the description of the home page and the link preview say "Software engineer based in Egypt" (#35)
 - F37: Two corner radii, named among the tokens: 4 px for what is clicked or typed into and the focus ring, 10 px for frames; the buttons in the bar at the top are no longer fully round (#37)
+- F38: The figures of a project, in its row and on its page, are a title block: framed cells, the number in the text face, two across on a phone; the record of the site keeps its large figures (#39)
