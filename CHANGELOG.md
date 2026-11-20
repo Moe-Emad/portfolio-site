@@ -66,3 +66,4 @@ and do not link here.
 - F34: Section titles stand without the saffron bar under them and no longer wait while the page scrolls; a browser test finds no drawing under any section title (#31)
 - F35: The skills and a project page list their tools as a plain line of text, like the rows of the work list, without chips, pills or a hover (#33)
 - F36: The line above the name, the description of the home page and the link preview say "Software engineer based in Egypt" (#35)
+- F37: Two corner radii, named among the tokens: 4 px for what is clicked or typed into and the focus ring, 10 px for frames; the buttons in the bar at the top are no longer fully round (#37)
