@@ -9,18 +9,21 @@ import NotFound from './components/NotFound.tsx';
 import ProjectPage from './components/ProjectPage.tsx';
 import Skills from './components/Skills.tsx';
 import Work from './components/Work.tsx';
-import { content, projectBySlug } from './content/index.ts';
+import { content } from './content/index.ts';
+import type { Project } from './content/schema.ts';
 import { useScrollMotion } from './lib/scroll-motion.ts';
 import { pageTitle } from './page-title.ts';
 import { matchRoute } from './routes.ts';
 
-/** The whole site: the address decides which page is shown between the bar at the top and the foot. */
-export default function App({ path }: { path: string }) {
+/**
+ * The whole site: the address decides which page is shown between the bar at the top and the foot.
+ * project: on the page of a project, its whole file (loadProject in src/content/index.ts, tracker F53).
+ */
+export default function App({ path, project }: { path: string; project?: Project }) {
   const route = matchRoute(
     path,
-    content.projects.map((project) => project.slug),
+    content.projects.map((card) => card.slug),
   );
-  const project = route.page === 'project' ? projectBySlug(route.slug) : undefined;
 
   useEffect(() => {
     document.title = pageTitle(path);
@@ -54,7 +57,7 @@ export default function App({ path }: { path: string }) {
           </>
         )}
         {route.page === 'work' && <Work page />}
-        {project && <ProjectPage project={project} />}
+        {route.page === 'project' && project && <ProjectPage project={project} />}
         {route.page === 'not-found' && <NotFound />}
       </main>
       <Footer home={route.page === 'home'} />

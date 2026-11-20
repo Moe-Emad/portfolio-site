@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { content } from '../content/index.ts';
 import { projectMeta } from '../content/schema.ts';
-import type { Project } from '../content/schema.ts';
+import type { ProjectCard } from '../content/schema.ts';
 import { projectPath } from '../routes.ts';
 import Shot from './Shot.tsx';
 import SectionTitle from './SectionTitle.tsx';
 
-type Kind = Project['kind'];
+type Kind = ProjectCard['kind'];
 
 // The tabs of the list, in this order, named as a group would be (tracker F19).
 const KIND_TABS: { kind: Kind; label: string }[] = [
@@ -18,7 +18,7 @@ const KIND_TABS: { kind: Kind; label: string }[] = [
 ];
 
 /** The kinds that have at least one project. */
-function kindTabs(projects: Project[]): { kind: Kind; label: string }[] {
+function kindTabs(projects: ProjectCard[]): { kind: Kind; label: string }[] {
   return KIND_TABS.filter((tab) => projects.some((project) => project.kind === tab.kind));
 }
 
@@ -39,7 +39,7 @@ const MAX_POINTS = 4;
  * (shown at their real value from the start, F48), my part, and the titles of the points its page looks at closer.
  * The points are shown only where the text column is wide enough to sit beside its picture (see index.css).
  */
-function ProjectDetails({ project }: { project: Project }) {
+function ProjectDetails({ project }: { project: ProjectCard }) {
   const points = project.highlights.slice(0, MAX_POINTS);
   return (
     <div className="project__details">
@@ -73,7 +73,7 @@ function ProjectDetails({ project }: { project: Project }) {
   );
 }
 
-function ProjectRow({ project }: { project: Project }) {
+function ProjectRow({ project }: { project: ProjectCard }) {
   const cover = project.images[0];
   return (
     <article className="project" data-featured={project.featured}>

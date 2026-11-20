@@ -45,6 +45,18 @@ test('a template without the markers or the root element stops the build', async
   assert.throws(() => fillTemplate(TEMPLATE.replace('<div id="root"></div>', '<div id="app"></div>'), page), /root/);
 });
 
+test('the page of a project names the script of its text in its head; other pages name none', async () => {
+  // Tracker F53: the browser fetches that script together with the script of the page.
+  const { preloadTag } = await import('./build.mjs');
+  const manifest = {
+    'index.html': { file: 'assets/index-AbCdEf12.js', isEntry: true },
+    'content/projects/relic.json': { file: 'assets/project-relic-Gh34Ij56.js', isDynamicEntry: true },
+  };
+  assert.equal(preloadTag(manifest, 'content/projects/relic.json'), '<link rel="modulepreload" crossorigin href="/assets/project-relic-Gh34Ij56.js" />');
+  assert.equal(preloadTag(manifest, undefined), '');
+  assert.equal(preloadTag(manifest, 'content/projects/missing.json'), '');
+});
+
 test('index.html has the markers, the root element and the theme script', () => {
   const html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
   assert.match(html, /<!--page-head-start-->[\s\S]*<title>[\s\S]*<!--page-head-end-->/);

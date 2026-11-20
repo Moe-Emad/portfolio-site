@@ -13,20 +13,64 @@ npm run weight
 
 ## The home page, from the original to today
 
-| | Original | After F2-F4 (new design, real HTML) | After F5 (WebP copies) | Today (after F52, AVIF copies) |
+| | Original | After F2-F4 (new design, real HTML) | After F5 (WebP copies) | Today (after F53) |
 |---|---|---|---|---|
 | Requests | 41, of them 15 to other servers | 10, all to the site itself | 10, all to the site itself | 13, all to the site itself |
-| JavaScript | 414 kB | 74 kB | 74 kB | 91 kB |
+| JavaScript | 414 kB | 74 kB | 74 kB | 83 kB |
 | CSS | 7 kB | 6 kB | 6 kB | 9 kB |
 | HTML | 0.3 kB (an empty page) | 6 kB (the whole text) | 6 kB | 9 kB |
 | Fonts | 80 kB, from Google | 74 kB, from the site | 74 kB, from the site | 74 kB, from the site |
 | Pictures | 2,988 kB | 393 kB | 125 kB on a desktop, 161 kB on a phone | 149 kB on a desktop, 222 kB on a phone |
 | 3D models and their lighting map | 2,908 kB | none | none | none |
-| **Total as it travels** | **6,397 kB** | **553 kB** | **286 kB on a desktop, 322 kB on a phone** | **332 kB on a desktop, 405 kB on a phone** |
+| **Total as it travels** | **6,397 kB** | **553 kB** | **286 kB on a desktop, 322 kB on a phone** | **325 kB on a desktop, 398 kB on a phone** |
 
 The original was measured from a build of the first version (`583fd75`) with the same method. Its 2,908 kB of 3D data are the models of the room (1,632 kB) and a lighting map the 3D library fetched
 from another server (1,276 kB). The last column counts every picture of the page; before B12 the tool missed the
 lower pictures, so the picture figures of the earlier columns are too low.
+
+## Measured on 2026-11-20, F53 (each page loads only the project text it shows)
+
+The script of every page carried the whole file of every project, the draft included: the paragraphs and points of
+each project page and the description of every picture, although the home page shows only a card of each project.
+Now that script carries the card of each shown project (what the list of work, the palette and the link to the next
+project need), cut from the project's file when the site is built. A project page loads the whole file of its own
+project as a second, small script; its head names that script, so the browser fetches it together with the first
+one instead of after it. No script of the site holds anything of the draft.
+
+The scripts, compressed with gzip; both builds were made from the same files, with and without the change:
+
+| | Script of every page | Script of the project | A project page loads | As the budget counts | Left of the 95 kB budget (97,280 B) |
+|---|---|---|---|---|---|
+| Before F53 | 92,793 B | - | 92,793 B | 94,268 B | 3,012 B |
+| After F53 | 85,232 B | 1,428 B (Jpro) to 2,768 B (Relic) | 86,660 B to 88,000 B | 89,475 B | 7,805 B |
+
+Every page downloads 7,561 B less JavaScript before it answers; a project page 4,793 B to 6,133 B less in all, in one
+request more. The HTML of a project page grows by the tag that names its script (26 B compressed). Since F53 the
+budget counts what one page can load: the script of every page, the EmailJS file (loaded on the first send) and
+the largest project file. Before, it added up every script of the build, which would now count seven project files
+where a page loads one.
+
+Before:
+
+| Page | Size | Requests | HTML | CSS | JavaScript | Fonts | Pictures | Total as it travels |
+|---|---|---|---|---|---|---|---|---|
+| `/` | desktop | 13 | 9 kB | 9 kB | 91 kB | 74 kB | 149 kB | **332 kB** |
+| `/` | phone | 13 | 9 kB | 9 kB | 91 kB | 74 kB | 222 kB | **405 kB** |
+| `/work/rplms-v2/` | desktop | 13 | 5 kB | 9 kB | 91 kB | 74 kB | 165 kB | **344 kB** |
+| `/work/rplms-v2/` | phone | 13 | 5 kB | 9 kB | 91 kB | 74 kB | 202 kB | **380 kB** |
+| `/work/relic/` | desktop | 15 | 6 kB | 9 kB | 91 kB | 74 kB | 164 kB | **344 kB** |
+| `/work/relic/` | phone | 15 | 6 kB | 9 kB | 91 kB | 74 kB | 251 kB | **430 kB** |
+
+After:
+
+| Page | Size | Requests | HTML | CSS | JavaScript | Fonts | Pictures | Total as it travels |
+|---|---|---|---|---|---|---|---|---|
+| `/` | desktop | 13 | 9 kB | 9 kB | 83 kB | 74 kB | 149 kB | **325 kB** |
+| `/` | phone | 13 | 9 kB | 9 kB | 83 kB | 74 kB | 222 kB | **398 kB** |
+| `/work/rplms-v2/` | desktop | 14 | 5 kB | 9 kB | 85 kB | 74 kB | 165 kB | **338 kB** |
+| `/work/rplms-v2/` | phone | 14 | 5 kB | 9 kB | 85 kB | 74 kB | 202 kB | **375 kB** |
+| `/work/relic/` | desktop | 16 | 6 kB | 9 kB | 86 kB | 74 kB | 164 kB | **339 kB** |
+| `/work/relic/` | phone | 16 | 6 kB | 9 kB | 86 kB | 74 kB | 251 kB | **426 kB** |
 
 ## Measured on 2026-11-20, F52 (AVIF copies)
 
@@ -195,8 +239,11 @@ repository. It was added in F52 (above).
 
 ## What keeps it that way
 
-`tests/browser/weight.spec.js` holds the budgets, a little above today's figures: 95 kB of JavaScript and 12 kB of
-CSS (compressed), 12 kB of HTML per page, 350 kB per picture and 160 kB per AVIF or WebP copy. It also checks
+`tests/browser/weight.spec.js` holds the budgets, a little above today's figures: 95 kB of the JavaScript one page
+can load and 12 kB of CSS (compressed), 12 kB of HTML per page, 350 kB per picture and 160 kB per AVIF or WebP copy.
+It checks that the script of every page holds the cards of the projects but not the text of their pages, that no
+script holds anything of a draft, and that a project page loads its own file and no other, named in its head (F53).
+It also checks
 that every picture offers its AVIF copies first, then WebP, then the original (F52), that the browser takes an AVIF
 copy and a phone one no wider than 1,100 pixels, that pictures below the first screen wait until they are needed, and
 that the JavaScript carries no check of the content (F51). Another checks that `npm run weight` counts every

@@ -3,7 +3,11 @@
 import { StrictMode } from 'react';
 import { renderToString } from 'react-dom/server';
 import App from './App.tsx';
+import { content, loadProject } from './content/index.ts';
 import { headHtml, pageHead, robotsTxt, sitemapXml, sitePaths, siteUrl } from './head.ts';
+import { matchRoute } from './routes.ts';
+
+export { checkContent } from './content/index.ts';
 
 const SITE = siteUrl(import.meta.env);
 
@@ -18,15 +22,24 @@ export function pages(): { path: string; file: string }[] {
   ];
 }
 
-/** One page: the HTML of the app and the tags of its head. */
-export function render(path: string): { app: string; head: string } {
+/**
+ * One page: the HTML of the app and the tags of its head. projectFile: on the page of a project, the content file
+ * its script is made from (tracker F53); the build names that script in the head of the page.
+ */
+export async function render(path: string): Promise<{ app: string; head: string; projectFile?: string }> {
+  const route = matchRoute(
+    path,
+    content.projects.map((card) => card.slug),
+  );
+  const project = route.page === 'project' ? await loadProject(route.slug) : undefined;
   return {
     app: renderToString(
       <StrictMode>
-        <App path={path} />
+        <App path={path} project={project} />
       </StrictMode>,
     ),
     head: headHtml(pageHead(path), SITE),
+    projectFile: route.page === 'project' ? `content/projects/${route.slug}.json` : undefined,
   };
 }
 

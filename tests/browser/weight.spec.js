@@ -13,6 +13,23 @@ const gzip = (file) => zlib.gzipSync(fs.readFileSync(file)).length;
 const assets = fs.readdirSync(path.join(BUILD, 'assets')).map((name) => path.join(BUILD, 'assets', name));
 const kB = 1024;
 
+const projectFiles = fs
+  .readdirSync('content/projects')
+  .filter((name) => name.endsWith('.json'))
+  .map((name) => JSON.parse(fs.readFileSync(`content/projects/${name}`, 'utf8')));
+const shownProjects = projectFiles.filter((project) => project.draft !== true);
+
+/** The longest run of plain letters, digits and spaces in a text: written the same way in the JavaScript. */
+const plain = (text) => (text.match(/[A-Za-z0-9 ]+/g) ?? []).map((run) => run.trim()).reduce((a, b) => (b.length > a.length ? b : a), '');
+/** The text of a project's own page: its paragraphs and the text of its points. */
+const pageText = (project) => [...project.description, ...project.highlights.map((point) => point.text)].map(plain).filter((run) => run.length >= 20);
+
+/** The script every page loads, as index.html names it. */
+const mainScript = () => {
+  const src = /<script type="module"[^>]*src="([^"]+)"/.exec(fs.readFileSync(path.join(BUILD, 'index.html'), 'utf8'))[1];
+  return path.join(BUILD, src);
+};
+
 function files(dir) {
   return fs.readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
     const full = path.join(dir, entry.name);
@@ -20,13 +37,79 @@ function files(dir) {
   });
 }
 
-test('the JavaScript and the CSS stay inside their budgets', () => {
+test('the JavaScript one page can load and the CSS stay inside their budgets', () => {
+  // Every script but the project files, plus the largest project file: a project page loads only its own (F53).
   const scripts = assets.filter((file) => file.endsWith('.js'));
-  const styles = assets.filter((file) => file.endsWith('.css'));
-  const js = scripts.reduce((sum, file) => sum + gzip(file), 0);
-  const css = styles.reduce((sum, file) => sum + gzip(file), 0);
+  const projects = scripts.filter((file) => path.basename(file).startsWith('project-'));
+  const shared = scripts.filter((file) => !projects.includes(file)).reduce((sum, file) => sum + gzip(file), 0);
+  const js = shared + Math.max(0, ...projects.map(gzip));
+  const css = assets.filter((file) => file.endsWith('.css')).reduce((sum, file) => sum + gzip(file), 0);
   expect(js, `JavaScript, compressed: ${(js / kB).toFixed(0)} kB`).toBeLessThan(95 * kB);
   expect(css, `CSS, compressed: ${(css / kB).toFixed(0)} kB`).toBeLessThan(12 * kB);
+});
+
+test('the script of every page holds the card of each project, not the text of its page', () => {
+  // Tracker F53. The list of work, the palette and the link to the next project need a project's card; its
+  // paragraphs, its points and its pictures are loaded by its own page only. A draft is not carried at all.
+  const code = fs.readFileSync(mainScript(), 'utf8');
+  let checked = 0;
+  for (const project of projectFiles) {
+    for (const text of pageText(project)) {
+      expect(code.includes(text), `${project.slug}: "${text}" is in the script of every page`).toBe(false);
+      checked += 1;
+    }
+    const summary = plain(project.summary);
+    expect(code.includes(summary), `${project.slug}: "${summary}"`).toBe(project.draft !== true);
+  }
+  expect(checked, 'texts looked for').toBeGreaterThan(30);
+});
+
+test('no script of the build holds anything of a draft', () => {
+  // Tracker F17, F53: a draft stays in content/ and is checked, but the site sends nothing of it.
+  const drafts = projectFiles.filter((project) => project.draft === true);
+  expect(drafts.length, 'drafts in content/projects').toBeGreaterThan(0);
+  for (const file of assets.filter((name) => name.endsWith('.js'))) {
+    const code = fs.readFileSync(file, 'utf8');
+    for (const draft of drafts) {
+      for (const text of [plain(draft.summary), ...pageText(draft)]) {
+        expect(code.includes(text), `${path.basename(file)} holds "${text}" of the draft ${draft.slug}`).toBe(false);
+      }
+    }
+  }
+});
+
+test('the home page loads no project file; a project page loads its own, named in its head', async ({ page }) => {
+  // Tracker F53. The head names the file, so that the browser fetches it together with the script of the page.
+  // The scripts are read from the build by their address: a second visit gets "304 Not Modified" without a body.
+  const scripts = new Set();
+  page.on('response', (response) => {
+    const address = new URL(response.url()).pathname;
+    if (address.endsWith('.js')) scripts.add(address);
+  });
+  const loaded = async () => {
+    await page.waitForLoadState('networkidle');
+    const entries = [...scripts].map((address) => [address, fs.readFileSync(path.join(BUILD, address), 'utf8')]);
+    scripts.clear();
+    return entries;
+  };
+  const holding = (entries, project) => entries.filter(([, text]) => pageText(project).some((run) => text.includes(run))).map(([address]) => address);
+
+  await page.goto('/');
+  const home = await loaded();
+  for (const project of shownProjects) expect(holding(home, project), `the home page loads the text of ${project.slug}`).toEqual([]);
+
+  for (const project of shownProjects) {
+    await page.goto(`/work/${project.slug}/`);
+    const entries = await loaded();
+    const own = holding(entries, project);
+    expect(own, `/work/${project.slug}/ loads its text in a file of its own`).toHaveLength(1);
+    expect(path.basename(own[0])).toMatch(/^project-/);
+    for (const other of shownProjects.filter((each) => each !== project)) {
+      expect(holding(entries, other), `/work/${project.slug}/ loads the text of ${other.slug}`).toEqual([]);
+    }
+    const named = await page.locator('head link[rel="modulepreload"]').evaluateAll((links) => links.map((link) => new URL(link.href).pathname));
+    expect(named, `the head of /work/${project.slug}/`).toContain(own[0]);
+  }
 });
 
 test('the browser is not sent the check of the content: the build has made it', () => {

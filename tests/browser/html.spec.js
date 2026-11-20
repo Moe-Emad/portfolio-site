@@ -154,7 +154,8 @@ test('React takes over the HTML of each kind of page without a mismatch', async 
   });
   page.on('pageerror', (error) => messages.push(error.message));
 
-  for (const address of ['/', `/work/${projects[0].slug}/`]) {
+  // Every project page: each one loads the text of its project before React takes it over (tracker F53).
+  for (const address of ['/', '/work/', ...projects.map((project) => `/work/${project.slug}/`)]) {
     await page.goto(address);
     // React marks the element it has taken over with a property of its own.
     await page.waitForFunction(() => Object.keys(document.getElementById('root')).some((key) => key.startsWith('__reactContainer')));
