@@ -4,11 +4,33 @@ import type { Project } from '../content/schema.ts';
 import { WORK_PATH, projectPath } from '../routes.ts';
 import Shot from './Shot.tsx';
 
+/**
+ * How wide the pictures of the gallery are shown, for the "sizes" of each (tracker F33). The content is about 92vw
+ * wide, at most 104rem. With phone screens beside them, the wide screens share what the phones leave: one column up
+ * to 80rem, two from there. The first of an odd number spans the row. A phone screen is clamp(12rem, 16vw, 19rem).
+ */
+const GALLERY_SIZES = {
+  beside: {
+    lead: '(min-width: 80rem) min(76vw, 84rem), (min-width: 52rem) 76vw, 100vw',
+    pair: '(min-width: 80rem) min(38vw, 41rem), (min-width: 52rem) 76vw, 100vw',
+    phone: '(min-width: 52rem) clamp(12rem, 16vw, 19rem), 19rem',
+  },
+  alone: {
+    lead: '(min-width: 52rem) min(92vw, 104rem), 100vw',
+    pair: '(min-width: 52rem) min(46vw, 51rem), 100vw',
+  },
+};
+
 /** The page of one project: what it is, my part, what is worth a closer look, and the screens. */
 export default function ProjectPage({ project }: { project: Project }) {
   const [cover, ...gallery] = project.images;
   const desktop = gallery.filter((image) => image.device === 'desktop');
   const phone = gallery.filter((image) => image.device === 'phone');
+  // Phone screens stand beside the wide screens when there are both; the first of an odd number of wide screens
+  // spans the row (the stylesheet does the same with :first-child:nth-last-child(odd)).
+  const beside = desktop.length > 0 && phone.length > 0;
+  const sizes = beside ? GALLERY_SIZES.beside : GALLERY_SIZES.alone;
+  const lead = desktop.length % 2 === 1;
 
   // The next project in the order of the home page; after the last one comes the first.
   const index = content.projects.findIndex((other) => other.slug === project.slug);
@@ -91,20 +113,24 @@ export default function ProjectPage({ project }: { project: Project }) {
         </div>
 
         {gallery.length > 0 && (
-          <section className="gallery" aria-labelledby="gallery-title">
+          <section className="gallery" aria-labelledby="gallery-title" data-beside={beside || undefined}>
             <h2 id="gallery-title">More screens</h2>
-            <div className="gallery__desktop">
-              {desktop.map((image) => (
-                <Shot key={image.src} image={image} sizes="(min-width: 52rem) min(50vw, 36rem), 100vw" caption />
-              ))}
+            <div className="gallery__body">
+              {desktop.length > 0 && (
+                <div className="gallery__desktop">
+                  {desktop.map((image, index) => (
+                    <Shot key={image.src} image={image} sizes={lead && index === 0 ? sizes.lead : sizes.pair} caption />
+                  ))}
+                </div>
+              )}
+              {phone.length > 0 && (
+                <div className="gallery__phone">
+                  {phone.map((image) => (
+                    <Shot key={image.src} image={image} sizes={beside ? GALLERY_SIZES.beside.phone : '19rem'} caption />
+                  ))}
+                </div>
+              )}
             </div>
-            {phone.length > 0 && (
-              <div className="gallery__phone">
-                {phone.map((image) => (
-                  <Shot key={image.src} image={image} sizes="19rem" caption />
-                ))}
-              </div>
-            )}
           </section>
         )}
 
