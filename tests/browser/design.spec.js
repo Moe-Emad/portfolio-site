@@ -462,7 +462,7 @@ test.describe('lists of tools', () => {
 });
 
 // Two corner radii (tracker F37): a small one for what is clicked or typed into and for the focus ring, a large one
-// for frames (screenshots, the palette, the side card). Both are tokens at the top of src/index.css.
+// for frames (screenshots, the palette). Both are tokens at the top of src/index.css.
 test.describe('corners', () => {
   const RADII = ['border-radius', 'border-top-left-radius', 'border-top-right-radius', 'border-bottom-right-radius', 'border-bottom-left-radius'];
 
@@ -623,4 +623,87 @@ test.describe('figures', () => {
       }
     });
   }
+});
+
+// The first screen of a project page (tracker F39): the title block of its figures stands in the blue band, where a
+// drawing has it, at the bottom right beside the summary on a wide screen, so the right half of the band is no longer
+// empty; under the summary on a phone. My part and the tools stand on the page under a hairline, not in a card.
+test.describe('the first screen of a project page', () => {
+  const PAGE = '/work/mtc-training-platform/';
+
+  for (const width of [1024, 1280, 1920]) {
+    test(`at ${width} px the title block fills the right of the blue band, beside the summary and above the picture`, async ({ page }, testInfo) => {
+      test.skip(isPhone(testInfo), 'wide screens only');
+      await page.setViewportSize({ width, height: 900 });
+      await page.emulateMedia({ reducedMotion: 'reduce' });
+      await page.goto(PAGE);
+      await expect(page.locator('h1')).toBeVisible();
+      const block = page.locator('.case__head .facts');
+      await expect(block).toBeVisible();
+      await expect(page.locator('.case__body .facts')).toHaveCount(0);
+      const [band, wrap, summary, figures, cover] = await Promise.all(
+        ['.case__head', '.case__head .wrap', '.case__summary', '.case__head .facts', '.case__cover'].map((selector) =>
+          page.locator(selector).first().evaluate((element) => {
+            const box = element.getBoundingClientRect();
+            const style = getComputedStyle(element);
+            return { top: box.top, right: box.right - parseFloat(style.paddingRight), bottom: box.bottom, left: box.left + parseFloat(style.paddingLeft) };
+          }),
+        ),
+      );
+      expect(figures.left, 'beside the summary, not under it').toBeGreaterThan(summary.right);
+      expect(figures.left, 'in the right half of the band').toBeGreaterThan((wrap.left + wrap.right) / 2 - 1);
+      expect(Math.abs(figures.right - wrap.right), 'reaches the right edge of the content').toBeLessThanOrEqual(1);
+      expect(figures.top, 'level with the summary').toBeLessThan(summary.bottom);
+      expect(figures.bottom, 'inside the band').toBeLessThanOrEqual(band.bottom);
+      expect(figures.bottom, 'above the picture that hangs into the band').toBeLessThanOrEqual(cover.top);
+    });
+  }
+
+  test('on a phone the title block follows the summary inside the band, two across', async ({ page }, testInfo) => {
+    test.skip(!isPhone(testInfo), 'phone size only');
+    await page.goto(PAGE);
+    const cells = page.locator('.case__head .facts > div');
+    await expect(cells).toHaveCount(4);
+    const tops = await cells.evaluateAll((elements) => elements.map((element) => Math.round(element.getBoundingClientRect().top)));
+    expect(new Set(tops).size).toBe(2);
+  });
+
+  test('in the band the title block is drawn in the colours of the band', async ({ page }) => {
+    await page.goto(PAGE);
+    const colours = await page.locator('.case__head .facts').evaluate((block) => {
+      const root = getComputedStyle(document.documentElement);
+      const probe = document.createElement('i');
+      document.body.append(probe);
+      const resolve = (token) => {
+        probe.style.color = root.getPropertyValue(token);
+        return getComputedStyle(probe).color;
+      };
+      const tokens = { line: resolve('--on-blue-line'), value: resolve('--on-blue'), label: resolve('--on-blue-muted') };
+      probe.remove();
+      return {
+        tokens,
+        frame: getComputedStyle(block).borderTopColor,
+        cell: getComputedStyle(block.querySelector('div')).borderRightColor,
+        value: getComputedStyle(block.querySelector('dt')).color,
+        label: getComputedStyle(block.querySelector('dd')).color,
+      };
+    });
+    expect(colours.frame).toBe(colours.tokens.line);
+    expect(colours.cell).toBe(colours.tokens.line);
+    expect(colours.value).toBe(colours.tokens.value);
+    expect(colours.label).toBe(colours.tokens.label);
+  });
+
+  test('my part and the tools stand on the page under a hairline, not in a card', async ({ page }) => {
+    await page.goto(PAGE);
+    const side = await page.locator('.case__side').evaluate((element) => {
+      const style = getComputedStyle(element);
+      return {
+        background: style.backgroundColor,
+        radius: style.borderTopLeftRadius,
+        sides: ['Top', 'Right', 'Bottom', 'Left'].filter((side) => parseFloat(style[`border${side}Width`]) > 0),
+      };
+    });
+    expect(side).toEqual({ background: 'rgba(0, 0, 0, 0)', radius: '0px', sides: ['Top'] });
+  });
 });
