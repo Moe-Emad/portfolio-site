@@ -104,7 +104,7 @@ export default function ProjectPage({ project }: { project: Project }) {
             <h2>My part</h2>
             <p>{project.role}</p>
             <h2>Built with</h2>
-            <ul className="case__stack">
+            <ul className="stack">
               {project.stack.map((name) => (
                 <li key={name}>{name}</li>
               ))}
