@@ -46,6 +46,11 @@ export interface ProjectImage {
   /** The size of the file in pixels: the page keeps the place free before the picture has loaded. */
   width: number;
   height: number;
+  /**
+   * The fingerprint of the picture's files, which its addresses carry (tracker F54). Worked out by the build and the
+   * dev server (tools/build/picture-versions.mjs); never written in a content file.
+   */
+  version?: string;
 }
 
 export interface Project {

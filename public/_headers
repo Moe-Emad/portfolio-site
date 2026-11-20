@@ -20,3 +20,8 @@
 # The names of these files change whenever their content does, so a browser may keep them for a year.
 /assets/*
   Cache-Control: public, max-age=31536000, immutable
+
+# The screenshots keep their names when they are replaced, but every page names them with a fingerprint of their
+# files ("?v=1a2b3c4d", tracker F54), which changes with them: a browser may keep them for a year too.
+/images/*
+  Cache-Control: public, max-age=31536000, immutable

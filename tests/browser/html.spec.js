@@ -84,7 +84,10 @@ for (const page of pages) {
       // The picture of the link preview is a file of the build, at a full address.
       const image = meta(html, 'property', 'og:image');
       expect(image.startsWith(`${SITE}/`), image).toBe(true);
-      expect(fs.existsSync(path.join(BUILD, image.slice(SITE.length))), `${image} exists`).toBe(true);
+      const [file, query] = image.slice(SITE.length).split('?');
+      expect(fs.existsSync(path.join(BUILD, file)), `${image} exists`).toBe(true);
+      // A screenshot carries the fingerprint of its files, so a preview of a changed cover is fetched anew (F54).
+      if (file.startsWith('/images/')) expect(query, image).toMatch(/^v=[0-9a-f]{8}$/);
       expect(Number(meta(html, 'property', 'og:image:width'))).toBeGreaterThan(300);
     });
 

@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import test from 'node:test';
-import { COPY_WIDTHS, FORMATS, copies, srcSet } from './pictures.js';
+import { COPY_WIDTHS, FORMATS, copies, srcSet, versioned } from './pictures.js';
 
 const ROOT = path.resolve(import.meta.dirname, '..', '..');
 
@@ -39,6 +39,18 @@ test('a copy is never wider than the picture', () => {
 test('the srcset names every copy with its width', () => {
   assert.equal(srcSet('/b.png', 800, 'webp'), '/b-640.webp 640w, /b.webp 800w');
   assert.equal(srcSet('/b.png', 800, 'avif'), '/b-640.avif 640w, /b.avif 800w');
+});
+
+test('with a fingerprint, every address of a picture carries it', () => {
+  // Tracker F54: the address changes when the picture does, so a browser may keep the file for a year.
+  assert.equal(versioned('/a.jpg', '1a2b3c4d'), '/a.jpg?v=1a2b3c4d');
+  assert.equal(versioned('/a.jpg', undefined), '/a.jpg');
+  assert.equal(srcSet('/b.png', 800, 'avif', '1a2b3c4d'), '/b-640.avif?v=1a2b3c4d 640w, /b.avif?v=1a2b3c4d 800w');
+  // The names of the files themselves never carry it: the tool that writes the copies uses them.
+  assert.deepEqual(
+    copies('/b.png', 800, 'webp').map((copy) => copy.src),
+    ['/b-640.webp', '/b.webp'],
+  );
 });
 
 test('every copy of every picture of this repo exists in public/, in each format', () => {

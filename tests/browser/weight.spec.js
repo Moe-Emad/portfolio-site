@@ -6,6 +6,7 @@ import { createRequire } from 'node:module';
 import path from 'node:path';
 import zlib from 'node:zlib';
 import { expect, test } from '@playwright/test';
+import { pictureVersion } from '../../tools/build/picture-versions.mjs';
 
 const { measurePage } = createRequire(import.meta.url)('../../tools/dev/page-weight.cjs');
 const BUILD = process.env.E2E_BUILD;
@@ -153,10 +154,40 @@ test('every picture offers its AVIF copies first, then WebP, then the original',
     expect(pictures.length, `pictures on ${address}`).toBeGreaterThan(0);
     for (const picture of pictures) {
       expect(picture.types, picture.src).toEqual(['image/avif', 'image/webp']);
-      expect(picture.avif, picture.src).toMatch(/^(\S+\.avif \d+w)(, \S+\.avif \d+w)*$/);
-      expect(picture.src, 'the fallback is the original').toMatch(/\.(jpe?g|png)$/);
+      expect(picture.avif, picture.src).toMatch(/^(\S+\.avif\?v=[0-9a-f]{8} \d+w)(, \S+\.avif\?v=[0-9a-f]{8} \d+w)*$/);
+      expect(picture.src, 'the fallback is the original').toMatch(/\.(jpe?g|png)\?v=[0-9a-f]{8}$/);
     }
   }
+});
+
+test('every address of a picture carries the fingerprint of its files', async ({ page }) => {
+  // Tracker F54. The fingerprint changes when the picture or one of its copies does, so the address changes with it
+  // and a browser may keep a picture for a year without ever showing an old one.
+  const images = new Map(projectFiles.flatMap((project) => project.images.map((image) => [image.src, image])));
+  for (const address of ['/', '/work/rplms-v2/', '/work/relic/']) {
+    await page.goto(address);
+    const pictures = await page.locator('picture').evaluateAll((elements) =>
+      elements.map((element) => ({
+        img: element.querySelector('img').getAttribute('src'),
+        sources: [...element.querySelectorAll('source')].flatMap((source) => source.getAttribute('srcset').split(', ').map((entry) => entry.split(' ')[0])),
+      })),
+    );
+    expect(pictures.length, `pictures on ${address}`).toBeGreaterThan(0);
+    for (const picture of pictures) {
+      const [src, query] = picture.img.split('?');
+      const image = images.get(src);
+      expect(image, `${src} is a picture of content/projects`).toBeTruthy();
+      const version = pictureVersion('public', image);
+      expect(query, src).toBe(`v=${version}`);
+      for (const copy of picture.sources) expect(copy, `a copy of ${src}`).toMatch(new RegExp(`\\?v=${version}$`));
+    }
+  }
+});
+
+test('the pictures may be kept by the browser for a year: their addresses change with them', () => {
+  // Tracker F54. Before, every visit asked the host about every picture again.
+  const headers = fs.readFileSync(path.join(BUILD, '_headers'), 'utf8');
+  expect(headers).toMatch(/\/images\/\*\n\s+Cache-Control: public, max-age=31536000, immutable/);
 });
 
 test('the browser is given an AVIF copy that fits the screen, not the full picture', async ({ page }, testInfo) => {

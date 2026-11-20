@@ -76,7 +76,8 @@ other static host works too (GitHub Pages, a shared web space): upload the conte
    | Output directory | `dist` | Every page as its own HTML file |
 
    `vercel.json` also sends the security headers of `public/_headers` and lets the browser keep the files in
-   `assets/` for a year. Vercel does not read `public/_headers`; a test keeps the two files in step.
+   `assets/` and the pictures in `images/` for a year. Vercel does not read `public/_headers`; a test keeps the two
+   files in step.
 
    One of these headers is the **Content-Security-Policy**: a page may load files of the site only, run the one
    small script of `index.html` that sets the theme before the first paint (allowed by its hash), and connect to the
@@ -133,7 +134,9 @@ other static host works too (GitHub Pages, a shared web space): upload the conte
    `VITE_SITE_URL` to the new address and deploy again, so the sitemap and the link previews use it.
 
 The file `public/_headers` is read by Cloudflare Pages (and Netlify): it sets the security headers and lets the
-browser keep the files in `assets/` for a year, which is safe because their names change with their content.
+browser keep the files in `assets/` and `images/` for a year. That is safe because the address of each changes
+with its content: the files in `assets/` by their names, the pictures by the fingerprint of their files that every
+page writes after them (`?v=...`).
 
 ## 5. After every deploy: the checklist
 
@@ -152,8 +155,8 @@ Tick each line on the live address.
 - [ ] View the source of the page (Ctrl+U): the text of the page is in it.
 - [ ] The headers arrive. In PowerShell, with the address of the site: `curl.exe -sI https://<address>/` lists
       `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, `Referrer-Policy`, `Permissions-Policy` and
-      `Content-Security-Policy`; a file under `/assets/` (its name is in the source of the page) has
-      `Cache-Control: public, max-age=31536000, immutable`.
+      `Content-Security-Policy`; a file under `/assets/` (its name is in the source of the page) and a picture
+      under `/images/` have `Cache-Control: public, max-age=31536000, immutable`.
 - [ ] No request to another server: open the developer tools (F12), Network, reload. Every line is your own
       address.
 - [ ] The policy refuses nothing of the site itself: in the developer tools, Console, no line says "Content
@@ -186,7 +189,7 @@ host builds and publishes the new version by itself, usually within two minutes.
 | On a preview address of Vercel the console says the Vercel toolbar was refused | The toolbar of previews is a script from another server | Expected: the policy is the same on previews as on the live site, so the toolbar's comments are not available there |
 | A link preview shows no picture, or an old one | The address in `VITE_SITE_URL` is wrong, or the service kept an old copy | Check `og:image` in the source of the page; then let the Post Inspector of LinkedIn fetch it again |
 | A project page shows the home page or a blank page | The host serves `index.html` for every address instead of the files | Make sure the output directory is `dist` (on Vercel it comes from `vercel.json`) and no "single page app" rewrite is switched on |
-| An old version stays after a deploy | The browser kept the page | Reload with Ctrl+F5. The HTML is never kept for long; only the files in `assets/` are |
+| An old version stays after a deploy | The browser kept the page | Reload with Ctrl+F5. The HTML is never kept for long; only the files in `assets/` and the pictures are, and their addresses change with them |
 
 ## 8. Rolling back
 
