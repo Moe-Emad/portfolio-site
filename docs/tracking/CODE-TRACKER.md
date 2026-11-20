@@ -98,7 +98,7 @@ issue and pull request numbers do not link here. From D4 on, the numbers are tho
 | F55 | #78 | The fonts of the first view are fetched with the stylesheet | The browser found the two typefaces only in the stylesheet and asked for Rakkas last: on a slow connection the name and the titles stood in a stand-in typeface for about 0.4 s and the page moved when it arrived | `feat/f55-font-preload` | #79 | done |
 | F56 | #80 | The Arabic font holds only the letters the site shows | Every page downloaded the whole Arabic file of Rakkas (26 kB) for ten letters, and its face, without a range, was taken for every character, Latin text included | `feat/f56-arabic-font-subset` | #81 | done |
 | F57 | #82 | Skills on the lines of Experience on a wide screen | At 1920 px the tools of each group ended near the middle of the row and the right of the section stayed empty, while Experience above uses the width in three columns | `feat/f57-skills-columns` | #83 | done |
-| F58 | #84 | Screenshots sharp on sharp screens, starting with Jpro | On a screen with two pixels per point, as most laptops, the 1,440 px screenshots were enlarged and looked soft; the site had no copy for such a screen | `feat/f58-sharp-screenshots` | #PR | done |
+| F58 | #84 | Screenshots sharp on sharp screens, starting with Jpro | On a screen with two pixels per point, as most laptops, the 1,440 px screenshots were enlarged and looked soft; the site had no copy for such a screen | `feat/f58-sharp-screenshots` | #85 | done |
 
 ## D - docs and developer setup
 
