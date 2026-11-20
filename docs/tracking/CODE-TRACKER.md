@@ -97,7 +97,7 @@ issue and pull request numbers do not link here. From D4 on, the numbers are tho
 | F54 | #76 | Browsers keep the pictures, and fetch a changed one at once | The host sent every picture with max-age=0, so every visit asked about each picture again (nine round trips on a second visit to a project page); the pictures keep their names when replaced, so a long cache alone would show old ones | `feat/f54-picture-cache` | #77 | done |
 | F55 | #78 | The fonts of the first view are fetched with the stylesheet | The browser found the two typefaces only in the stylesheet and asked for Rakkas last: on a slow connection the name and the titles stood in a stand-in typeface for about 0.4 s and the page moved when it arrived | `feat/f55-font-preload` | #79 | done |
 | F56 | #80 | The Arabic font holds only the letters the site shows | Every page downloaded the whole Arabic file of Rakkas (26 kB) for ten letters, and its face, without a range, was taken for every character, Latin text included | `feat/f56-arabic-font-subset` | #81 | done |
-| F57 | #82 | Skills on the lines of Experience on a wide screen | At 1920 px the tools of each group ended near the middle of the row and the right of the section stayed empty, while Experience above uses the width in three columns | `feat/f57-skills-columns` | #PR | done |
+| F57 | #82 | Skills on the lines of Experience on a wide screen | At 1920 px the tools of each group ended near the middle of the row and the right of the section stayed empty, while Experience above uses the width in three columns | `feat/f57-skills-columns` | #83 | done |
 
 ## D - docs and developer setup
 
