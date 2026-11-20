@@ -86,7 +86,7 @@ issue and pull request numbers do not link here. From D4 on, the numbers are tho
 | F45 | #52 | The first screen has one button, and the role stands under the name | A line over the name and a pair of equal buttons are the pattern of countless templates, and the two buttons competed for the one main way on | `feat/f45-first-screen` | #53 | done |
 | F46 | #54 | On a phone the star stands under the buttons, at full strength | On a phone the star was enlarged behind the name at 22 % opacity, its lines across the name, the role and the headline, and too faint to read as a drawing | `feat/f46-phone-star` | #55 | done |
 | F47 | #56 | A blueprint dark theme | The dark theme was navy with lavender text, a generic dark mode, and its tinted bands differed from the ground by 1.06 | `feat/f47-blueprint` | #57 | done |
-| F48 | #58 | Lines draw themselves instead of text rising | Almost every block of text rose into place while scrolling and the figures counted up, rewriting their text while it was read: the motion of a template, not of a drawing | `feat/f48-draw-motion` | - | in review |
+| F48 | #58 | Lines draw themselves instead of text rising | Almost every block of text rose into place while scrolling and the figures counted up, rewriting their text while it was read: the motion of a template, not of a drawing | `feat/f48-draw-motion` | #59 | done |
 
 ## D - docs and developer setup
 
