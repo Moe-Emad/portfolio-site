@@ -81,8 +81,27 @@ test('a draft is left out of the shown projects, its file is still checked, and 
   assert.match(problems.join('\n'), /project - "draft-project" is a draft, so the site does not show it/);
 });
 
-// The first picture of RPLMS v2 is its home page: it shows what the site is at a glance (tracker F21).
-test('the first picture of RPLMS v2 is its home page, on a desktop', () => {
+// A project is named as the product, without a version number such as "v2" (tracker F32).
+test('no project title carries a version number', () => {
+  const versioned = projectFiles()
+    .map(([, project]) => (project as Project).title)
+    .filter((title) => /\bv\d+\b|\bversion\s*\d/i.test(title));
+  assert.deepEqual(versioned, []);
+});
+
+// RPLMS gives the Laravel version it runs on, not the way there, and its text names no versions of its own
+// (tracker F32). The address of its page keeps "rplms-v2", so links already shared keep working.
+test('the Laravel figure of RPLMS is the version it runs on, and its text speaks of no "Version 1" or "Version 2"', () => {
+  const project = read('content/projects/rplms-v2.json') as Project;
+  assert.deepEqual(
+    project.facts.find((fact) => fact.label === 'Laravel version'),
+    { value: '13', label: 'Laravel version' },
+  );
+  assert.doesNotMatch([project.summary, ...project.description].join(' '), /\bVersion \d/);
+});
+
+// The first picture of RPLMS is its home page: it shows what the site is at a glance (tracker F21).
+test('the first picture of RPLMS is its home page, on a desktop', () => {
   const [first] = (read('content/projects/rplms-v2.json') as Project).images;
   assert.equal(first?.src, '/images/projects/rplms-v2/01-home.jpg');
   assert.equal(first?.device, 'desktop');
