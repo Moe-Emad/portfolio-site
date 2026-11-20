@@ -325,6 +325,40 @@ test.describe('printing', () => {
   }
 });
 
+// No stripe down one side of a block (tracker F30): the page draws its rules as hairlines. A stripe is a border at
+// the left or right that is wider than one pixel and wider than the borders above and below it; a field with the
+// same border all round is not one.
+test.describe('side stripes', () => {
+  const project = fs
+    .readdirSync('content/projects')
+    .filter((name) => name.endsWith('.json'))
+    .map((name) => JSON.parse(fs.readFileSync(`content/projects/${name}`, 'utf8')))
+    .find((entry) => entry.draft !== true);
+
+  for (const path of ['/', `/work/${project.slug}/`]) {
+    test(`${path} has no block with a stripe down one side`, async ({ page }) => {
+      await page.goto(path);
+      await expect(page.locator('h1')).toBeVisible();
+      const stripes = await page.evaluate(() => {
+        const found = [];
+        for (const element of document.body.querySelectorAll('*')) {
+          const style = getComputedStyle(element);
+          const across = Math.max(parseFloat(style.borderTopWidth), parseFloat(style.borderBottomWidth));
+          for (const side of ['Left', 'Right']) {
+            const width = parseFloat(style[`border${side}Width`]);
+            if (width > 1 && width > across) {
+              const name = `${element.tagName.toLowerCase()}${element.className ? `.${String(element.className).trim().split(/\s+/).join('.')}` : ''}`;
+              found.push(`${name}: ${width}px ${style[`border${side}Style`]} ${style[`border${side}Color`]} at the ${side.toLowerCase()}`);
+            }
+          }
+        }
+        return [...new Set(found)];
+      });
+      expect(stripes).toEqual([]);
+    });
+  }
+});
+
 // Skills as rows of tags, without counts (tracker F24).
 test.describe('the skills', () => {
   test.use({ viewport: { width: 1920, height: 1080 } });

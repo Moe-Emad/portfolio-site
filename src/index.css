@@ -1250,9 +1250,11 @@ a:hover {
   }
 }
 
+/* Each point sits under a hairline, as the figures and the rows of the work do (tracker F30); the accent colour is
+   kept for the sign. The line stays in place while the text rises into view under it. */
 .highlights li {
-  padding-left: 1.15rem;
-  border-left: 3px solid var(--saffron);
+  padding-top: 1rem;
+  border-top: 1px solid var(--line);
 }
 
 .highlights h3 {

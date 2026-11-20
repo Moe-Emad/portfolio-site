@@ -67,6 +67,40 @@ for (const project of projects) {
   });
 }
 
+// The points worth a closer look (tracker F30): each sits under a hairline in the colour of the other rules of the
+// page, as the figures and the rows of the work do; there is no stripe down the side.
+for (const colorScheme of ['light', 'dark']) {
+  test(`in the ${colorScheme} theme each point worth a closer look has a hairline above it and no stripe at its side`, async ({ page }) => {
+    await page.emulateMedia({ colorScheme });
+    await page.goto(`/work/${projects[0].slug}/`);
+    await expect(page.locator('html')).toHaveAttribute('data-theme', colorScheme);
+    const { line, points } = await page.locator('.highlights > li').evaluateAll((items) => {
+      // The colour of the --line token, as the browser computes it.
+      const ruler = document.createElement('div');
+      ruler.style.borderTop = '1px solid var(--line)';
+      document.body.append(ruler);
+      const colour = getComputedStyle(ruler).borderTopColor;
+      ruler.remove();
+      return {
+        line: colour,
+        points: items.map((item) => {
+          const style = getComputedStyle(item);
+          return {
+            title: item.querySelector('h3')?.textContent,
+            top: `${style.borderTopWidth} ${style.borderTopStyle} ${style.borderTopColor}`,
+            sides: `${style.borderLeftWidth} ${style.borderRightWidth}`,
+          };
+        }),
+      };
+    });
+    expect(points.map((point) => point.title)).toEqual(projects[0].highlights.map((highlight) => highlight.title));
+    for (const point of points) {
+      expect(point.top, `the line above "${point.title}"`).toBe(`1px solid ${line}`);
+      expect(point.sides, `the borders at the sides of "${point.title}"`).toBe('0px 0px');
+    }
+  });
+}
+
 test('a project page passes axe in the dark theme too', async ({ page }) => {
   await page.emulateMedia({ colorScheme: 'dark' });
   await page.goto(`/work/${projects[0].slug}/`);
