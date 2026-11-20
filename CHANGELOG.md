@@ -84,3 +84,4 @@ and do not link here.
 - F51: The browser no longer repeats the check of the content that the build and the tests make; every page downloads 2.2 kB less JavaScript, 3 kB of the budget free (#67)
 - B12: npm run weight brings every picture into view and waits for it, so it counts all of them and gives the same figures on every run; the home page weighs 368 kB on a desktop and 454 kB on a phone with every picture (#69)
 - D6: The README describes the motion of today: the star drawing itself on opening, and further down rules that draw while the text stands still (#71)
+- F52: Every screenshot has AVIF copies, offered before WebP; the pictures of the home page weigh 149 kB instead of 186 kB on a desktop and 222 kB instead of 272 kB on a phone, as sharp as before (#PR)

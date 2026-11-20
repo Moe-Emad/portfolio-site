@@ -1,4 +1,4 @@
-// Speed (tracker F5): pictures in a modern format and in the size of the screen, and a budget for what the site
+// Speed (tracker F5, F52): pictures in a modern format and in the size of the screen, and a budget for what the site
 // may weigh. The budgets are a little above today's figures (docs/page-weight.md): they catch a change that makes
 // a page much heavier, not every extra byte.
 import fs from 'node:fs';
@@ -48,22 +48,44 @@ test('no page sends more than 12 kB of HTML, compressed', () => {
   }
 });
 
-test('no picture is heavier than 350 kB, and no WebP copy heavier than 160 kB', () => {
+test('no picture is heavier than 350 kB, and no AVIF or WebP copy heavier than 160 kB', () => {
   for (const file of files(path.join(BUILD, 'images'))) {
     const size = fs.statSync(file).size;
-    const limit = file.endsWith('.webp') ? 160 : 350;
+    const limit = /\.(avif|webp)$/.test(file) ? 160 : 350;
     expect(size, `${path.relative(BUILD, file)}: ${(size / kB).toFixed(0)} kB`).toBeLessThan(limit * kB);
   }
 });
 
-test('the browser is given a WebP copy that fits the screen, not the full picture', async ({ page }, testInfo) => {
+test('every picture offers its AVIF copies first, then WebP, then the original', async ({ page }) => {
+  // Tracker F52. A browser takes the first <source> whose type it can show; one without AVIF takes the WebP copies.
+  for (const address of ['/', '/work/rplms-v2/']) {
+    await page.goto(address);
+    const pictures = await page.locator('picture').evaluateAll((elements) =>
+      elements.map((element) => ({
+        types: [...element.querySelectorAll('source')].map((source) => source.type),
+        avif: element.querySelector('source')?.getAttribute('srcset') ?? '',
+        src: element.querySelector('img')?.getAttribute('src') ?? '',
+      })),
+    );
+    expect(pictures.length, `pictures on ${address}`).toBeGreaterThan(0);
+    for (const picture of pictures) {
+      expect(picture.types, picture.src).toEqual(['image/avif', 'image/webp']);
+      expect(picture.avif, picture.src).toMatch(/^(\S+\.avif \d+w)(, \S+\.avif \d+w)*$/);
+      expect(picture.src, 'the fallback is the original').toMatch(/\.(jpe?g|png)$/);
+    }
+  }
+});
+
+test('the browser is given an AVIF copy that fits the screen, not the full picture', async ({ page }, testInfo) => {
   await page.goto('/work/jpro-website/');
   const cover = page.locator('.case__cover img');
   await expect(cover).toBeVisible();
   await expect.poll(() => cover.evaluate((image) => image.complete && image.naturalWidth > 0)).toBe(true);
 
   const used = await cover.evaluate((image) => ({ src: new URL(image.currentSrc).pathname, width: image.naturalWidth }));
-  expect(used.src, 'the copy the browser chose').toMatch(/\.webp$/);
+  expect(used.src, 'the copy the browser chose').toMatch(/\.avif$/);
+  const response = await page.request.get(used.src);
+  expect(response.headers()['content-type'], `${used.src} is sent as an AVIF picture`).toBe('image/avif');
   if (testInfo.project.name === 'phone') {
     // A phone screen is at most 1100 pixels wide in real pixels: the 1440 pixel picture is not needed.
     expect(used.width, `${used.src} is ${used.width} pixels wide`).toBeLessThanOrEqual(1100);
@@ -88,7 +110,7 @@ test('npm run weight counts every picture of the page, also when the pictures ar
   // Tracker B12. The tool counted four of the seven pictures of the home page on a desktop and three on a phone:
   // it never got far enough down to load the others. Every picture is held back for a moment here, as on a slow
   // connection, so that a walk that does not wait for them is caught on every run.
-  await page.route(/\.(webp|jpe?g|png)$/, async (route) => {
+  await page.route(/\.(avif|webp|jpe?g|png)$/, async (route) => {
     await new Promise((resolve) => setTimeout(resolve, 300));
     await route.continue();
   });

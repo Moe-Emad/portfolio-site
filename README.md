@@ -32,7 +32,7 @@ about the work, and a page for every project.
 | Real HTML for every page | At build time `tools/build/build.mjs` writes every page to its own HTML file, with its own title, description, share picture and structured data; React takes it over in the browser. The text is there before any JavaScript arrives, for visitors, search engines and link previews alike. |
 | Content as data | Every text, job, skill and project is a JSON file in `content/`, checked against a schema (`src/content/schema.ts`) by the tests and by the build, so a broken file cannot go online. |
 | An admin panel without a server | [Pages CMS](https://pagescms.org) edits the files in `content/` through forms and saves each change as a commit. There is no database and no admin page on the site ([docs/admin.md](docs/admin.md)). |
-| Pictures sized for the screen | Every screenshot has WebP copies in several widths, so a phone downloads a picture of its own size. A weight budget per page is held by the tests ([docs/page-weight.md](docs/page-weight.md)). |
+| Pictures sized for the screen | Every screenshot has AVIF and WebP copies in several widths, so a phone downloads a picture of its own size, in the smallest format its browser can show. A weight budget per page is held by the tests ([docs/page-weight.md](docs/page-weight.md)). |
 | Accessibility | Browser tests run the axe rules on every page in both themes, on a desktop and a phone size, and use the site by keyboard. |
 | The look | All colours are tokens for the two themes at the top of `src/index.css`: Egyptian blue and saffron. |
 | Contact form | [EmailJS](https://www.emailjs.com), loaded only when a message is sent. |
@@ -76,7 +76,7 @@ form.
 | `npm run test:tools` | Tests of the build and the developer tools |
 | `npm run lint` / `npm run typecheck` | ESLint (warnings fail too) / TypeScript |
 | `npm run weight` | Measures what a page downloads, on both sizes, for [docs/page-weight.md](docs/page-weight.md) |
-| `npm run pictures` | Fills in the size of new screenshots and makes their WebP copies |
+| `npm run pictures` | Fills in the size of new screenshots and makes their AVIF and WebP copies |
 | `npm run cms-config` | Writes `.pages.yml`, the forms of the admin panel, from `tools/build/pages-cms.cjs` |
 | `npm run og-image` | Redraws `public/og-image.png`, the picture shown in link previews |
 | `npm run hooks` | Switches on the git hooks of the project, once per clone |

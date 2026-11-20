@@ -57,8 +57,8 @@ open a pull request on GitHub. The host builds a preview address for it.
 2. In the project, add an entry under **Pictures** for each one: pick the file, describe it, choose desktop or
    phone. The first picture is the cover.
 3. The width and height can be left empty in the panel, but the site needs them, and each picture needs its
-   smaller WebP copies. On the PC, pull the change and let both be made, then commit and push the result through
-   a branch as usual:
+   smaller AVIF and WebP copies. On the PC, pull the change and let both be made (the copies take a few seconds
+   per picture), then commit and push the result through a branch as usual:
 
    ```powershell
    git pull

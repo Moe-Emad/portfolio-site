@@ -13,19 +13,57 @@ npm run weight
 
 ## The home page, from the original to today
 
-| | Original | After F2-F4 (new design, real HTML) | After F5 (this change) |
-|---|---|---|---|
-| Requests | 41, of them 15 to other servers | 10, all to the site itself | 10, all to the site itself |
-| JavaScript | 414 kB | 74 kB | 74 kB |
-| CSS | 7 kB | 6 kB | 6 kB |
-| HTML | 0.3 kB (an empty page) | 6 kB (the whole text) | 6 kB |
-| Fonts | 80 kB, from Google | 74 kB, from the site | 74 kB, from the site |
-| Pictures | 2,988 kB | 393 kB | 125 kB on a desktop, 161 kB on a phone |
-| 3D models and their lighting map | 2,908 kB | none | none |
-| **Total as it travels** | **6,397 kB** | **553 kB** | **286 kB on a desktop, 322 kB on a phone** |
+| | Original | After F2-F4 (new design, real HTML) | After F5 (WebP copies) | Today (after F52, AVIF copies) |
+|---|---|---|---|---|
+| Requests | 41, of them 15 to other servers | 10, all to the site itself | 10, all to the site itself | 13, all to the site itself |
+| JavaScript | 414 kB | 74 kB | 74 kB | 91 kB |
+| CSS | 7 kB | 6 kB | 6 kB | 9 kB |
+| HTML | 0.3 kB (an empty page) | 6 kB (the whole text) | 6 kB | 9 kB |
+| Fonts | 80 kB, from Google | 74 kB, from the site | 74 kB, from the site | 74 kB, from the site |
+| Pictures | 2,988 kB | 393 kB | 125 kB on a desktop, 161 kB on a phone | 149 kB on a desktop, 222 kB on a phone |
+| 3D models and their lighting map | 2,908 kB | none | none | none |
+| **Total as it travels** | **6,397 kB** | **553 kB** | **286 kB on a desktop, 322 kB on a phone** | **332 kB on a desktop, 405 kB on a phone** |
 
 The original was measured from a build of the first version (`583fd75`) with the same method. Its 2,908 kB of 3D data are the models of the room (1,632 kB) and a lighting map the 3D library fetched
-from another server (1,276 kB).
+from another server (1,276 kB). The last column counts every picture of the page; before B12 the tool missed the
+lower pictures, so the picture figures of the earlier columns are too low.
+
+## Measured on 2026-11-20, F52 (AVIF copies)
+
+Every screenshot now has AVIF copies beside its WebP copies, in the same widths. The page offers AVIF first; a
+browser that cannot show it takes the WebP copy, and one that can show neither takes the original. Both tables were
+measured with `npm run weight` on the same day, before and after the change.
+
+Before (WebP):
+
+| Page | Size | Requests | HTML | CSS | JavaScript | Fonts | Pictures | Total as it travels |
+|---|---|---|---|---|---|---|---|---|
+| `/` | desktop | 13 | 9 kB | 9 kB | 91 kB | 74 kB | 186 kB | **368 kB** |
+| `/` | phone | 13 | 9 kB | 9 kB | 91 kB | 74 kB | 272 kB | **454 kB** |
+| `/work/rplms-v2/` | desktop | 13 | 5 kB | 9 kB | 91 kB | 74 kB | 190 kB | **369 kB** |
+| `/work/rplms-v2/` | phone | 13 | 5 kB | 9 kB | 91 kB | 74 kB | 230 kB | **409 kB** |
+
+After (AVIF):
+
+| Page | Size | Requests | HTML | CSS | JavaScript | Fonts | Pictures | Total as it travels |
+|---|---|---|---|---|---|---|---|---|
+| `/` | desktop | 13 | 9 kB | 9 kB | 91 kB | 74 kB | 149 kB | **332 kB** |
+| `/` | phone | 13 | 9 kB | 9 kB | 91 kB | 74 kB | 222 kB | **405 kB** |
+| `/work/rplms-v2/` | desktop | 13 | 5 kB | 9 kB | 91 kB | 74 kB | 165 kB | **344 kB** |
+| `/work/rplms-v2/` | phone | 13 | 5 kB | 9 kB | 91 kB | 74 kB | 202 kB | **380 kB** |
+
+The pictures of the home page are 37 kB lighter on a desktop and 50 kB lighter on a phone, about a fifth. Each
+picture now also names its AVIF copies in the HTML: 242 B more of compressed HTML on the home page (9,025 B to
+9,267 B), about 200 B on a project page. The JavaScript grew by 23 B (94,245 B to 94,268 B, together with EmailJS);
+3,012 B of its 95 kB budget are left.
+
+How the quality was chosen: every screenshot was compared with its original by two measures, SSIM and PSNR, and
+the WebP copies of F5 (quality 80) were the bar. AVIF at quality 60, effort 7, with the colour kept at full
+resolution: the 51 screenshots at full width come to 1,837 kB against 2,305 kB in WebP, 20 % less, and 49 of them
+are at least as close to the original on both measures; the other two are within 0.001 SSIM and 0.8 dB PSNR. At
+quality 55 and below AVIF fell behind WebP on most screenshots, and with the colour halved as WebP does it (4:2:0)
+it fell behind on coloured text. In the repository the copies are 174 AVIF files of 4.1 MB, beside the 174 WebP
+files of 5.0 MB.
 
 ## Measured on 2026-11-20, B12 (every picture counted)
 
@@ -151,15 +189,16 @@ The page today weighs about a twentieth of the original, and it shows its text b
   layout, so it asks for the sharper copy.
 - The original JPEG or PNG stays as the fallback for a browser without WebP and as the picture of link previews.
 
-AVIF is not done yet. In a trial on five of the screenshots it came to 180 kB where WebP needs 247 kB, about a
-quarter less, which would take another 30 to 40 kB off a page. It would also add a second set of 82 files to the
-repository. It is noted in the tracker as a follow-up.
+AVIF was not done in F5. In a trial on five of the screenshots it came to 180 kB where WebP needs 247 kB, about a
+quarter less, which would take another 30 to 40 kB off a page. It would also add a second set of files to the
+repository. It was added in F52 (above).
 
 ## What keeps it that way
 
 `tests/browser/weight.spec.js` holds the budgets, a little above today's figures: 95 kB of JavaScript and 12 kB of
-CSS (compressed), 12 kB of HTML per page, 350 kB per picture and 160 kB per WebP copy. It also checks that a phone
-is given a copy no wider than 1,100 pixels, that pictures below the first screen wait until they are needed, and
+CSS (compressed), 12 kB of HTML per page, 350 kB per picture and 160 kB per AVIF or WebP copy. It also checks
+that every picture offers its AVIF copies first, then WebP, then the original (F52), that the browser takes an AVIF
+copy and a phone one no wider than 1,100 pixels, that pictures below the first screen wait until they are needed, and
 that the JavaScript carries no check of the content (F51). Another checks that `npm run weight` counts every
 picture of the home page, with the pictures held back as on a slow connection (B12).
 `tests/browser/design.spec.js` checks that no request goes to another server.

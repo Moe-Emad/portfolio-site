@@ -92,6 +92,7 @@ issue and pull request numbers do not link here. From D4 on, the numbers are tho
 | F49 | #60 | The tabs of the work list name their kind without a count | Every tab carried the number of its projects (two of them 1), the look of a shop's filter bar, while the line under the tabs already said the number; at 1024 px the wider tabs pushed the title of the section onto two lines | `feat/f49-tab-names` | #61 | done |
 | F50 | #62 | Each screen in a frame of its own kind, and covers no wider than their pixels | Every screenshot stood in the same card with its caption inside, a phone screen as a tall rectangle; the 1440 px cover of a project page was stretched to 1664 px on a wide screen and looked soft | `feat/f50-screen-frames` | #63 | done |
 | F51 | #66 | The content is checked when the site is built, not in every visit | The JavaScript was 873 B under its budget; every visit repeated in the browser the check of the content that the build and the tests had already made | `feat/f51-content-check-at-build` | #67 | done |
+| F52 | #72 | AVIF copies of the screenshots | The pictures were the largest part of every page and came only as WebP; AVIF holds the same screenshot about a fifth smaller, as close to the original | `feat/f52-avif-copies` | #PR | done |
 
 ## D - docs and developer setup
 
@@ -110,7 +111,7 @@ New findings that are outside the item being worked on go here first, then becom
 
 - The other pictures of Molok El-Sook (02 to 06) are still the 800 px pictures of the game's `demo/` folder. They
   are shown smaller, in the gallery of its page, so they are sharp enough; new ones at 1440 px would match the rest.
-- JavaScript is at 94,220 B of its 95 kB budget (97,280 B) since F51; 3,060 B are left. React DOM is about 65 kB of
+- JavaScript is at 94,268 B of its 95 kB budget (97,280 B) since F52; 3,012 B are left. React DOM is about 65 kB of
   it. The next thing to trim: the text of every project is in the main bundle (about 11 kB compressed, the draft
   included), although the home page shows only a part of each and a project page only its own.
 - The Jpro site answers on jprotraining.my and on jprotraining.com. The project page links to jprotraining.my (the
@@ -119,11 +120,8 @@ New findings that are outside the item being worked on go here first, then becom
 - On this PC, a full `npm run test:browser` while other programs are busy can stop at the 30 s limit in a few tests,
   different ones from run to run, all on the desktop size (seen in B8: 2, then 6). The same files pass on their own and
   on GitHub. If it keeps happening, run the tests with fewer workers (`npm run test:browser -- --workers 2`).
-- AVIF copies of the screenshots: a trial on five pictures showed AVIF a quarter smaller than WebP (180 kB against
-  247 kB), another 30 to 40 kB per page. F5 delivered WebP only; `src/lib/pictures.js` and `npm run pictures` are
-  the two places to extend.
 - The screenshots were taken at one pixel per point: the wide screens are 1440 px. Since F50 the cover is never
   stretched on an ordinary screen, but a sharp screen (two pixels per point, most laptops sold today) has about 2,650
   pixels across for the cover at 1440 px and the picture has 1,440, so it is enlarged there, as are the pictures of
   the work list and the gallery. Taking the pictures again at twice the size (2880 px) would make them sharp everywhere; each project
-  has to be running for that, and the WebP copies (`npm run pictures`) would grow.
+  has to be running for that, and the AVIF and WebP copies (`npm run pictures`) would grow.
