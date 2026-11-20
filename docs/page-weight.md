@@ -28,6 +28,30 @@ The original was measured from a build of the first version (`583fd75`) with the
 from another server (1,276 kB). The last column counts every picture of the page; before B12 the tool missed the
 lower pictures, so the picture figures of the earlier columns are too low.
 
+## Measured on 2026-11-20, F58 (screenshots sharp on sharp screens, starting with Jpro)
+
+Most laptops have two pixels per point. The screenshots of wide screens were 1,440 px across, so on such a screen
+the cover of a project page, about 1,320 points wide at 1440, was enlarged from 1,440 to about 2,650 pixels and
+looked soft. The four wide screenshots of the Jpro website were taken again at 2880 x 1800 from its public pages.
+Two copy widths were added (1,440 and 2,200 px, in AVIF and WebP): an ordinary desktop takes the 1,440 px copy, the
+size it had before, and a sharp one the full picture. The cover keeps its place: never wider than its pixels nor
+than 90rem (F50).
+
+`npm run weight` measures a third size since F58: a sharp desktop, 1440 x 900 at two pixels per point.
+
+| Page | Size | Pictures before | Pictures after | Total before | Total after |
+|---|---|---|---|---|---|
+| `/work/jpro-website/` | desktop | 127 kB | 122 kB | 280 kB | 276 kB |
+| `/work/jpro-website/` | sharp desktop | 161 kB | 228 kB | 314 kB | 381 kB |
+| `/work/jpro-website/` | phone | 144 kB | 140 kB | 297 kB | 293 kB |
+| `/` | desktop | 149 kB | 148 kB | 306 kB | 305 kB |
+| `/` | sharp desktop | 309 kB | 328 kB | 465 kB | 485 kB |
+| `/` | phone | 222 kB | 221 kB | 379 kB | 378 kB |
+
+Sharpness costs bytes on a sharp screen only: 67 kB more for the Jpro page there, while an ordinary desktop and a
+phone get what they got before. Every new file stays inside the budgets (the largest picture 205 kB, the largest
+copy 105 kB). The other projects follow when each of them runs again.
+
 ## Measured on 2026-11-20, F56 (the Arabic font holds only the letters the site shows)
 
 Every page shows the Arabic name in Rakkas (in the footer, and on the home page in the first view), and Molok

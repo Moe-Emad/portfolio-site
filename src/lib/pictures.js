@@ -3,8 +3,12 @@
 // its own size instead of the desktop one, each in AVIF and in WebP. This file is the one place that knows their
 // names; the page (src/components/Shot.tsx) and the tool that makes them (tools/build/picture-sizes.cjs) both use it.
 
-/** The widths of the narrower copies, in pixels: a small phone, a phone with a sharp screen, a tablet. */
-export const COPY_WIDTHS = [640, 828, 1100];
+/**
+ * The widths of the narrower copies, in pixels: a small phone, a phone with a sharp screen, a tablet, an ordinary
+ * desktop and a sharp one (two pixels per point, as most laptops). The last two only come out of a screenshot taken
+ * at twice the size (tracker F58): a copy is never wider than its picture.
+ */
+export const COPY_WIDTHS = [640, 828, 1100, 1440, 2200];
 
 /**
  * The formats of the copies, in the order the page offers them. A browser takes the first it can show: AVIF is

@@ -98,6 +98,7 @@ issue and pull request numbers do not link here. From D4 on, the numbers are tho
 | F55 | #78 | The fonts of the first view are fetched with the stylesheet | The browser found the two typefaces only in the stylesheet and asked for Rakkas last: on a slow connection the name and the titles stood in a stand-in typeface for about 0.4 s and the page moved when it arrived | `feat/f55-font-preload` | #79 | done |
 | F56 | #80 | The Arabic font holds only the letters the site shows | Every page downloaded the whole Arabic file of Rakkas (26 kB) for ten letters, and its face, without a range, was taken for every character, Latin text included | `feat/f56-arabic-font-subset` | #81 | done |
 | F57 | #82 | Skills on the lines of Experience on a wide screen | At 1920 px the tools of each group ended near the middle of the row and the right of the section stayed empty, while Experience above uses the width in three columns | `feat/f57-skills-columns` | #83 | done |
+| F58 | #84 | Screenshots sharp on sharp screens, starting with Jpro | On a screen with two pixels per point, as most laptops, the 1,440 px screenshots were enlarged and looked soft; the site had no copy for such a screen | `feat/f58-sharp-screenshots` | #85 | done |
 
 ## D - docs and developer setup
 
@@ -119,8 +120,7 @@ New findings that are outside the item being worked on go here first, then becom
 - On this PC, a full `npm run test:browser` while other programs are busy can stop at the 30 s limit in a few tests,
   different ones from run to run, all on the desktop size (seen in B8: 2, then 6). The same files pass on their own and
   on GitHub. If it keeps happening, run the tests with fewer workers (`npm run test:browser -- --workers 2`).
-- The screenshots were taken at one pixel per point: the wide screens are 1440 px. Since F50 the cover is never
-  stretched on an ordinary screen, but a sharp screen (two pixels per point, most laptops sold today) has about 2,650
-  pixels across for the cover at 1440 px and the picture has 1,440, so it is enlarged there, as are the pictures of
-  the work list and the gallery. Taking the pictures again at twice the size (2880 px) would make them sharp everywhere; each project
-  has to be running for that, and the AVIF and WebP copies (`npm run pictures`) would grow.
+- Sharp screenshots (F58): the site carries screenshots taken at twice the size, and the four wide screenshots of
+  Jpro are retaken at 2880 px. The wide screenshots of Athelvoid (7), MTC (7), Relic (8), TPMS (5), RPLMS (6) and
+  Molok El-Sook (5, four of them the 800 px pictures of its demo folder) are still 1x; each project has to run with
+  its data to take them again, the same pages in the same state. One item per project.

@@ -21,11 +21,13 @@ function pngHeader(width, height) {
   return buffer;
 }
 
-test('the size of a PNG and of a JPEG is read from the file', () => {
+test('the size of a PNG and of a JPEG is read from the file', async () => {
   assert.deepEqual(pictureSize(pngHeader(640, 480)), { width: 640, height: 480 });
   assert.deepEqual(pictureSize(fs.readFileSync(path.join(ROOT, 'public', 'og-image.png'))), { width: 1200, height: 630 });
+  // A screenshot of the repo, compared with what sharp reads: the screenshots are retaken now and then (F58).
   const jpeg = fs.readFileSync(path.join(ROOT, 'public', 'images', 'projects', 'jpro-website', '01-home.jpg'));
-  assert.deepEqual(pictureSize(jpeg), { width: 1440, height: 900 });
+  const { width, height } = await require('sharp')(jpeg).metadata();
+  assert.deepEqual(pictureSize(jpeg), { width, height });
 });
 
 test('a file that is not a picture is refused', () => {

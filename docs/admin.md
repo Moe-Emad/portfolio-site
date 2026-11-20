@@ -52,8 +52,9 @@ open a pull request on GitHub. The host builds a preview address for it.
 
 ## Pictures
 
-1. Upload the screenshots in **Media**, into `projects/<address of the page>/`. JPEG, PNG or WebP. Keep them under
-   about 300 kB each: 1440 pixels wide is plenty for a desktop screenshot.
+1. Upload the screenshots in **Media**, into `projects/<address of the page>/`. JPEG, PNG or WebP. Take them at
+   twice the size of the window, so that sharp screens show them sharp: a window 1440 points wide gives a picture
+   2880 pixels wide, a phone 390 points wide one of 780. Keep them under about 300 kB each (JPEG at quality 80 does).
 2. In the project, add an entry under **Pictures** for each one: pick the file, describe it, choose desktop or
    phone. The first picture is the cover.
 3. The width and height can be left empty in the panel, but the site needs them, and each picture needs its
