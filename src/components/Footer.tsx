@@ -13,7 +13,7 @@ export default function Footer({ home }: { home: boolean }) {
         </p>
         {/* The year is written when the site is built and corrected in the browser if it has changed since. */}
         <p suppressHydrationWarning>
-          © {new Date().getFullYear()} {profile.name}. Built with React, without a template.
+          © {new Date().getFullYear()} {profile.name}.
         </p>
         <ul>
           <li>

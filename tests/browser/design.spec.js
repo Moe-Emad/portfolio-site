@@ -359,6 +359,20 @@ test.describe('side stripes', () => {
   }
 });
 
+// The footer says only the year and the name (tracker F31): how the site was built is for the repository.
+test.describe('the footer', () => {
+  const profile = JSON.parse(fs.readFileSync('content/profile.json', 'utf8'));
+
+  for (const path of ['/', '/work/relic/']) {
+    test(`on ${path} it gives the year and the name, and nothing about how the site was built`, async ({ page }) => {
+      await page.goto(path);
+      const footer = page.locator('.site-footer');
+      await expect(footer.locator('p', { hasText: '©' })).toHaveText(`© ${new Date().getFullYear()} ${profile.name}.`);
+      await expect(footer).not.toContainText(/built with|template/i);
+    });
+  }
+});
+
 // Skills as rows of tags, without counts (tracker F24).
 test.describe('the skills', () => {
   test.use({ viewport: { width: 1920, height: 1080 } });
