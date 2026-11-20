@@ -27,6 +27,19 @@ test('the JavaScript and the CSS stay inside their budgets', () => {
   expect(css, `CSS, compressed: ${(css / kB).toFixed(0)} kB`).toBeLessThan(12 * kB);
 });
 
+test('the browser is not sent the check of the content: the build has made it', () => {
+  // Tracker F51. The build draws every page with the content and stops on a broken file, and the unit tests check
+  // every file again. In the browser of a visitor the check could only repeat a known result, at the cost of
+  // about 2.5 kB of the JavaScript budget.
+  const code = assets
+    .filter((file) => file.endsWith('.js'))
+    .map((file) => fs.readFileSync(file, 'utf8'))
+    .join('\n');
+  for (const message of ['The content has', 'must be a text that is not empty', 'must be one of: ']) {
+    expect(code.includes(message), `the JavaScript holds "${message}"`).toBe(false);
+  }
+});
+
 test('no page sends more than 12 kB of HTML, compressed', () => {
   for (const file of files(BUILD).filter((name) => name.endsWith('.html'))) {
     expect(gzip(file), path.relative(BUILD, file)).toBeLessThan(12 * kB);
