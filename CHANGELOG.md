@@ -81,3 +81,4 @@ and do not link here.
 - F49: The tabs of the work list name their kind without a count; the line under them says how many projects are shown (#61)
 - F50: Captions stand under the screens; a phone screen is drawn as a phone; the cover of a project page is never stretched past its pixels (#63)
 - B11: A Content-Security-Policy on every page: only the site's own files and its theme script run, connections only to the site and EmailJS; the browser tests run under it (#65)
+- F51: The browser no longer repeats the check of the content that the build and the tests make; every page downloads 2.2 kB less JavaScript, 3 kB of the budget free (#67)

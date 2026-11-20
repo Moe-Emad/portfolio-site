@@ -90,6 +90,7 @@ issue and pull request numbers do not link here. From D4 on, the numbers are tho
 | F48 | #58 | Lines draw themselves instead of text rising | Almost every block of text rose into place while scrolling and the figures counted up, rewriting their text while it was read: the motion of a template, not of a drawing | `feat/f48-draw-motion` | #59 | done |
 | F49 | #60 | The tabs of the work list name their kind without a count | Every tab carried the number of its projects (two of them 1), the look of a shop's filter bar, while the line under the tabs already said the number; at 1024 px the wider tabs pushed the title of the section onto two lines | `feat/f49-tab-names` | #61 | done |
 | F50 | #62 | Each screen in a frame of its own kind, and covers no wider than their pixels | Every screenshot stood in the same card with its caption inside, a phone screen as a tall rectangle; the 1440 px cover of a project page was stretched to 1664 px on a wide screen and looked soft | `feat/f50-screen-frames` | #63 | done |
+| F51 | #66 | The content is checked when the site is built, not in every visit | The JavaScript was 873 B under its budget; every visit repeated in the browser the check of the content that the build and the tests had already made | `feat/f51-content-check-at-build` | #67 | done |
 
 ## D - docs and developer setup
 
@@ -107,10 +108,9 @@ New findings that are outside the item being worked on go here first, then becom
 
 - The other pictures of Molok El-Sook (02 to 06) are still the 800 px pictures of the game's `demo/` folder. They
   are shown smaller, in the gallery of its page, so they are sharp enough; new ones at 1440 px would match the rest.
-- JavaScript is at 96,424 B of its 95 kB budget (97,280 B; `tests/browser/weight.spec.js` adds up the main bundle
-  and a 1.5 kB chunk) since F48, which took the count-up of the figures out; 856 B are left. Most of the growth came
-  with React DOM 19.3 in A7, about 10.5 kB larger in the bundle than 19.1. A change that adds more than that reaches
-  the budget; decide then whether to trim or to raise it.
+- JavaScript is at 94,220 B of its 95 kB budget (97,280 B) since F51; 3,060 B are left. React DOM is about 65 kB of
+  it. The next thing to trim: the text of every project is in the main bundle (about 11 kB compressed, the draft
+  included), although the home page shows only a part of each and a project page only its own.
 - The picture column of `npm run weight` depends on timing. Its scroll (steps of three quarters of a screen every
   120 ms) is faster than the pictures below the first screen load, so it counts two to five of the seven on the home
   page, differently from run to run (found in A7). Brought into view one by one, all seven load. A fix: bring each

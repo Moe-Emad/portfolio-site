@@ -27,6 +27,20 @@ npm run weight
 The original was measured from a build of the first version (`583fd75`) with the same method. Its 2,908 kB of 3D data are the models of the room (1,632 kB) and a lighting map the 3D library fetched
 from another server (1,276 kB).
 
+## Measured on 2026-11-20, F51 (the content is checked when the site is built)
+
+The browser no longer checks the content files: the build has already checked them and drawn every page with them,
+and the unit tests check them again. Only the JavaScript changes. Both builds were made from the same files, with
+and without the change; compressed with gzip:
+
+| | Main bundle (every page) | EmailJS (loaded on the first send) | Together, as the budget counts | Left of the 95 kB budget (97,280 B) |
+|---|---|---|---|---|
+| Before F51 | 94,932 B | 1,475 B | 96,407 B | 873 B |
+| After F51 | 92,745 B | 1,475 B | 94,220 B | 3,060 B |
+
+Every page downloads 2,187 B less, and the browser has 6.9 kB less code to read before the page answers. React DOM
+is about 65 kB of the main bundle; most of the rest is the site's own components and the text of the content.
+
 ## Measured on 2026-11-20, F33 (the gallery of a project page)
 
 F33 changes how the screens under "More screens" are laid out, and with it which copy of each picture the browser
@@ -114,5 +128,6 @@ repository. It is noted in the tracker as a follow-up.
 
 `tests/browser/weight.spec.js` holds the budgets, a little above today's figures: 95 kB of JavaScript and 12 kB of
 CSS (compressed), 12 kB of HTML per page, 350 kB per picture and 160 kB per WebP copy. It also checks that a phone
-is given a copy no wider than 1,100 pixels and that pictures below the first screen wait until they are needed.
+is given a copy no wider than 1,100 pixels, that pictures below the first screen wait until they are needed, and
+that the JavaScript carries no check of the content (F51).
 `tests/browser/design.spec.js` checks that no request goes to another server.
