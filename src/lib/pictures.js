@@ -26,9 +26,18 @@ export function copies(src, width, format) {
   ];
 }
 
-/** The copies in one format as the "srcset" of a <source>: "/a-640.avif 640w, /a.avif 1440w". */
-export function srcSet(src, width, format) {
+/**
+ * The address of a file of a picture with the fingerprint of the picture's files: "/a.avif?v=1a2b3c4d" (tracker
+ * F54, tools/build/picture-versions.mjs). It changes when the picture does, so a browser may keep the file for a
+ * year. Without a fingerprint, the bare path.
+ */
+export function versioned(src, version) {
+  return version ? `${src}?v=${version}` : src;
+}
+
+/** The copies in one format as the "srcset" of a <source>: "/a-640.avif?v=1a2b3c4d 640w, /a.avif?v=1a2b3c4d 1440w". */
+export function srcSet(src, width, format, version) {
   return copies(src, width, format)
-    .map((copy) => `${copy.src} ${copy.width}w`)
+    .map((copy) => `${versioned(copy.src, version)} ${copy.width}w`)
     .join(', ');
 }

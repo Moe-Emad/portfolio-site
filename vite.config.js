@@ -5,6 +5,7 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import { projectCard } from "./src/content/schema.ts";
+import { withPictureVersions } from "./tools/build/picture-versions.mjs";
 
 // The figures the page shows about itself are counted from the repository when the site is built
 // (tools/build/site-record.cjs) and written into the code as a constant.
@@ -17,6 +18,7 @@ const PROJECT_FILE = /[\\/]content[\\/]projects[\\/][^\\/]+\.json$/;
 /**
  * The project files as the site needs them (tracker F53). The plugin hands Vite JSON text, and Vite makes a module
  * of it as of any JSON file; a change to a file reaches the dev server as before.
+ * - Every picture gets the fingerprint of its files, which its addresses carry (tracker F54).
  * - "content/projects/<slug>.json?card" is the card of that project: the part every page needs, cut from the file
  *   by projectCard() in src/content/schema.ts (null for a draft).
  * - A draft (tracker F17) is null in the build for the browser, so that no script of the site holds its text. The
@@ -24,18 +26,25 @@ const PROJECT_FILE = /[\\/]content[\\/]projects[\\/][^\\/]+\.json$/;
  */
 function projectFiles() {
   let build = false;
+  let publicDir = "";
   return {
     name: "project-files",
     configResolved(config) {
       build = config.command === "build";
+      publicDir = config.publicDir;
     },
     load(id, options) {
       const [file, query] = id.split("?");
-      if (!PROJECT_FILE.test(file)) return null;
-      const project = () => JSON.parse(fs.readFileSync(file, "utf8"));
-      if (query === "card") return JSON.stringify(projectCard(project()));
-      if (query === undefined && build && !options?.ssr && project().draft === true) return "null";
-      return null;
+      if (!PROJECT_FILE.test(file) || (query !== undefined && query !== "card")) return null;
+      let project;
+      try {
+        project = withPictureVersions(JSON.parse(fs.readFileSync(file, "utf8")), publicDir);
+      } catch (error) {
+        throw new Error(`${file}: ${error.message}`);
+      }
+      if (query === "card") return JSON.stringify(projectCard(project));
+      if (build && !options?.ssr && project.draft === true) return "null";
+      return JSON.stringify(project);
     },
   };
 }

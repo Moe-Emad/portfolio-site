@@ -50,7 +50,8 @@ for (const project of projects) {
       await expect(pictures).toHaveCount(project.images.length);
       await scrollThrough(page);
       for (const image of project.images) {
-        const picture = page.locator(`main img[src="${image.src}"]`);
+        // The address carries the fingerprint of the picture's files (tracker F54).
+        const picture = page.locator(`main img[src^="${image.src}?v="]`);
         await expect(picture).toHaveAttribute('alt', image.alt);
         await expect(picture).toHaveAttribute('width', String(image.width));
         await expect.poll(() => picture.evaluate((element) => element.complete && element.naturalWidth > 0), { message: `${image.src} loaded` }).toBe(true);

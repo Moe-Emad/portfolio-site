@@ -86,3 +86,4 @@ and do not link here.
 - D6: The README describes the motion of today: the star drawing itself on opening, and further down rules that draw while the text stands still (#71)
 - F52: Every screenshot has AVIF copies, offered before WebP; the pictures of the home page weigh 149 kB instead of 186 kB on a desktop and 222 kB instead of 272 kB on a phone, as sharp as before (#73)
 - F53: The script of every page carries a card of each project instead of every project's whole text; a project page loads its own text, named in its head; nothing of the draft is sent. 7.6 kB less JavaScript on every page, 7.8 kB of the budget free (#75)
+- F54: Every address of a picture carries a fingerprint of its files, and browsers keep the pictures for a year: a second visit asks the host about none of them instead of each, and a replaced picture is fetched at once (#77)

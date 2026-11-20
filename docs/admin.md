@@ -70,6 +70,10 @@ open a pull request on GitHub. The host builds a preview address for it.
 
    Until then the check on GitHub is red and the new pictures do not go online; everything else stays as it was.
 
+A screenshot may also be replaced under the same name, with its copies made again the same way. Visitors see the
+new one at once: the site names every picture with a fingerprint of its files, so a browser that kept the old one
+fetches it anew.
+
 ## If a form looks wrong
 
 The forms come from `.pages.yml`, which is written by `npm run cms-config` from `tools/build/pages-cms.cjs`. If the

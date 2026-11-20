@@ -2,6 +2,7 @@
 // keep, the picture and text of a link preview, and structured data. Pure functions: the build calls them once
 // per page (src/entry-server.tsx) and the unit tests check them.
 import { content, projectBySlug } from './content/index.ts';
+import { versioned } from './lib/pictures.js';
 import { roleLine } from './lib/profile.js';
 import { pageTitle } from './page-title.ts';
 import { WORK_PATH, matchRoute, projectPath } from './routes.ts';
@@ -50,8 +51,9 @@ export function pageHead(path: string): PageHead {
       title,
       description: project.summary,
       path: projectPath(project.slug),
+      // With the fingerprint of its files (tracker F54): a link preview of a changed cover fetches it anew.
       image: cover
-        ? { src: cover.src, width: cover.width, height: cover.height, alt: cover.alt }
+        ? { src: versioned(cover.src, cover.version), width: cover.width, height: cover.height, alt: cover.alt }
         : { ...SHARE_IMAGE, alt: `${profile.name}, ${profile.role}` },
       index: true,
       data: {

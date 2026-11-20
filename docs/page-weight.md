@@ -28,6 +28,27 @@ The original was measured from a build of the first version (`583fd75`) with the
 from another server (1,276 kB). The last column counts every picture of the page; before B12 the tool missed the
 lower pictures, so the picture figures of the earlier columns are too low.
 
+## Measured on 2026-11-20, F54 (browsers keep the pictures)
+
+What a first visit downloads does not change. A second visit does: the host sent every picture with
+`max-age=0, must-revalidate`, its default, so the browser asked about each picture again before it showed it, one
+round trip each, and on a phone every picture further down waited for its answer as it came into view. Now every
+address of a picture carries a fingerprint of its files (`?v=1a2b3c4d`, worked out by the build), and pictures under
+`/images/` may be kept for a year, as the scripts already were. A replaced picture gets a new fingerprint, so a
+browser fetches it at once.
+
+A second visit to the Relic page on a desktop (nine pictures), served as the host serves the site: the rules of
+`public/_headers` and the host's default for every other file.
+
+| | Pictures shown | Questions to the host about pictures |
+|---|---|---|
+| Before F54 | 9 | 9, each answered "304 Not Modified" |
+| After F54 | 9 | none: all from the browser's cache |
+
+The fingerprints make a first visit a little larger, compressed: the HTML of the home page 9,266 B to 9,457 B, of
+the Relic page 5,916 B to 6,126 B; the script of every page 85,232 B to 85,337 B, the Relic file 2,768 B to
+2,860 B. The budget counts 89,672 B; 7,608 B of it are left.
+
 ## Measured on 2026-11-20, F53 (each page loads only the project text it shows)
 
 The script of every page carried the whole file of every project, the draft included: the paragraphs and points of
