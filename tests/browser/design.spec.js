@@ -866,3 +866,56 @@ test('on a phone the star stands under the buttons at full strength and crosses 
   });
   expect(tablet).toEqual({ opacity: '1', besideText: true, underName: true, inBand: true });
 });
+
+// The dark theme is a blueprint (tracker F47): deep blueprint blue with a faint grid of drawing paper behind the page,
+// and bands that stand apart from the ground. Before, it was navy with lavender text, and a tinted band differed from
+// the ground by 1.06. axe cannot measure text over a background image, so its helper takes the grid away while it
+// measures (support.js); this test proves the grid is too faint to change what it would find.
+test('the dark theme is a blueprint: a faint grid on the ground, bands that stand apart, text that keeps its contrast', async ({ page }) => {
+  await page.emulateMedia({ colorScheme: 'dark', reducedMotion: 'reduce' });
+  await open(page);
+  const problems = await page.evaluate(() => {
+    const found = [];
+    if (document.documentElement.dataset.theme !== 'dark') found.push(`the theme is ${document.documentElement.dataset.theme}`);
+    const probe = document.createElement('i');
+    document.body.append(probe);
+    const rgba = (value) => {
+      probe.style.color = '';
+      probe.style.color = value;
+      const [r, g, b, a = 1] = getComputedStyle(probe).color.match(/[\d.]+/g).map(Number);
+      return { rgb: [r, g, b], a };
+    };
+    const root = getComputedStyle(document.documentElement);
+    const token = (name) => rgba(root.getPropertyValue(name).trim() || 'transparent');
+    const lin = (c) => ((c /= 255) <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4);
+    const lum = ([r, g, b]) => 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(b);
+    const ratio = (x, y) => (Math.max(lum(x), lum(y)) + 0.05) / (Math.min(lum(x), lum(y)) + 0.05);
+    const over = (base, white) => base.map((c) => c * (1 - white) + 255 * white);
+
+    // The grid: two sets of lines on the ground, faint even where a fine and a strong line cross.
+    const image = getComputedStyle(document.body).backgroundImage;
+    if ((image.match(/linear-gradient/g) ?? []).length < 4) found.push(`the ground has no grid: ${image}`);
+    const minor = token('--grid-minor');
+    const major = token('--grid-major');
+    const both = 1 - (1 - minor.a) * (1 - major.a);
+    if (minor.a === 0 || major.a === 0) found.push('the grid tokens are missing');
+    if (both > 0.08) found.push(`the grid is too strong: ${both.toFixed(3)} white where its lines cross`);
+
+    // The bands stand apart from the ground.
+    const ground = token('--ground').rgb;
+    const tint = rgba(getComputedStyle(document.querySelector('.section--tinted')).backgroundColor).rgb;
+    if (ratio(tint, ground) < 1.2) found.push(`a tinted band differs from the ground by ${ratio(tint, ground).toFixed(2)}`);
+
+    // Text keeps its contrast on the ground with a grid line under it, and on a band.
+    const needs = { '--ink': 4.5, '--muted': 4.5, '--title': 4.5, '--link': 4.5, '--error': 4.5, '--success': 4.5, '--field-border': 3 };
+    for (const [name, least] of Object.entries(needs)) {
+      for (const [where, background] of [['the ground under a grid line', over(ground, both)], ['a tinted band', tint]]) {
+        const value = ratio(token(name).rgb, background);
+        if (value < least) found.push(`${name} on ${where}: ${value.toFixed(2)}`);
+      }
+    }
+    probe.remove();
+    return found;
+  });
+  expect(problems).toEqual([]);
+});

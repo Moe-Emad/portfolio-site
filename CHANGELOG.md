@@ -76,3 +76,4 @@ and do not link here.
 - F44: The picture of link previews says the headline of the home page; its page is made from content/profile.json (#51)
 - F45: The first screen has one button, See the work, with Get in touch as a plain link; the role line stands under the name (#53)
 - F46: On a phone the star stands under the buttons at full strength, beside the text on a tablet; the name stands on clean blue (#55)
+- F47: The dark theme is a blueprint: deep blueprint blue, white and pale-blue text, a faint grid of drawing paper on the ground, bands that stand apart (#57)
