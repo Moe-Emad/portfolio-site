@@ -82,6 +82,7 @@ issue and pull request numbers do not link here. From D4 on, the numbers are tho
 | F41 | #44 | Smaller and earlier work as a register | Eight equal cells with the same star in every corner and a hover on cells that are not links; their names in the display face competed with the main work since F40 | `feat/f41-register` | #45 | done |
 | F42 | #46 | Name and email side by side in the contact form on a wide screen | Each field took the full width of its column, 924 px at 1920 for a name, which made the form taller than the text beside it | `feat/f42-form-pair` | #47 | done |
 | F43 | #48 | The phone menu fills the screen, and touch screens see no keyboard hints | The open menu ended in the middle of a phone screen over the first screen; the palette named arrow keys, Enter and Esc on touch screens | `feat/f43-phone-menu` | #49 | done |
+| F44 | #50 | The link preview says the headline of the home page | The share picture still said the line of before F26 under the name, typed into its script, while the home page had a new headline | `feat/f44-share-line` | #51 | done |
 
 ## D - docs and developer setup
 
@@ -103,9 +104,6 @@ New findings that are outside the item being worked on go here first, then becom
   and a 1.5 kB chunk) since F34, which took 12 B off (F33 had added 170 B); 640 B are left. Most of the growth came
   with React DOM 19.3 in A7, about 10.5 kB larger in the bundle than 19.1. The next change that adds JavaScript
   reaches the budget; decide then whether to trim or to raise it.
-- The picture of link previews (`public/og-image.png`, F36) says "Web applications built and brought up to date, with
-  a test behind every change." under the name, while the home page has said "From the database to the last pixel, I
-  build web apps that just work." since F26. The headline could take its place there (`tools/build/og-image.mjs`).
 - The picture column of `npm run weight` depends on timing. Its scroll (steps of three quarters of a screen every
   120 ms) is faster than the pictures below the first screen load, so it counts two to five of the seven on the home
   page, differently from run to run (found in A7). Brought into view one by one, all seven load. A fix: bring each
