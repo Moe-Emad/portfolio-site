@@ -14,6 +14,8 @@ dist-e2e-ssr/
 *.sql
 *.dump
 
+# Made by the build from content/ (tracker F56)
+src/fonts/generated/
 # Test output
 test-results/
 playwright-report/

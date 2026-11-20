@@ -17,7 +17,9 @@ about the work, and a page for every project.
   open a profile, all from the keyboard.
 - **A light and a dark theme.** The first visit follows the system setting; a choice is remembered.
 - **Latin and Arabic type.** The name is written in both scripts, in fonts the site serves itself (Rakkas for the
-  titles, Readex Pro for the text), so no request goes to another server.
+  titles, Readex Pro for the text), so no request goes to another server. The Arabic file of Rakkas is cut down to
+  the Arabic letters of the content whenever the site is built, with every form they take in a word: 6.5 kB instead
+  of 26 kB.
 - **Motion in CSS only.** The first screen opens with the star drawing itself line by line, the name rising and the
   Arabic name written from the right. Further down, pictures unroll as they come into view and rules draw themselves
   across, while the text stands still. Everything stands still for a visitor who has asked their system to reduce

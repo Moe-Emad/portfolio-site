@@ -96,6 +96,7 @@ issue and pull request numbers do not link here. From D4 on, the numbers are tho
 | F53 | #74 | Each page loads only the project text it shows | The script of every page carried the whole file of every project, the draft included (about 10 kB compressed), while the home page shows a card of each and a project page only its own text; the JavaScript was 3 kB under its budget | `feat/f53-project-text-per-page` | #75 | done |
 | F54 | #76 | Browsers keep the pictures, and fetch a changed one at once | The host sent every picture with max-age=0, so every visit asked about each picture again (nine round trips on a second visit to a project page); the pictures keep their names when replaced, so a long cache alone would show old ones | `feat/f54-picture-cache` | #77 | done |
 | F55 | #78 | The fonts of the first view are fetched with the stylesheet | The browser found the two typefaces only in the stylesheet and asked for Rakkas last: on a slow connection the name and the titles stood in a stand-in typeface for about 0.4 s and the page moved when it arrived | `feat/f55-font-preload` | #79 | done |
+| F56 | #80 | The Arabic font holds only the letters the site shows | Every page downloaded the whole Arabic file of Rakkas (26 kB) for ten letters, and its face, without a range, was taken for every character, Latin text included | `feat/f56-arabic-font-subset` | #PR | done |
 
 ## D - docs and developer setup
 

@@ -13,20 +13,46 @@ npm run weight
 
 ## The home page, from the original to today
 
-| | Original | After F2-F4 (new design, real HTML) | After F5 (WebP copies) | Today (after F53) |
+| | Original | After F2-F4 (new design, real HTML) | After F5 (WebP copies) | Today (after F56) |
 |---|---|---|---|---|
 | Requests | 41, of them 15 to other servers | 10, all to the site itself | 10, all to the site itself | 13, all to the site itself |
 | JavaScript | 414 kB | 74 kB | 74 kB | 83 kB |
 | CSS | 7 kB | 6 kB | 6 kB | 9 kB |
 | HTML | 0.3 kB (an empty page) | 6 kB (the whole text) | 6 kB | 9 kB |
-| Fonts | 80 kB, from Google | 74 kB, from the site | 74 kB, from the site | 74 kB, from the site |
+| Fonts | 80 kB, from Google | 74 kB, from the site | 74 kB, from the site | 55 kB, from the site |
 | Pictures | 2,988 kB | 393 kB | 125 kB on a desktop, 161 kB on a phone | 149 kB on a desktop, 222 kB on a phone |
 | 3D models and their lighting map | 2,908 kB | none | none | none |
-| **Total as it travels** | **6,397 kB** | **553 kB** | **286 kB on a desktop, 322 kB on a phone** | **325 kB on a desktop, 398 kB on a phone** |
+| **Total as it travels** | **6,397 kB** | **553 kB** | **286 kB on a desktop, 322 kB on a phone** | **306 kB on a desktop, 379 kB on a phone** |
 
 The original was measured from a build of the first version (`583fd75`) with the same method. Its 2,908 kB of 3D data are the models of the room (1,632 kB) and a lighting map the 3D library fetched
 from another server (1,276 kB). The last column counts every picture of the page; before B12 the tool missed the
 lower pictures, so the picture figures of the earlier columns are too low.
+
+## Measured on 2026-11-20, F56 (the Arabic font holds only the letters the site shows)
+
+Every page shows the Arabic name in Rakkas (in the footer, and on the home page in the first view), and Molok
+El-Sook has an Arabic title: ten Arabic letters in all. For them every page downloaded the whole Arabic file of
+Rakkas, 26,040 B. The build now cuts it down to the Arabic letters of the content, with every form they take in a
+word (`tools/build/arabic-font.mjs`, with `subset-font`): 6,508 B. Both Arabic texts are drawn pixel for pixel as
+with the whole file (a browser test compares them on both sizes).
+
+The two faces of Rakkas also have the range of their letters now. Fontsource's files for Latin and for Arabic,
+imported one by one, gave their face none, so the browser took each for every character: it fetched the Arabic
+file for the Latin name in the bar first, and asked for the Latin file only when that had arrived without Latin
+letters. F55 had already made the Latin file arrive in time by naming it in the head.
+
+| Page | Size | Requests | HTML | CSS | JavaScript | Fonts | Pictures | Total as it travels |
+|---|---|---|---|---|---|---|---|---|
+| `/` before | desktop | 13 | 9 kB | 9 kB | 83 kB | 74 kB | 149 kB | **325 kB** |
+| `/` after | desktop | 13 | 9 kB | 9 kB | 83 kB | 55 kB | 149 kB | **306 kB** |
+| `/` before | phone | 13 | 9 kB | 9 kB | 83 kB | 74 kB | 222 kB | **398 kB** |
+| `/` after | phone | 13 | 9 kB | 9 kB | 83 kB | 55 kB | 222 kB | **379 kB** |
+| `/work/relic/` before | desktop | 16 | 6 kB | 9 kB | 86 kB | 74 kB | 164 kB | **339 kB** |
+| `/work/relic/` after | desktop | 16 | 6 kB | 9 kB | 86 kB | 55 kB | 164 kB | **320 kB** |
+| `/work/relic/` before | phone | 16 | 6 kB | 9 kB | 86 kB | 74 kB | 251 kB | **426 kB** |
+| `/work/relic/` after | phone | 16 | 6 kB | 9 kB | 86 kB | 55 kB | 251 kB | **407 kB** |
+
+The times of the fonts did not change (measured as for F55: Rakkas there at about 400 ms, before the stylesheet).
 
 ## Measured on 2026-11-20, F55 (the fonts of the first view come with the stylesheet)
 
@@ -285,7 +311,9 @@ repository. It was added in F52 (above).
 can load and 12 kB of CSS (compressed), 12 kB of HTML per page, 350 kB per picture and 160 kB per AVIF or WebP copy.
 It checks that the script of every page holds the cards of the projects but not the text of their pages, that no
 script holds anything of a draft, and that a project page loads its own file and no other, named in its head (F53),
-and that every page names the two fonts of its first view in its head and uses each of them once (F55).
+that every page names the two fonts of its first view in its head and uses each of them once (F55), and that each
+face of Rakkas has the range of its letters and its Arabic file holds only the letters of the site, drawn as with
+the whole file (F56).
 It also checks
 that every picture offers its AVIF copies first, then WebP, then the original (F52), that the browser takes an AVIF
 copy and a phone one no wider than 1,100 pixels, that pictures below the first screen wait until they are needed, and

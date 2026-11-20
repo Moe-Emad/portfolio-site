@@ -6,6 +6,7 @@ import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import { projectCard } from "./src/content/schema.ts";
 import { withPictureVersions } from "./tools/build/picture-versions.mjs";
+import { writeArabicFont } from "./tools/build/arabic-font.mjs";
 
 // The figures the page shows about itself are counted from the repository when the site is built
 // (tools/build/site-record.cjs) and written into the code as a constant.
@@ -49,12 +50,35 @@ function projectFiles() {
   };
 }
 
+/**
+ * The Arabic file of Rakkas, cut down to the Arabic letters of the content (tracker F56, src/fonts/rakkas.css):
+ * made before the stylesheet that names it is read, and again on the dev server when a content file changes.
+ */
+function arabicFont() {
+  let root = process.cwd();
+  return {
+    name: "arabic-font",
+    configResolved(config) {
+      root = config.root;
+    },
+    async buildStart() {
+      await writeArabicFont({ root });
+    },
+    configureServer(server) {
+      server.watcher.on("change", (file) => {
+        if (!/[\\/]content[\\/].+\.json$/.test(file)) return;
+        writeArabicFont({ root }).catch((error) => server.config.logger.error(`arabic-font: ${error.message}`));
+      });
+    },
+  };
+}
+
 /** The whole file of a project is a script of its own, named "project-<slug>-<hash>.js" (tracker F53). */
 const isProjectFile = (chunk) => PROJECT_FILE.test(chunk.facadeModuleId ?? "");
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [projectFiles(), react(), tailwindcss()],
+  plugins: [arabicFont(), projectFiles(), react(), tailwindcss()],
   define: {
     __SITE_RECORD__: JSON.stringify(siteRecord()),
     // "production", "preview" or "development" when Vercel builds the site, empty everywhere else. Speed Insights
