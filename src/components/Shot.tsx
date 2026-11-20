@@ -3,7 +3,8 @@ import { webpSrcSet } from '../lib/pictures.js';
 import { useReveal } from '../lib/reveal.ts';
 
 /**
- * A screenshot in its frame.
+ * A screenshot in its frame, with its caption under the frame (tracker F50). The frame is of the screen's kind: a
+ * hairline for a wide screen, the outline of a phone around a phone screen (see .shot__frame in index.css).
  * - The browser picks a WebP copy that fits the place and the screen (src/lib/pictures.js); the original file is
  *   the fallback for a browser without WebP.
  * - The size of the file is written into the HTML, so the page keeps the place free and nothing jumps when the
@@ -26,18 +27,20 @@ export default function Shot({
   const ref = useReveal<HTMLElement>();
   return (
     <figure ref={ref} className="shot" data-device={image.device}>
-      <picture>
-        <source type="image/webp" srcSet={webpSrcSet(image.src, image.width)} sizes={sizes} />
-        <img
-          src={image.src}
-          alt={image.alt}
-          width={image.width}
-          height={image.height}
-          loading={first ? 'eager' : 'lazy'}
-          decoding="async"
-          fetchPriority={first ? 'high' : 'auto'}
-        />
-      </picture>
+      <div className="shot__frame">
+        <picture>
+          <source type="image/webp" srcSet={webpSrcSet(image.src, image.width)} sizes={sizes} />
+          <img
+            src={image.src}
+            alt={image.alt}
+            width={image.width}
+            height={image.height}
+            loading={first ? 'eager' : 'lazy'}
+            decoding="async"
+            fetchPriority={first ? 'high' : 'auto'}
+          />
+        </picture>
+      </div>
       {caption && image.caption && <figcaption>{image.caption}</figcaption>}
     </figure>
   );

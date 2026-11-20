@@ -88,6 +88,7 @@ issue and pull request numbers do not link here. From D4 on, the numbers are tho
 | F47 | #56 | A blueprint dark theme | The dark theme was navy with lavender text, a generic dark mode, and its tinted bands differed from the ground by 1.06 | `feat/f47-blueprint` | #57 | done |
 | F48 | #58 | Lines draw themselves instead of text rising | Almost every block of text rose into place while scrolling and the figures counted up, rewriting their text while it was read: the motion of a template, not of a drawing | `feat/f48-draw-motion` | #59 | done |
 | F49 | #60 | The tabs of the work list name their kind without a count | Every tab carried the number of its projects (two of them 1), the look of a shop's filter bar, while the line under the tabs already said the number; at 1024 px the wider tabs pushed the title of the section onto two lines | `feat/f49-tab-names` | #61 | done |
+| F50 | #62 | Each screen in a frame of its own kind, and covers no wider than their pixels | Every screenshot stood in the same card with its caption inside, a phone screen as a tall rectangle; the 1440 px cover of a project page was stretched to 1664 px on a wide screen and looked soft | `feat/f50-screen-frames` | #63 | done |
 
 ## D - docs and developer setup
 
@@ -122,3 +123,8 @@ New findings that are outside the item being worked on go here first, then becom
 - AVIF copies of the screenshots: a trial on five pictures showed AVIF a quarter smaller than WebP (180 kB against
   247 kB), another 30 to 40 kB per page. F5 delivered WebP only; `src/lib/pictures.js` and `npm run pictures` are
   the two places to extend.
+- The screenshots were taken at one pixel per point: the wide screens are 1440 px. Since F50 the cover is never
+  stretched on an ordinary screen, but a sharp screen (two pixels per point, most laptops sold today) has about 2,650
+  pixels across for the cover at 1440 px and the picture has 1,440, so it is enlarged there, as are the pictures of
+  the work list and the gallery. Taking the pictures again at twice the size (2880 px) would make them sharp everywhere; each project
+  has to be running for that, and the WebP copies (`npm run pictures`) would grow.

@@ -554,12 +554,13 @@ test.describe('lists of tools', () => {
   }
 });
 
-// Two corner radii (tracker F37): a small one for what is clicked or typed into and for the focus ring, a large one
-// for frames (screenshots, the palette). Both are tokens at the top of src/index.css.
+// Two corner radii for the interface (tracker F37): a small one for what is clicked or typed into and for the focus
+// ring, a large one for frames (screenshots, the palette). A phone screen is drawn as a phone (F50), with the corners
+// of its body and of its screen. All are tokens at the top of src/index.css.
 test.describe('corners', () => {
   const RADII = ['border-radius', 'border-top-left-radius', 'border-top-right-radius', 'border-bottom-right-radius', 'border-bottom-left-radius'];
 
-  test('every radius in the stylesheet, in any state, is one of the two tokens', async ({ page }) => {
+  test('every radius in the stylesheet, in any state, is one of the tokens', async ({ page }) => {
     await open(page);
     const found = await page.evaluate((properties) => {
       const problems = [];
@@ -570,7 +571,7 @@ test.describe('corners', () => {
           const shorthand = rule.style.getPropertyValue(properties[0]).trim();
           const values = shorthand ? [[properties[0], shorthand]] : properties.slice(1).map((property) => [property, rule.style.getPropertyValue(property).trim()]);
           for (const [property, value] of values) {
-            if (['', '0', '0px', 'var(--radius)', 'var(--radius-frame)'].includes(value)) continue;
+            if (['', '0', '0px', 'var(--radius)', 'var(--radius-frame)', 'var(--radius-phone)', 'var(--radius-screen)'].includes(value)) continue;
             problems.push(`${rule.selectorText}: ${property} ${value}`);
           }
         }
@@ -582,14 +583,15 @@ test.describe('corners', () => {
   });
 
   for (const path of ['/', '/work/mtc-training-platform/']) {
-    test(`on ${path} every corner is square, small or large`, async ({ page }) => {
+    test(`on ${path} every corner is square, small or large, or the corner of a phone`, async ({ page }) => {
       await page.goto(path);
       await expect(page.locator('h1')).toBeVisible();
       const { small, large, found } = await page.evaluate(() => {
         const root = getComputedStyle(document.documentElement);
         const small = root.getPropertyValue('--radius').trim();
         const large = root.getPropertyValue('--radius-frame').trim();
-        const allowed = new Set(['0px', small, large]);
+        const phone = [root.getPropertyValue('--radius-phone').trim(), root.getPropertyValue('--radius-screen').trim()];
+        const allowed = new Set(['0px', small, large, ...phone.filter(Boolean)]);
         const problems = [];
         // The palette is in the page while closed, so its rows and keys are counted too.
         for (const element of document.querySelectorAll('*')) {
@@ -611,6 +613,109 @@ test.describe('corners', () => {
       expect(found).toEqual([]);
     });
   }
+});
+
+// The frames of the screens (tracker F50). Before, every screenshot stood in the same card, with its caption inside
+// under a hairline. Now a wide screen has a hairline frame, a phone screen is drawn as a phone, and the caption stands
+// under the frame as the caption of a figure.
+test.describe('screens', () => {
+  const PROJECT = '/work/mtc-training-platform/';
+
+  test('a caption stands under its picture, and no card boxes the two together', async ({ page }) => {
+    await page.goto(PROJECT);
+    await expect(page.locator('h1')).toBeVisible();
+    const found = await page.evaluate(() => {
+      const problems = [];
+      const shots = [...document.querySelectorAll('.shot')];
+      for (const shot of shots) {
+        const name = shot.querySelector('img').getAttribute('src');
+        const style = getComputedStyle(shot);
+        if (['Top', 'Right', 'Bottom', 'Left'].some((side) => parseFloat(style[`border${side}Width`]) > 0)) problems.push(`${name}: the figure has a border`);
+        if (style.backgroundColor !== 'rgba(0, 0, 0, 0)') problems.push(`${name}: the figure has a ground of its own`);
+        const frame = shot.querySelector(':scope > .shot__frame');
+        if (!frame) {
+          problems.push(`${name}: no frame of its own around the picture`);
+          continue;
+        }
+        if (!frame.querySelector('picture')) problems.push(`${name}: the picture is outside its frame`);
+        const caption = shot.querySelector('figcaption');
+        if (!caption) continue;
+        if (frame.contains(caption)) problems.push(`${name}: the caption is inside the frame`);
+        if (caption.getBoundingClientRect().top < frame.getBoundingClientRect().bottom) problems.push(`${name}: the caption is not under the frame`);
+        if (parseFloat(getComputedStyle(caption).borderTopWidth) > 0) problems.push(`${name}: a hairline over the caption`);
+      }
+      return { captions: shots.filter((shot) => shot.querySelector('figcaption')).length, problems };
+    });
+    expect(found.captions, 'pictures with a caption on this page').toBeGreaterThan(3);
+    expect(found.problems).toEqual([]);
+  });
+
+  test('a phone screen is drawn as a phone, a wide screen in a hairline frame', async ({ page }) => {
+    await page.goto(PROJECT);
+    await expect(page.locator('h1')).toBeVisible();
+    const found = await page.evaluate(() => {
+      const root = getComputedStyle(document.documentElement);
+      const probe = document.createElement('i');
+      document.body.append(probe);
+      probe.style.color = 'var(--line)';
+      const line = getComputedStyle(probe).color;
+      probe.remove();
+      const frameRadius = parseFloat(root.getPropertyValue('--radius-frame'));
+      const problems = [];
+      const frames = (device) => [...document.querySelectorAll(`.shot[data-device="${device}"] > .shot__frame`)];
+      const wide = frames('desktop');
+      const phones = frames('phone');
+      for (const frame of wide) {
+        const style = getComputedStyle(frame);
+        const name = frame.querySelector('img').getAttribute('src');
+        if (parseFloat(style.borderTopWidth) !== 1 || style.borderTopColor !== line) problems.push(`${name}: not a hairline frame`);
+        if (parseFloat(style.borderTopLeftRadius) !== frameRadius) problems.push(`${name}: corner ${style.borderTopLeftRadius}`);
+      }
+      for (const frame of phones) {
+        const style = getComputedStyle(frame);
+        const name = frame.querySelector('img').getAttribute('src');
+        const body = frame.getBoundingClientRect();
+        const screen = frame.querySelector('picture');
+        const inside = screen.getBoundingClientRect();
+        // The body has the corners of a phone: far rounder than a wide screen's frame, about a tenth of its width.
+        const corner = parseFloat(style.borderTopLeftRadius);
+        if (corner < 3 * frameRadius || corner < body.width * 0.1) problems.push(`${name}: the body has a corner of ${corner} px at ${Math.round(body.width)} px wide`);
+        // The screen sits inside the outline with a margin all round, and its own corners curve too.
+        const margins = [inside.left - body.left, body.right - inside.right, inside.top - body.top, body.bottom - inside.bottom];
+        if (margins.some((margin) => margin < 4)) problems.push(`${name}: the screen touches the outline (${margins.map(Math.round).join(', ')})`);
+        const screenCorner = parseFloat(getComputedStyle(screen).borderTopLeftRadius);
+        if (!(screenCorner > frameRadius && screenCorner < corner)) problems.push(`${name}: the screen has a corner of ${screenCorner} px`);
+        if (getComputedStyle(screen).overflow !== 'hidden') problems.push(`${name}: the screen does not clip its picture to its corners`);
+      }
+      return { wide: wide.length, phones: phones.length, problems };
+    });
+    expect(found.wide, 'wide screens on this page').toBeGreaterThan(0);
+    expect(found.phones, 'phone screens on this page').toBeGreaterThan(0);
+    expect(found.problems).toEqual([]);
+  });
+
+  test('on a wide screen the cover is no wider than its pixels and stands in the middle under the band', async ({ page }, testInfo) => {
+    test.skip(isPhone(testInfo), 'about wide screens');
+    await page.setViewportSize({ width: 1920, height: 1080 });
+    const slugs = fs
+      .readdirSync('content/projects')
+      .filter((name) => name.endsWith('.json'))
+      .map((name) => JSON.parse(fs.readFileSync(`content/projects/${name}`, 'utf8')))
+      .filter((project) => project.draft !== true && project.images.length > 0 && project.images[0].device === 'desktop')
+      .map((project) => project.slug);
+    expect(slugs.length).toBeGreaterThan(0);
+    for (const slug of slugs) {
+      await page.goto(`/work/${slug}/`);
+      await expect(page.locator('h1')).toBeVisible();
+      const cover = await page.locator('.case__cover img').evaluate((image) => {
+        const shown = image.getBoundingClientRect();
+        const body = image.closest('.case__body').getBoundingClientRect();
+        return { shown: shown.width, pixels: Number(image.getAttribute('width')), left: shown.left - body.left, right: body.right - shown.right };
+      });
+      expect(cover.shown, `${slug}: the cover is drawn ${Math.round(cover.shown)} px wide from ${cover.pixels} px`).toBeLessThanOrEqual(cover.pixels);
+      expect(Math.abs(cover.left - cover.right), `${slug}: room left and right of the cover`).toBeLessThan(2);
+    }
+  });
 });
 
 // Skills as rows by group, without counts (tracker F24); their tools as a line of text since F35.
