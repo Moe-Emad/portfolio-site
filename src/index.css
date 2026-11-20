@@ -294,14 +294,21 @@ a:hover {
   }
 }
 
-/* Phone: the sections fold into a panel below the bar. */
+/* Phone: the sections fold into a panel that fills the screen under the bar (tracker F43), so the first screen does
+   not show under a menu that stops halfway. The sections are in the display face between hairlines, the theme switch
+   under them; on a screen too short for them (a phone held sideways) the panel scrolls on its own. The height is
+   the screen less the bar: 100% is the height of the bar, the box the panel hangs from. */
 .site-nav {
   display: none;
   position: absolute;
   top: 100%;
   left: 0;
   right: 0;
-  padding: 0.75rem clamp(1.25rem, 4vw, 3rem) 1.5rem;
+  height: calc(100vh - 100%);
+  height: calc(100dvh - 100%);
+  padding: 0.5rem clamp(1.25rem, 4vw, 3rem) 2rem;
+  overflow-y: auto;
+  overscroll-behavior: contain;
   background: var(--blue-deep);
 }
 
@@ -310,13 +317,19 @@ a:hover {
 }
 
 .site-nav ul {
-  margin-bottom: 1rem;
+  margin-bottom: 1.75rem;
+}
+
+.site-nav li {
+  border-bottom: 1px solid var(--on-blue-line);
 }
 
 .site-nav li a {
   display: block;
-  padding: 0.65rem 0;
-  font-size: 1.2rem;
+  padding: 0.75rem 0 0.6rem;
+  font-family: var(--font-display);
+  font-size: 2rem;
+  line-height: 1.15;
   text-decoration: none;
 }
 
@@ -335,7 +348,9 @@ a:hover {
     position: static;
     align-items: center;
     gap: 1.75rem;
+    height: auto;
     padding: 0;
+    overflow: visible;
     background: none;
   }
 
@@ -345,9 +360,15 @@ a:hover {
     margin-bottom: 0;
   }
 
+  .site-nav li {
+    border-bottom: 0;
+  }
+
   .site-nav li a {
     padding: 0.4rem 0;
+    font-family: inherit;
     font-size: 1rem;
+    line-height: inherit;
   }
 }
 
@@ -462,6 +483,15 @@ a:hover {
   border: 1px solid var(--line);
   border-radius: var(--radius);
   font-family: inherit;
+}
+
+/* Where the main pointer is a finger there are no keys to name (tracker F43): no line of keys in the palette, no
+   "Ctrl K" on the Search button. With a mouse and a keyboard both stay. */
+@media (pointer: coarse) {
+  .palette__keys,
+  .palette-button kbd {
+    display: none;
+  }
 }
 
 /* ---------- The sign ---------- */
