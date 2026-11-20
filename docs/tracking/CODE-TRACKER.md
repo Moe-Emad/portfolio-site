@@ -90,7 +90,7 @@ issue and pull request numbers do not link here. From D4 on, the numbers are tho
 | F48 | #58 | Lines draw themselves instead of text rising | Almost every block of text rose into place while scrolling and the figures counted up, rewriting their text while it was read: the motion of a template, not of a drawing | `feat/f48-draw-motion` | #59 | done |
 | F49 | #60 | The tabs of the work list name their kind without a count | Every tab carried the number of its projects (two of them 1), the look of a shop's filter bar, while the line under the tabs already said the number; at 1024 px the wider tabs pushed the title of the section onto two lines | `feat/f49-tab-names` | #61 | done |
 | F50 | #62 | Each screen in a frame of its own kind, and covers no wider than their pixels | Every screenshot stood in the same card with its caption inside, a phone screen as a tall rectangle; the 1440 px cover of a project page was stretched to 1664 px on a wide screen and looked soft | `feat/f50-screen-frames` | #63 | done |
-| F51 | #66 | The content is checked when the site is built, not in every visit | The JavaScript was 873 B under its budget; every visit repeated in the browser the check of the content that the build and the tests had already made | `feat/f51-content-check-at-build` | #67 | in progress |
+| F51 | #66 | The content is checked when the site is built, not in every visit | The JavaScript was 873 B under its budget; every visit repeated in the browser the check of the content that the build and the tests had already made | `feat/f51-content-check-at-build` | #67 | done |
 
 ## D - docs and developer setup
 
