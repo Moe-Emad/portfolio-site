@@ -1702,8 +1702,9 @@ a:hover {
 
 /* ---------- Skills ---------- */
 
-/* One row per group (tracker F24): the name and what it is for on the left, the tools as tags on the right.
-   On a phone the tags sit under the name. */
+/* One row per group (tracker F24): the name and what it is for on the left, the tools as a line on the right.
+   On a phone the tools sit under the note. From 90rem the name, the note and the tools stand on the three lines of
+   Experience (F57): the same columns as .job and .job__body, so the rows read across like the jobs above them. */
 .skills {
   margin-top: 2.5rem;
   border-top: 1px solid var(--line);
@@ -1711,15 +1712,62 @@ a:hover {
 
 .skill-group {
   display: grid;
-  gap: 1rem 4rem;
   padding-block: 1.75rem;
   border-bottom: 1px solid var(--line);
+}
+
+.skill-group .stack--large {
+  margin-top: 1rem;
 }
 
 @media (min-width: 52rem) {
   .skill-group {
     grid-template-columns: minmax(14rem, 22rem) 1fr;
+    grid-template-rows: auto 1fr;
+    column-gap: 4rem;
     align-items: start;
+  }
+
+  .skill-group__body {
+    display: contents;
+  }
+
+  .skill-group h3,
+  .skill-group p {
+    grid-column: 1;
+  }
+
+  .skill-group .stack--large {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    margin-top: 0;
+  }
+}
+
+@media (min-width: 90rem) {
+  .skill-group {
+    grid-template-columns: 13rem 1fr;
+    grid-template-rows: auto;
+    column-gap: 3.5rem;
+    align-items: baseline;
+  }
+
+  .skill-group__body {
+    display: grid;
+    grid-template-columns: minmax(18rem, 2fr) 3fr;
+    column-gap: 4rem;
+    align-items: baseline;
+  }
+
+  .skill-group h3,
+  .skill-group p,
+  .skill-group .stack--large {
+    grid-column: auto;
+    grid-row: auto;
+  }
+
+  .skill-group p {
+    margin-top: 0;
   }
 }
 
