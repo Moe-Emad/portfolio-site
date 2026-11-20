@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 'use strict';
 // Fills in the width and height of the pictures named in content/projects (tracker F6) and makes their smaller
-// WebP copies (tracker F5):
+// copies in AVIF (tracker F52) and WebP (tracker F5):
 //   npm run pictures
 // The page writes the size of each picture into the HTML so that nothing jumps while it loads, and the content
 // check wants both numbers. After adding pictures - in the admin panel or by hand - this command reads the size
@@ -74,12 +74,25 @@ function fillSizes(root = ROOT) {
 }
 
 /**
- * Makes the WebP copies of every picture named in the project files (names and widths: src/lib/pictures.js).
- * A copy that exists and is newer than its picture is left alone. Returns the lines to print.
+ * How each format is written. Screenshots are flat colours and text: at these settings the letters stay sharp.
+ * - WebP at quality 80 (F5).
+ * - AVIF at quality 60, with the colour kept at full resolution (WebP halves it): on the 51 screenshots of F52
+ *   about a fifth smaller than WebP, and as close to the original (SSIM and PSNR) on 49 of them, the other two
+ *   within 0.001 SSIM. Below 60 it fell behind WebP on most of them. Effort 7 of 9: about 1.5 s for a 1440 px
+ *   picture; the lower efforts give larger files at the same quality.
+ */
+const ENCODE = {
+  avif: (pipeline) => pipeline.avif({ quality: 60, effort: 7, chromaSubsampling: '4:4:4' }),
+  webp: (pipeline) => pipeline.webp({ quality: 80, effort: 6 }),
+};
+
+/**
+ * Makes the AVIF and WebP copies of every picture named in the project files (names, widths and formats:
+ * src/lib/pictures.js). A copy that exists and is newer than its picture is left alone. Returns the lines to print.
  */
 async function writeCopies(root = ROOT) {
   const sharp = require('sharp');
-  const { webpCopies } = await import('../../src/lib/pictures.js');
+  const { FORMATS, copies } = await import('../../src/lib/pictures.js');
   const lines = [];
   const dir = path.join(root, 'content', 'projects');
   for (const name of fs.readdirSync(dir).filter((file) => file.endsWith('.json'))) {
@@ -87,12 +100,13 @@ async function writeCopies(root = ROOT) {
     for (const image of project.images || []) {
       const picture = path.join(root, 'public', image.src);
       if (!fs.existsSync(picture) || !Number.isInteger(image.width)) continue;
-      for (const copy of webpCopies(image.src, image.width)) {
-        const file = path.join(root, 'public', copy.src);
-        if (fs.existsSync(file) && fs.statSync(file).mtimeMs >= fs.statSync(picture).mtimeMs) continue;
-        // Screenshots are flat colours and text: WebP at this quality keeps the letters sharp.
-        await sharp(picture).resize({ width: copy.width, withoutEnlargement: true }).webp({ quality: 80, effort: 6 }).toFile(file);
-        lines.push(`${copy.src} (${(fs.statSync(file).size / 1024).toFixed(0)} kB)`);
+      for (const format of FORMATS) {
+        for (const copy of copies(image.src, image.width, format)) {
+          const file = path.join(root, 'public', copy.src);
+          if (fs.existsSync(file) && fs.statSync(file).mtimeMs >= fs.statSync(picture).mtimeMs) continue;
+          await ENCODE[format](sharp(picture).resize({ width: copy.width, withoutEnlargement: true })).toFile(file);
+          lines.push(`${copy.src} (${(fs.statSync(file).size / 1024).toFixed(0)} kB)`);
+        }
       }
     }
   }
@@ -103,7 +117,7 @@ if (require.main === module) {
   const sizes = fillSizes();
   console.log(sizes.length ? sizes.join('\n') : 'pictures: every size is already right.');
   writeCopies().then(
-    (copies) => console.log(copies.length ? `pictures: ${copies.length} WebP copies written\n  ${copies.join('\n  ')}` : 'pictures: every WebP copy is already there.'),
+    (copies) => console.log(copies.length ? `pictures: ${copies.length} copies written\n  ${copies.join('\n  ')}` : 'pictures: every AVIF and WebP copy is already there.'),
     (error) => {
       console.error(`pictures: ${error.stack ?? error}`);
       process.exit(1);

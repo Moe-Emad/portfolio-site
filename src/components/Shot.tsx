@@ -1,12 +1,12 @@
 import type { ProjectImage } from '../content/schema.ts';
-import { webpSrcSet } from '../lib/pictures.js';
+import { FORMATS, srcSet } from '../lib/pictures.js';
 import { useReveal } from '../lib/reveal.ts';
 
 /**
  * A screenshot in its frame, with its caption under the frame (tracker F50). The frame is of the screen's kind: a
  * hairline for a wide screen, the outline of a phone around a phone screen (see .shot__frame in index.css).
- * - The browser picks a WebP copy that fits the place and the screen (src/lib/pictures.js); the original file is
- *   the fallback for a browser without WebP.
+ * - The browser picks a copy that fits the place and the screen (src/lib/pictures.js): AVIF, or WebP if it cannot
+ *   show AVIF (tracker F52); the original file is the fallback for a browser without either.
  * - The size of the file is written into the HTML, so the page keeps the place free and nothing jumps when the
  *   picture arrives.
  * - first: the picture at the top of a page loads at once; all others load when they come near the screen.
@@ -29,7 +29,9 @@ export default function Shot({
     <figure ref={ref} className="shot" data-device={image.device}>
       <div className="shot__frame">
         <picture>
-          <source type="image/webp" srcSet={webpSrcSet(image.src, image.width)} sizes={sizes} />
+          {FORMATS.map((format) => (
+            <source key={format} type={`image/${format}`} srcSet={srcSet(image.src, image.width, format)} sizes={sizes} />
+          ))}
           <img
             src={image.src}
             alt={image.alt}

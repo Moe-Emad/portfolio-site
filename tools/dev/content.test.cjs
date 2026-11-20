@@ -33,9 +33,9 @@ test('every file in public/ is used by the site', () => {
   const unused = files(PUBLIC)
     .map((file) => path.relative(PUBLIC, file).split(path.sep).join('/'))
     .filter((name) => !BY_NAME.includes(name) && !name.startsWith('admin/') && !text.includes(`/${name}`))
-    // A WebP copy ("01-home-640.webp", "01-home.webp") is used when the picture it was made from is.
+    // An AVIF or WebP copy ("01-home-640.avif", "01-home.webp") is used when the picture it was made from is.
     .filter((name) => {
-      const copy = /^(.*?)(-\d+)?\.webp$/.exec(name);
+      const copy = /^(.*?)(-\d+)?\.(avif|webp)$/.exec(name);
       return !(copy && ['jpg', 'jpeg', 'png'].some((extension) => text.includes(`/${copy[1]}.${extension}`)));
     });
   assert.deepEqual(unused, [], 'public/ holds files that no page uses - anyone can download them');
