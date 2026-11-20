@@ -27,6 +27,25 @@ npm run weight
 The original was measured from a build of the first version (`583fd75`) with the same method. Its 2,908 kB of 3D data are the models of the room (1,632 kB) and a lighting map the 3D library fetched
 from another server (1,276 kB).
 
+## Measured on 2026-11-20, F33 (the gallery of a project page)
+
+F33 changes how the screens under "More screens" are laid out, and with it which copy of each picture the browser
+takes. Only those pictures are compared here, on all seven project pages together: each one was brought into view
+and waited for, because the scroll of `npm run weight` is faster than the pictures load (see the tracker).
+
+| Gallery pictures, all seven pages | Desktop, 1440 px | Desktop, 1920 px | Phone (Pixel 7) |
+|---|---|---|---|
+| Before F33 | 911 kB | 911 kB | 1,517 kB |
+| After F33 | 962 kB | 1,238 kB | 1,517 kB |
+
+Per page that is 0 to 19 kB more at 1440 px and 21 to 78 kB more at 1920 px; a phone downloads the same as before.
+Before F33 the `sizes` of the gallery said 36rem at most, so on a wide screen the browser took the 640 px copy of a
+picture shown about 816 px wide and stretched it. Now every picture is loaded at least as wide as it is shown (a
+browser test checks it at 1920 px); the first of an odd number spans the row and takes a wider copy.
+
+The rest, compressed: CSS 8,450 B to 8,572 B; JavaScript 96,482 B to 96,652 B (the sizes of the gallery are chosen
+in the component), which leaves 628 B of the 95 kB budget; the HTML of a project page about 45 B more.
+
 ## Measured on 2026-11-20, F28 (Speed Insights)
 
 Speed Insights starts only in the build Vercel makes for production, so `npm run weight` and the budgets, which
