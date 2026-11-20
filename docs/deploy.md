@@ -77,6 +77,12 @@ other static host works too (GitHub Pages, a shared web space): upload the conte
 
    `vercel.json` also sends the security headers of `public/_headers` and lets the browser keep the files in
    `assets/` for a year. Vercel does not read `public/_headers`; a test keeps the two files in step.
+
+   One of these headers is the **Content-Security-Policy**: a page may load files of the site only, run the one
+   small script of `index.html` that sets the theme before the first paint (allowed by its hash), and connect to the
+   site and to EmailJS. Everything else is refused by the browser, an injected script as much as a font or a
+   picture from another server. `npm run preview` sends the same headers, so the browser tests run under the
+   policy. Section 7 says what to change when the theme script changes or a service from elsewhere is added.
 3. Environment variables (Settings, Environment Variables, for Production):
 
    | Name | Value |
@@ -145,10 +151,13 @@ Tick each line on the live address.
       [Post Inspector](https://www.linkedin.com/post-inspector/) shows what it reads.
 - [ ] View the source of the page (Ctrl+U): the text of the page is in it.
 - [ ] The headers arrive. In PowerShell, with the address of the site: `curl.exe -sI https://<address>/` lists
-      `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, `Referrer-Policy` and `Permissions-Policy`; a file
-      under `/assets/` (its name is in the source of the page) has `Cache-Control: public, max-age=31536000, immutable`.
+      `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, `Referrer-Policy`, `Permissions-Policy` and
+      `Content-Security-Policy`; a file under `/assets/` (its name is in the source of the page) has
+      `Cache-Control: public, max-age=31536000, immutable`.
 - [ ] No request to another server: open the developer tools (F12), Network, reload. Every line is your own
       address.
+- [ ] The policy refuses nothing of the site itself: in the developer tools, Console, no line says "Content
+      Security Policy" on the home page, on a project page, and after sending the contact form.
 
 Once, after the first deploy:
 
@@ -172,6 +181,9 @@ host builds and publishes the new version by itself, usually within two minutes.
 | The build says "VITE_SITE_URL is not set" | The variable is missing on the host | Add it (section 3 or 4, step 3) and deploy again. Without it there is no sitemap and no picture in link previews |
 | The contact form is replaced by a notice | One of the three EmailJS variables is missing on the host | Add all three and deploy again: they are read when the site is built, not when it runs |
 | The contact form says the message could not be sent | EmailJS refused it: wrong value, or the address of the site is not in the Domains list | Compare the three values with the dashboard; add the live address under Domains |
+| The gate fails with "the theme script of index.html has the hash 'sha256-...'" | The small script in `index.html` was changed, and the Content-Security-Policy allows it by the hash of its old text | Copy the new hash from the message into the policy in `public/_headers` and in `vercel.json`, in place of the old one |
+| Something from another server does not load (a font, a script, a map), and the console says it was refused by the Content Security Policy | The policy allows files of the site only, and connections to the site and to EmailJS | Add the address of that server to the rule the console names (`script-src`, `connect-src`, `img-src`, `font-src`...) in `public/_headers` and in `vercel.json`, and the same in the test of the policy in `tools/dev/vercel.test.cjs`. Ask first whether the page needs it at all |
+| On a preview address of Vercel the console says the Vercel toolbar was refused | The toolbar of previews is a script from another server | Expected: the policy is the same on previews as on the live site, so the toolbar's comments are not available there |
 | A link preview shows no picture, or an old one | The address in `VITE_SITE_URL` is wrong, or the service kept an old copy | Check `og:image` in the source of the page; then let the Post Inspector of LinkedIn fetch it again |
 | A project page shows the home page or a blank page | The host serves `index.html` for every address instead of the files | Make sure the output directory is `dist` (on Vercel it comes from `vercel.json`) and no "single page app" rewrite is switched on |
 | An old version stays after a deploy | The browser kept the page | Reload with Ctrl+F5. The HTML is never kept for long; only the files in `assets/` are |

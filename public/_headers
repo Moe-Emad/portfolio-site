@@ -11,6 +11,11 @@
   Referrer-Policy: strict-origin-when-cross-origin
   # The site uses none of these.
   Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=()
+  # What a page may load and run (tracker B11): files of the site itself, and the one inline script of index.html,
+  # which sets the theme before the first paint, by its hash (a test gives the new hash when the script changes).
+  # Style attributes stay allowed, <style> blocks do not. Connections go to the site and to EmailJS (the contact form).
+  # No plugins, no <base>, forms only to the site, and no other site may show a page of this one in a frame.
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'sha256-hj/ji97ffByQ3vx1BXx7zAWhI0HSvK9yZThD51ERm8s='; style-src 'self'; style-src-attr 'unsafe-inline'; img-src 'self'; font-src 'self'; connect-src 'self' https://api.emailjs.com; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'
 
 # The names of these files change whenever their content does, so a browser may keep them for a year.
 /assets/*

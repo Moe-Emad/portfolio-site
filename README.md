@@ -108,7 +108,7 @@ unless it is marked as a draft. `npm run test:unit` names the file and the field
 | `src/lib/` | Logic kept apart from the pages so it can be tested alone: the contact form, the command palette, the theme, the picture copies |
 | `src/index.css` | The whole look: the colours of both themes, type, layout and motion |
 | `tests/browser/` | The browser tests |
-| `tools/build/` | The build: pages to HTML, the share picture, the picture copies, the forms of the admin panel |
+| `tools/build/` | The build: pages to HTML, the share picture, the picture copies, the forms of the admin panel, the headers |
 | `tools/dev/` | The gate, the git hooks and their tests |
 | `docs/` | The admin and deploy guides, the page weight, screenshots of each change, the tracker |
 
@@ -122,5 +122,6 @@ cost time once are in [docs/pitfalls.md](docs/pitfalls.md).
 ## Deploying
 
 Every page is a plain HTML file, so any static host can serve the site. The live site is on Vercel, which builds
-and publishes every merge to `main` with the settings and headers in `vercel.json`. [docs/deploy.md](docs/deploy.md)
-has the settings, the EmailJS steps and a checklist for after a deploy.
+and publishes every merge to `main` with the settings and headers in `vercel.json`, a Content-Security-Policy among
+them: a page runs only the scripts of the site. [docs/deploy.md](docs/deploy.md) has the settings, the EmailJS steps
+and a checklist for after a deploy.
