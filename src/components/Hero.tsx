@@ -29,7 +29,10 @@ function useLean(area: RefObject<HTMLElement | null>, target: RefObject<HTMLElem
   }, [area, target]);
 }
 
-/** The first screen: the name as a two-script sign, one sentence about the work, and the way on. */
+/**
+ * The first screen: the name as a two-script sign with the role under it, as the caption under a drawing, one
+ * sentence about the work, and the way on: one button to the work, and a plain link to the contact form (F45).
+ */
 export default function Hero() {
   const { profile } = content;
   // The sign has two rows: the first name on top; below it the rest of the name on the left and the Arabic
@@ -43,7 +46,6 @@ export default function Hero() {
     <section ref={hero} id="top" className="hero" aria-labelledby="hero-name">
       <div className="wrap hero__grid">
         <div className="hero__text">
-          <p className="hero__role">{roleLine(profile.role, profile.location)}</p>
           <h1 id="hero-name" className="sign">
             <span className="sign__first">{first}</span>{' '}
             {rest.length > 0 && <span className="sign__rest">{rest.join(' ')}</span>}{' '}
@@ -51,12 +53,13 @@ export default function Hero() {
               {profile.nameArabic}
             </span>
           </h1>
+          <p className="hero__role">{roleLine(profile.role, profile.location)}</p>
           <p className="hero__headline">{profile.headline}</p>
           <div className="hero__actions">
             <a href="#work" className="button button--sign">
               See the work
             </a>
-            <a href="#contact" className="button button--outline">
+            <a href="#contact" className="hero__link">
               Get in touch
             </a>
           </div>
