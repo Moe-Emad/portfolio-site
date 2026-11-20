@@ -79,7 +79,7 @@ issue and pull request numbers do not link here. From D4 on, the numbers are tho
 | F38 | #38 | The figures of a project as a title block instead of a strip of big numbers | Seven rows of large numbers in the display face read as a dashboard and outweighed the name of each project; on a phone four figures wrapped as three and one | `feat/f38-figures` | #39 | done |
 | F39 | #40 | The title block of a project page in the corner of the blue band | The right half of the band was empty on a wide screen while the figures ran the full width under the cover in four mostly empty cells; my part sat in the one card left on a page of hairlines | `feat/f39-band-corner` | #41 | done |
 | F40 | #42 | Each row of the work list has its name on top | The name of a project was in the text face and little larger than its figures and summary, smaller than the heading of the lesser work below; my part was muted under a label in ink | `feat/f40-row-names` | #43 | done |
-| F41 | #44 | Smaller and earlier work as a register | Eight equal cells with the same star in every corner and a hover on cells that are not links; their names in the display face competed with the main work since F40 | `feat/f41-register` | - | in review |
+| F41 | #44 | Smaller and earlier work as a register | Eight equal cells with the same star in every corner and a hover on cells that are not links; their names in the display face competed with the main work since F40 | `feat/f41-register` | #45 | done |
 
 ## D - docs and developer setup
 

@@ -70,3 +70,4 @@ and do not link here.
 - F38: The figures of a project, in its row and on its page, are a title block: framed cells, the number in the text face, two across on a phone; the record of the site keeps its large figures (#39)
 - F39: The title block of a project page stands in the corner of the blue band, beside the summary on a wide screen and under it on a phone; my part and the tools stand under a hairline instead of in a card (#41)
 - F40: The name of each project in the work list is in the display face and the largest text of its row; my part is in ink and its label muted (#43)
+- F41: The smaller and earlier work is a register: one entry under another between hairlines, name, what it is and tools on one line, without a star or a hover (#45)
