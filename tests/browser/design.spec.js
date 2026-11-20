@@ -539,3 +539,88 @@ test.describe('the skills', () => {
     }
   });
 });
+
+// The measured figures of a project (tracker F38) are a title block, the table in the corner of a technical drawing,
+// instead of a strip of big numbers: each figure in a cell of its own inside one frame, no row of cells left half
+// empty (a phone had three figures and then one alone), and no figure in the display face or larger than the name
+// of a project in the list (1.6rem). The record of the site keeps its large figures: it is the one place for them.
+test.describe('figures', () => {
+  const blocks = [
+    { path: '/', what: 'the rows of the work list', selector: '#work .project__facts' },
+    { path: '/work/mtc-training-platform/', what: 'a project page', selector: '.facts' },
+    { path: '/work/molok-el-sook/', what: 'a project page with three figures', selector: '.facts' },
+  ];
+
+  for (const { path, what, selector } of blocks) {
+    test(`on ${what} the figures are a table of framed cells, not a strip of big numbers`, async ({ page }) => {
+      await page.emulateMedia({ reducedMotion: 'reduce' });
+      await page.goto(path);
+      await expect(page.locator('h1')).toBeVisible();
+      const tables = page.locator(selector);
+      expect(await tables.count()).toBeGreaterThan(0);
+      for (const table of await tables.all()) {
+        await table.scrollIntoViewIfNeeded();
+        const found = await table.evaluate((frame) => {
+          const problems = [];
+          const name = [...frame.querySelectorAll('dd')].map((label) => label.textContent).join(', ');
+          const style = getComputedStyle(frame);
+          const box = frame.getBoundingClientRect();
+          const inner = {
+            top: box.top + parseFloat(style.borderTopWidth),
+            right: box.right - parseFloat(style.borderRightWidth),
+            bottom: box.bottom - parseFloat(style.borderBottomWidth),
+            left: box.left + parseFloat(style.borderLeftWidth),
+          };
+          const cells = [...frame.children].map((cell) => ({ cell, box: cell.getBoundingClientRect(), style: getComputedStyle(cell) }));
+          const near = (a, b) => Math.abs(a - b) <= 1;
+          const overlaps = (a, b, from, to) => Math.min(a[to], b[to]) - Math.max(a[from], b[from]) > 1;
+          const opposite = { Top: 'Bottom', Bottom: 'Top', Left: 'Right', Right: 'Left' };
+
+          // Every row of cells runs from one side of the frame to the other.
+          const rows = new Map();
+          for (const item of cells) {
+            const top = Math.round(item.box.top);
+            rows.set(top, [...(rows.get(top) ?? []), item.box]);
+          }
+          for (const row of rows.values()) {
+            const from = Math.min(...row.map((cell) => cell.left));
+            const to = Math.max(...row.map((cell) => cell.right));
+            if (!near(from, inner.left) || !near(to, inner.right)) {
+              problems.push(`${name}: a row of ${row.length} cells covers ${Math.round(from)}-${Math.round(to)} of a frame ${Math.round(inner.left)}-${Math.round(inner.right)}`);
+            }
+          }
+
+          // Every side of every cell is drawn: by the cell, by the frame, or by the cell next to it.
+          for (const { cell, box: own, style: look } of cells) {
+            const label = cell.querySelector('dd')?.textContent;
+            for (const side of ['Top', 'Right', 'Bottom', 'Left']) {
+              const edge = own[side.toLowerCase()];
+              const across = side === 'Top' || side === 'Bottom' ? ['left', 'right'] : ['top', 'bottom'];
+              const drawn =
+                parseFloat(look[`border${side}Width`]) > 0 ||
+                (parseFloat(style[`border${side}Width`]) > 0 && near(edge, inner[side.toLowerCase()])) ||
+                cells.some(
+                  (other) =>
+                    other.cell !== cell &&
+                    parseFloat(other.style[`border${opposite[side]}Width`]) > 0 &&
+                    near(other.box[opposite[side].toLowerCase()], edge) &&
+                    overlaps(other.box, own, ...across),
+                );
+              if (!drawn) problems.push(`${label}: no line at the ${side.toLowerCase()} of its cell`);
+            }
+          }
+
+          // The figure itself: the text face, no larger than the name of a project in the list.
+          const rem = parseFloat(getComputedStyle(document.documentElement).fontSize);
+          for (const value of frame.querySelectorAll('dt')) {
+            const look = getComputedStyle(value);
+            if (look.fontFamily.startsWith('"Rakkas"')) problems.push(`${value.textContent}: in the display face`);
+            if (parseFloat(look.fontSize) > 1.6 * rem) problems.push(`${value.textContent}: ${look.fontSize}, larger than 1.6rem`);
+          }
+          return problems;
+        });
+        expect(found).toEqual([]);
+      }
+    });
+  }
+});
