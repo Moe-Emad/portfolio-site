@@ -83,3 +83,39 @@ test('the hidden field is out of sight and out of the tab order', async ({ page 
   await expect(trap).toHaveAttribute('tabindex', '-1');
   await expect(page.locator('#contact .form-trap')).toHaveAttribute('aria-hidden', 'true');
 });
+
+// After a failed send the cursor goes to the first field with a problem (tracker B10). When that field is just under
+// the bar at the top, the browser scrolls only as far as the field needs; its label must not stay under the bar.
+test('after a failed send, the first field and its label come out from under the bar', async ({ page }) => {
+  // "Reduce motion" makes the page scroll at once, so what is measured is where the scroll ends.
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.setViewportSize({ width: page.viewportSize().width, height: 600 });
+  await openForm(page);
+  const places = () =>
+    page.evaluate(() => ({
+      bar: Math.round(document.querySelector('.site-header').getBoundingClientRect().bottom),
+      label: Math.round(document.querySelector('label[for="name"]').getBoundingClientRect().top),
+    }));
+  // The first field 20 px from the top: on the screen, but it and its label are under the bar.
+  await page.evaluate(() => {
+    const field = document.getElementById('name');
+    window.scrollBy({ top: field.getBoundingClientRect().top - 20, behavior: 'instant' });
+  });
+  const start = await places();
+  expect(start.label, 'the label is not under the bar to begin with, so the test proves nothing').toBeLessThan(start.bar);
+
+  // Sent without a click, which would scroll the page to the button first.
+  await page.locator('#contact form').evaluate((form) => form.requestSubmit());
+  await expect(page.locator('#name')).toBeFocused();
+  // Wait until two looks a quarter of a second apart agree.
+  let last = null;
+  await expect
+    .poll(async () => {
+      const now = await places();
+      const still = last !== null && now.label === last.label;
+      last = now;
+      return still;
+    }, { intervals: [250] })
+    .toBe(true);
+  expect(last.label).toBeGreaterThanOrEqual(last.bar);
+});

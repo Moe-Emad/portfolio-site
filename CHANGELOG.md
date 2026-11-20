@@ -57,3 +57,4 @@ and do not link here.
 - B8: vercel.json gives the live site the headers and caching of public/_headers, installs with npm ci and builds without npm; the deploy guide has a section on Vercel (#13)
 - F28: Vercel Speed Insights measures real visits to the live site; it loads after the page and only in the production build on Vercel (#15)
 - B9: A printed page shows every block: what still waits below the screen is in place on paper; a browser test prints pages without scrolling (#17)
+- B10: After a failed send the first field and its label come out from under the bar at the top (#19)

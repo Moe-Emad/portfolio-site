@@ -1647,6 +1647,14 @@ a:hover {
   color: var(--ink);
 }
 
+/* After a failed send the cursor goes to the first field with a problem, and the page scrolls to it. The field
+   stops this far below the top, so its label stays in view under the bar: the 5rem of [id], plus the label
+   (tracker B10). */
+.field input,
+.field textarea {
+  scroll-margin-top: 7.5rem;
+}
+
 .field textarea {
   resize: vertical;
 }
