@@ -16,6 +16,15 @@
   --font-display: "Rakkas", "Readex Pro Variable", Georgia, serif;
 }
 
+/* ---------- Corners ----------
+   Two radii and no others (tracker F37): a small one for everything that is clicked or typed into, and for the
+   focus ring; a large one for frames: the screenshots, the palette, the side card of a project page. */
+
+:root {
+  --radius: 4px;
+  --radius-frame: 10px;
+}
+
 /* ---------- Colours ---------- */
 
 :root {
@@ -102,7 +111,7 @@ a:hover {
 :focus-visible {
   outline: 3px solid var(--focus);
   outline-offset: 3px;
-  border-radius: 2px;
+  border-radius: var(--radius);
 }
 
 ::selection {
@@ -124,7 +133,7 @@ a:hover {
   left: 0.75rem;
   z-index: 100;
   padding: 0.6rem 1rem;
-  border-radius: 4px;
+  border-radius: var(--radius);
   background: var(--saffron);
   color: var(--sign-ink);
   font-weight: 600;
@@ -146,7 +155,7 @@ a:hover {
   min-height: 2.875rem;
   padding: 0.7rem 1.4rem;
   border: 2px solid transparent;
-  border-radius: 4px;
+  border-radius: var(--radius);
   font-weight: 600;
   line-height: 1.2;
   text-decoration: none;
@@ -223,7 +232,7 @@ a:hover {
   min-height: 2.5rem;
   padding: 0.35rem 0.85rem;
   border: 1px solid var(--on-blue-line);
-  border-radius: 999px;
+  border-radius: var(--radius);
   color: var(--on-blue);
   font-size: 0.9375rem;
   cursor: pointer;
@@ -243,7 +252,7 @@ a:hover {
   margin-left: auto;
   padding: 0.35rem 0.85rem;
   border: 1px solid var(--on-blue-line);
-  border-radius: 999px;
+  border-radius: var(--radius);
   color: var(--on-blue);
   font-size: 0.9375rem;
   cursor: pointer;
@@ -273,7 +282,7 @@ a:hover {
   display: none;
   padding: 0.05rem 0.4rem;
   border: 1px solid var(--on-blue-line);
-  border-radius: 4px;
+  border-radius: var(--radius);
   color: var(--on-blue-muted);
   font-family: inherit;
   font-size: 0.75rem;
@@ -355,7 +364,7 @@ a:hover {
   padding: 0;
   overflow: hidden;
   border: 1px solid var(--line);
-  border-radius: 10px;
+  border-radius: var(--radius-frame);
   background: var(--surface);
   color: var(--ink);
   box-shadow: 0 24px 60px rgb(7 13 51 / 0.35);
@@ -406,7 +415,7 @@ a:hover {
   justify-content: space-between;
   gap: 1rem;
   padding: 0.6rem 0.8rem;
-  border-radius: 6px;
+  border-radius: var(--radius);
   cursor: pointer;
 }
 
@@ -451,7 +460,7 @@ a:hover {
 .palette__keys kbd {
   padding: 0 0.35rem;
   border: 1px solid var(--line);
-  border-radius: 4px;
+  border-radius: var(--radius);
   font-family: inherit;
 }
 
@@ -833,7 +842,7 @@ a:hover {
 }
 
 .project__link:focus-visible::after {
-  border-radius: 6px;
+  border-radius: var(--radius);
   outline: 3px solid var(--focus);
   outline-offset: 4px;
 }
@@ -969,7 +978,7 @@ a:hover {
 .shot {
   overflow: hidden;
   border: 1px solid var(--line);
-  border-radius: 10px;
+  border-radius: var(--radius-frame);
   background: var(--surface);
 }
 
@@ -1282,7 +1291,7 @@ a:hover {
   align-self: start;
   padding: 1.5rem 1.6rem;
   border: 1px solid var(--line);
-  border-radius: 6px;
+  border-radius: var(--radius-frame);
   background: var(--surface);
 }
 
@@ -1678,7 +1687,7 @@ a:hover {
   width: 100%;
   padding: 0.75rem 0.9rem;
   border: 1.5px solid var(--field-border);
-  border-radius: 4px;
+  border-radius: var(--radius);
   background: var(--surface);
   color: var(--ink);
 }
@@ -1719,7 +1728,7 @@ a:hover {
   max-width: 44ch;
   padding: 1.25rem 1.5rem;
   border: 1px solid var(--line);
-  border-radius: 4px;
+  border-radius: var(--radius);
   background: var(--surface);
 }
 
