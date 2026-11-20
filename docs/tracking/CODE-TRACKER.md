@@ -123,3 +123,8 @@ New findings that are outside the item being worked on go here first, then becom
 - AVIF copies of the screenshots: a trial on five pictures showed AVIF a quarter smaller than WebP (180 kB against
   247 kB), another 30 to 40 kB per page. F5 delivered WebP only; `src/lib/pictures.js` and `npm run pictures` are
   the two places to extend.
+- The screenshots were taken at one pixel per point: the wide screens are 1440 px. Since F50 the cover is never
+  stretched on an ordinary screen, but on a sharp screen (two pixels per point, most laptops sold today) the cover is
+  drawn from about 2,650 pixels' worth of room out of 1,440, and the pictures of the work list and the gallery are
+  enlarged too. Taking the pictures again at twice the size (2880 px) would make them sharp everywhere; each project
+  has to be running for that, and the WebP copies (`npm run pictures`) would grow.
