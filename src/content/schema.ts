@@ -11,7 +11,10 @@ export interface Profile {
   headline: string;
   /** Paragraphs of the "about" text. */
   about: string[];
-  links: { linkedin: string; github?: string };
+  /** email: shown in the contact section and on every project page, with a copy button (tracker F62). */
+  links: { linkedin: string; github?: string; email?: string };
+  /** One line beside the contact form: what I am open to and where I work from (tracker F62). */
+  availability?: string;
 }
 
 export interface Job {
@@ -183,7 +186,12 @@ export function profileProblems(raw: unknown, file = 'content/profile.json'): st
   else {
     check.link(raw.links, 'linkedin');
     check.link(raw.links, 'github', { optional: true });
+    const email = raw.links.email;
+    if (email !== undefined && email !== null && email !== '' && (typeof email !== 'string' || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))) {
+      check.fail('links: email', 'must be an email address, like name@example.com');
+    }
   }
+  check.text(raw, 'availability', { optional: true, max: 200 });
   return check.problems;
 }
 
@@ -380,21 +388,12 @@ export function shownProjects<T extends Pick<Project, 'order' | 'title' | 'draft
 }
 
 /**
- * The lead project (tracker F60): the first in the order of the work with a wide screenshot. The first screen of the
- * home page shows its screen.
+ * The work on the home page (tracker F61), in its order: the first three in large rows, the others in a grid.
+ * /work/ lists them all with their figures. F60 had put the first in the first screen, above "Selected work"; it is
+ * the first of the work again (F62).
  */
-export function leadProject<T extends Pick<ProjectCard, 'featured' | 'images'>>(projects: T[]): T | undefined {
-  return projects.find((project) => project.featured && project.images[0]?.device === 'desktop');
-}
-
-/**
- * The rest of the work on the home page (tracker F61), in its order and without the lead, which the first screen
- * shows: the next two in large rows, the others in a grid. /work/ lists them all.
- */
-export function homeWork<T extends Pick<ProjectCard, 'featured' | 'images'>>(projects: T[]): { large: T[]; grid: T[] } {
-  const lead = leadProject(projects);
-  const rest = projects.filter((project) => project !== lead);
-  return { large: rest.slice(0, 2), grid: rest.slice(2) };
+export function homeWork<T>(projects: T[]): { large: T[]; grid: T[] } {
+  return { large: projects.slice(0, 3), grid: projects.slice(3) };
 }
 
 /**

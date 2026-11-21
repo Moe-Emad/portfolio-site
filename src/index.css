@@ -676,144 +676,6 @@ a:hover {
   }
 }
 
-/* The screen of the lead project under the star (tracker F60): the work is seen in the first view. It hangs from the
-   band as the cover of a project page reaches up into its band: the blue ends --hang above the foot of the block,
-   two fifths of the way down the picture on a phone, a fifth on a wide screen, and the name of the project stands
-   under it on the page. The whole
-   block is one link to the project's page. --work is the width of the picture; screenshots are 16:10. */
-.hero:has(.hero__work) {
-  --work: calc(100vw - 2 * clamp(1.25rem, 4vw, 4.5rem));
-  --hang: calc(var(--work) * 0.625 * 0.42 + 3.75rem);
-
-  background: linear-gradient(var(--blue) calc(100% - var(--hang)), transparent 0);
-}
-
-.hero:has(.hero__work) .hero__grid {
-  padding-bottom: 0;
-}
-
-.hero__work {
-  --focus: var(--saffron);
-
-  position: relative;
-  z-index: 1;
-  display: block;
-  margin-top: 1.75rem;
-  color: var(--ink);
-  text-decoration: none;
-}
-
-.hero__work .shot__frame {
-  box-shadow: 0 1.5rem 3rem -2rem color-mix(in srgb, var(--ink) 55%, transparent);
-}
-
-.hero__work-label {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 0.15rem 0.75rem;
-  padding-top: 0.8rem;
-}
-
-.hero__work-title {
-  color: var(--title);
-  font-family: var(--font-display);
-  font-size: 1.4rem;
-  line-height: 1.15;
-}
-
-.hero__work-meta {
-  color: var(--muted);
-  font-size: 0.9rem;
-}
-
-.hero__work:hover .hero__work-title,
-.hero__work:focus-visible .hero__work-title {
-  text-decoration: underline;
-  text-decoration-thickness: 2px;
-  text-underline-offset: 0.2em;
-}
-
-/* The ring of the focus runs over the band and over the page: saffron inside, the band's blue outside, so one of the
-   two stands out on either ground. */
-.hero__work:focus-visible {
-  outline: none;
-}
-
-.hero__work:focus-visible .shot__frame {
-  outline: 3px solid var(--saffron);
-  outline-offset: 3px;
-  box-shadow: 0 0 0 6px var(--blue);
-}
-
-/* A phone: the star smaller under the buttons, so the picture under it starts in the first view. Nothing is laid over
-   the star: a screen over its lower half read as a broken drawing, above all once the bar at the top hid the rest. */
-@media (max-width: 39.99rem) {
-  .hero:has(.hero__work) .hero__drawing {
-    width: min(30vw, 8rem);
-    margin-top: 1rem;
-  }
-
-  .hero__work {
-    margin-top: 1rem;
-  }
-}
-
-/* A tablet: the picture under the star and the text, as wide as the column of text, at the right. */
-@media (min-width: 40rem) and (max-width: 63.99rem) {
-  .hero:has(.hero__work) {
-    --work: min(100vw - 2 * clamp(1.25rem, 4vw, 4.5rem), 36rem);
-  }
-
-  .hero__work {
-    grid-column: 1 / -1;
-    width: var(--work);
-    margin-left: auto;
-  }
-}
-
-/* A wide screen: the name on the left; on the right the star, whole, and the picture under it. The star is no longer
-   outside the page at the right: it has a column of its own. The picture reaches only a little below the band - with
-   two fifths of it below, a wide screen had an empty band of page beside it before the work began. */
-@media (min-width: 64rem) {
-  .hero:has(.hero__work) {
-    --work: min(36vw, 40rem);
-    --hang: calc(var(--work) * 0.625 * 0.2 + 3.75rem);
-  }
-
-  .hero:has(.hero__work) .hero__grid {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) var(--work);
-    column-gap: clamp(2rem, 4vw, 4.5rem);
-    padding-top: clamp(2.5rem, 4.5vw, 4.5rem);
-  }
-
-  /* The text stands in the blue: its foot is the foot of the band, and the buttons keep the band's room under them. */
-  .hero:has(.hero__work) .hero__text {
-    grid-row: 1 / span 2;
-    align-self: end;
-    max-width: none;
-    padding-bottom: calc(var(--hang) + clamp(3rem, 5vw, 5rem));
-  }
-
-  .hero:has(.hero__work) .hero__drawing {
-    position: relative;
-    top: auto;
-    right: auto;
-    grid-column: 2;
-    grid-row: 1;
-    justify-self: center;
-    width: 64%;
-    transform: none;
-  }
-
-  .hero__work {
-    grid-column: 2;
-    grid-row: 2;
-    margin-top: 1.5rem;
-  }
-}
-
 .star {
   display: block;
   width: 100%;
@@ -1226,17 +1088,12 @@ a:hover {
   }
 }
 
-/* The work on the home page (tracker F61). The lead project is in the first screen (F60); then two large rows, their
-   text level with the middle of the picture, and the others in a grid of two, each with its picture on top. My part
+/* The work on the home page (tracker F61, F62): the first three in large rows, their text level with the middle of the
+   picture, and the others in a grid of two, each with its picture on top. My part
    closes a large row; the figures and the points are on the project's page and on /work/. On a phone every picture
    comes before its text, so a row starts with what was built. */
 .project[data-size="large"] {
   align-items: center;
-}
-
-/* Under the first screen the picture that hangs from the band already makes room: the work begins closer. */
-.hero:has(.hero__work) + .section {
-  padding-top: clamp(2.5rem, 5vw, 4rem);
 }
 
 .project__role {
@@ -2021,6 +1878,93 @@ a:hover {
   gap: 1.75rem;
   margin-top: 1.5rem;
   font-weight: 600;
+}
+
+/* What I am open to, and the email address with its copy button (tracker F62). */
+.contact__intro .contact__availability {
+  color: var(--ink);
+  font-weight: 500;
+}
+
+.contact__intro .contact__email {
+  margin-top: 1.5rem;
+}
+
+.email {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.9rem;
+}
+
+.email__address {
+  font-size: 1.125rem;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+  text-underline-offset: 0.25em;
+}
+
+.email__copy {
+  min-height: 2.75rem;
+  padding: 0.45rem 0.9rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  color: var(--ink);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.email__copy:hover {
+  border-color: var(--title);
+}
+
+/* The end of a project page (tracker F62): a blue band like the one at its top, the way to get in touch in it. It
+   stands on the foot of the page, which is blue too, with a hairline between them. */
+.case-contact {
+  --focus: var(--saffron);
+  --link: var(--on-blue);
+  --line: var(--on-blue-line);
+  --ink: var(--on-blue);
+
+  margin-top: clamp(4rem, 8vw, 6.5rem);
+  padding-block: clamp(3rem, 6vw, 4.5rem);
+  border-bottom: 1px solid var(--on-blue-line);
+  background: var(--blue);
+  color: var(--on-blue);
+}
+
+.case-contact__grid {
+  display: grid;
+  gap: 1.75rem 4rem;
+  align-items: center;
+}
+
+@media (min-width: 60rem) {
+  .case-contact__grid {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+}
+
+.case-contact__title {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4.5vw, 3.2rem);
+  font-weight: 400;
+  line-height: 1.05;
+  text-wrap: balance;
+}
+
+.case-contact__lead {
+  margin-top: 0.75rem;
+  color: var(--on-blue-muted);
+  font-size: 1.0625rem;
+}
+
+.case-contact__ways {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem 1.75rem;
 }
 
 .form {

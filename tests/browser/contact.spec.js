@@ -1,8 +1,15 @@
 // The contact form (tracker B3). The test build has made-up EmailJS settings (tools/dev/browser-tests.cjs) and
 // every request to EmailJS is answered here, so no mail is ever sent.
+import fs from 'node:fs';
 import { expect, test } from '@playwright/test';
 
 const EMAILJS = '**/api.emailjs.com/**';
+const profile = JSON.parse(fs.readFileSync('content/profile.json', 'utf8'));
+const projectSlugs = fs
+  .readdirSync('content/projects')
+  .map((name) => JSON.parse(fs.readFileSync(`content/projects/${name}`, 'utf8')))
+  .filter((project) => project.draft !== true)
+  .map((project) => project.slug);
 
 /** Opens the page, answers EmailJS with the given status and returns the list of requests that reach it. */
 async function openForm(page, status = 200) {
@@ -147,5 +154,42 @@ test('on a wide screen the name and the email address stand side by side, the me
     } else {
       expect(boxes.email.top, 'on a phone the email address under the name').toBeGreaterThan(boxes.name.bottom);
     }
+  }
+});
+
+// Getting in touch (tracker F62). Before, the contact section spoke only to clients, gave no email address and said
+// nothing about availability, and a project page ended on "Next project" with no way to get in touch.
+test('the contact section gives the email address with a copy button, and says what I am open to', async ({ page }) => {
+  expect(profile.links.email, 'content/profile.json gives an email address').toMatch(/^[^\s@]+@[^\s@]+\.[^\s@]+$/);
+  expect(profile.availability, 'content/profile.json says what I am open to').toBeTruthy();
+  // The clipboard of the test browser answers slowly and not always: a stand-in records what the page hands it.
+  await page.addInitScript(() => {
+    Object.defineProperty(navigator, 'clipboard', { value: { writeText: async (text) => (window.copied = text) }, configurable: true });
+  });
+  await page.goto('/');
+  const contact = page.locator('#contact');
+  const address = contact.locator(`a[href="mailto:${profile.links.email}"]`);
+  await expect(address).toHaveText(profile.links.email);
+  await expect(contact.getByText(profile.availability)).toBeVisible();
+
+  // The copy button puts the address on the clipboard and says so. React takes the page over a moment after it has
+  // started (the key on #root comes first): a click in that moment is lost, so the click is repeated until it is seen.
+  // Found by its class: its name turns from "Copy" to "Copied", which no longer contains "copy".
+  const copy = contact.locator('button.email__copy');
+  await expect(copy).toHaveAccessibleName(/^copy the email address$/i);
+  await expect(async () => {
+    await copy.click();
+    await expect(copy).toContainText(/copied/i, { timeout: 500 });
+  }).toPass({ timeout: 10000 });
+  expect(await page.evaluate(() => window.copied)).toBe(profile.links.email);
+});
+
+test('every project page ends with a way to get in touch', async ({ page }) => {
+  for (const slug of projectSlugs) {
+    await page.goto(`/work/${slug}/`);
+    const band = page.locator('.case-contact');
+    await expect(band, slug).toBeVisible();
+    await expect(band.locator('a[href="/#contact"]'), slug).toBeVisible();
+    await expect(band.locator(`a[href="mailto:${profile.links.email}"]`), slug).toBeVisible();
   }
 });

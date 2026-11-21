@@ -28,8 +28,8 @@ test('Ctrl+K opens the palette with the cursor in the field and every command li
   await page.keyboard.press('Control+k');
   await expect(palette(page)).toBeVisible();
   await expect(field(page)).toBeFocused();
-  // Five sections, every project, four actions.
-  await expect(options(page)).toHaveCount(5 + projects.length + 4);
+  // Five sections, every project, six actions (two of them for the email address since F62).
+  await expect(options(page)).toHaveCount(5 + projects.length + 6);
   await expect(chosen(page)).toHaveText(/^Work/);
 
   await page.keyboard.press('Control+k');
@@ -75,7 +75,7 @@ test('the arrow keys move the highlight and go round at the ends', async ({ page
   await expect(field(page)).toHaveAttribute('aria-activedescendant', await chosen(page).getAttribute('id'));
   await page.keyboard.press('ArrowUp');
   await page.keyboard.press('ArrowUp');
-  await expect(chosen(page)).toHaveText(/^Open GitHub/);
+  await expect(chosen(page)).toHaveText(/^Copy the email address/);
   await expect(chosen(page)).toBeInViewport();
   await page.keyboard.press('Home');
   await expect(chosen(page)).toHaveText(/^Work/);

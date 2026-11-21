@@ -992,45 +992,6 @@ test('the first screen has the role under the name and one button, with Get in t
   expect(look).toEqual({ button: false, underline: 'underline', border: '0px' });
 });
 
-// The work in the first view (tracker F60). Before, the name and the star filled the whole first screen of a laptop
-// (1440 x 900 and 1280 x 720) and the first screenshot of work began about 1,140 px down; on a phone, 2.2 screens down.
-// Now a screenshot of the lead project hangs from the blue band, linked to its page, and is seen without scrolling.
-test('the first view shows the work: a screenshot of the lead project, linked to its page', async ({ page }, testInfo) => {
-  await page.emulateMedia({ reducedMotion: 'reduce' });
-  const sizes = isPhone(testInfo) ? [page.viewportSize(), { width: 360, height: 740 }] : [{ width: 1440, height: 900 }, { width: 1280, height: 720 }, { width: 1920, height: 1080 }];
-  for (const size of sizes) {
-    await page.setViewportSize(size);
-    await open(page);
-    const found = await page.evaluate(() => {
-      const pictures = [...document.querySelectorAll('a[href^="/work/"] img')].map((image) => {
-        const box = image.getBoundingClientRect();
-        const seen = Math.min(box.bottom, window.innerHeight) - Math.max(box.top, 0);
-        return { href: image.closest('a').getAttribute('href'), seen: Math.round(seen), height: Math.round(box.height) };
-      });
-      return pictures.find((picture) => picture.seen > 0) ?? { href: null, seen: 0, height: 0 };
-    });
-    expect(found.href, `at ${size.width} x ${size.height} a screenshot of work is in the first view`).toMatch(/^\/work\/[a-z0-9-]+\/$/);
-    expect(found.seen, `at ${size.width} x ${size.height}: ${found.seen} of its ${found.height} px are seen`).toBeGreaterThanOrEqual(Math.min(160, found.height * 0.6));
-  }
-});
-
-// Nothing is laid over the star (tracker F61). F60 laid the screen of the lead project over the lower half of the star;
-// scrolled a little, the bar at the top hid the rest and what was left read as a broken drawing.
-test('the screen of the lead project leaves the star whole', async ({ page }, testInfo) => {
-  await page.emulateMedia({ reducedMotion: 'reduce' });
-  const sizes = isPhone(testInfo) ? [page.viewportSize()] : [{ width: 1440, height: 900 }, { width: 2000, height: 910 }, { width: 1024, height: 768 }];
-  for (const size of sizes) {
-    await page.setViewportSize(size);
-    await open(page);
-    const overlap = await page.evaluate(() => {
-      const star = document.querySelector('.hero__drawing svg').getBoundingClientRect();
-      const screen = document.querySelector('.hero__work .shot').getBoundingClientRect();
-      return Math.max(0, Math.min(star.bottom, screen.bottom) - Math.max(star.top, screen.top)) * Math.max(0, Math.min(star.right, screen.right) - Math.max(star.left, screen.left));
-    });
-    expect(overlap, `at ${size.width} x ${size.height} the screen covers ${Math.round(overlap)} px² of the star`).toBe(0);
-  }
-});
-
 // The star on a phone (tracker F46): small and at full strength under the buttons, in the band, at the right. Before,
 // it was enlarged behind the name at 22 % opacity, its lines across the name, the role and the headline.
 test('on a phone the star stands under the buttons at full strength and crosses no text', async ({ page }, testInfo) => {

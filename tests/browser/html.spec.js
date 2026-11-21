@@ -136,12 +136,11 @@ test.describe('without JavaScript', () => {
   test('the pages show their content and the links between them work', async ({ page }) => {
     await page.goto('/');
     await expect(page.locator('h1')).toContainText('Mohammed');
-    // The lead project is in the first screen, the others in the work (tracker F60, F61).
-    await expect(page.locator('#work .project')).toHaveCount(projects.length - 1);
+    await expect(page.locator('#work .project')).toHaveCount(projects.length);
     await expect(page.locator('#experience')).toContainText('UHRS');
 
     const first = [...projects].sort((a, b) => a.order - b.order)[0];
-    await page.locator(`#top a[href="/work/${first.slug}/"]`).click();
+    await page.locator(`#work a[href="/work/${first.slug}/"]`).click();
     await expect(page.locator('h1')).toContainText(first.title);
     await expect(page.locator('main img').first()).toBeVisible();
 
