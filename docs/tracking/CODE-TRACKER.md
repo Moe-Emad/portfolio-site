@@ -101,7 +101,7 @@ issue and pull request numbers do not link here. From D4 on, the numbers are tho
 | F58 | #84 | Screenshots sharp on sharp screens, starting with Jpro | On a screen with two pixels per point, as most laptops, the 1,440 px screenshots were enlarged and looked soft; the site had no copy for such a screen | `feat/f58-sharp-screenshots` | #85 | done |
 | F59 | #88 | TPMS screenshots sharp on sharp screens | On a screen with two pixels per point the TPMS screenshots are enlarged from 1,440 px and look soft | `feat/f59-tpms-sharp` | - | parked |
 | F60 | #89 | The work in the first view | On a laptop the name and the star filled the whole first screen; the first screenshot of work began about 1,140 px down, on a phone 2.2 screens down | `feat/f60-work-first-view` | #90 | done |
-| F61 | #91 | The work on the home page: two large rows and a grid | Seven rows of one template, about 552 px each, made flagship and minor work look alike, and the lead project's picture appeared twice | `feat/f61-work-list-rhythm` | - | in progress |
+| F61 | #91 | The work on the home page: two large rows and a grid | Seven rows of one template, about 552 px each, made flagship and minor work look alike, and the lead project's picture appeared twice | `feat/f61-work-list-rhythm` | #92 | done |
 
 ## D - docs and developer setup
 
