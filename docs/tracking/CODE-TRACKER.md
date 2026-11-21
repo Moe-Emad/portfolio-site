@@ -103,6 +103,7 @@ issue and pull request numbers do not link here. From D4 on, the numbers are tho
 | F60 | #89 | The work in the first view | On a laptop the name and the star filled the whole first screen; the first screenshot of work began about 1,140 px down, on a phone 2.2 screens down | `feat/f60-work-first-view` | #90 | done |
 | F61 | #91 | The work on the home page: two large rows and a grid | Seven rows of one template, about 552 px each, made flagship and minor work look alike, and the lead project's picture appeared twice | `feat/f61-work-list-rhythm` | #92 | done |
 | F62 | #93 | Getting in touch, and every project under Selected work | The first project's screen stood above "Selected work" since F60, out of place; there was no email address or availability, and project pages ended without a way to get in touch | `feat/f62-contact` | #94 | done |
+| F63 | #95 | The sign further down the page | From the smaller and earlier work down, every section stood on one pale ground with blue titles and hairlines; the blue, the saffron and the star of the first screen were gone | `feat/f63-sections-carry-the-sign` | #96 | done |
 
 ## D - docs and developer setup
 

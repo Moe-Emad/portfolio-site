@@ -1081,3 +1081,72 @@ test('the dark theme is a blueprint: a faint grid on the ground, bands that stan
   });
   expect(problems).toEqual([]);
 });
+
+// Further down the page carries the sign (tracker F63). Before, everything from the smaller and earlier work down stood
+// on one pale ground with blue titles and hairlines; the blue, the saffron and the star of the first screen were gone.
+test.describe('the sign further down', () => {
+  test('How I work and Get in touch stand on bands of the blue of the sign, with saffron numbers and a saffron send button', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await open(page);
+    const colours = await page.evaluate(() => {
+      const probe = (value) => {
+        const element = document.createElement('i');
+        element.style.color = value;
+        document.body.append(element);
+        const colour = getComputedStyle(element).color;
+        element.remove();
+        return colour;
+      };
+      const root = getComputedStyle(document.documentElement);
+      return {
+        blue: probe(root.getPropertyValue('--blue')),
+        saffron: probe(root.getPropertyValue('--saffron')),
+        method: getComputedStyle(document.querySelector('#method')).backgroundColor,
+        contact: getComputedStyle(document.querySelector('#contact')).backgroundColor,
+        step: getComputedStyle(document.querySelector('#method .steps li'), '::before').color,
+        figure: getComputedStyle(document.querySelector('#method .record dt')).color,
+        send: getComputedStyle(document.querySelector('#contact form button[type="submit"]')).backgroundColor,
+      };
+    });
+    expect(colours.method, 'How I work').toBe(colours.blue);
+    expect(colours.contact, 'Get in touch').toBe(colours.blue);
+    expect(colours.step, 'the number of a step').toBe(colours.saffron);
+    expect(colours.figure, 'a figure of the record').toBe(colours.saffron);
+    expect(colours.send, 'the send button').toBe(colours.saffron);
+  });
+
+  test('every section title starts with the star as a small mark that screen readers skip', async ({ page }) => {
+    for (const path of ['/', '/work/']) {
+      await page.goto(path);
+      const titles = page.locator('.section__title, .archive__title');
+      expect(await titles.count()).toBeGreaterThan(0);
+      for (const title of await titles.all()) {
+        const mark = title.locator('svg.mark');
+        await expect(mark, `${path}: ${await title.innerText()}`).toHaveCount(1);
+        await expect(mark).toHaveAttribute('aria-hidden', 'true');
+        expect(await title.evaluate((element) => element.firstElementChild?.matches('svg.mark')), 'the mark comes first').toBe(true);
+      }
+    }
+  });
+
+  test('Experience is a line of time: a diamond at each job, filled saffron while the job goes on', async ({ page }) => {
+    await open(page);
+    const jobs = await page.locator('#experience .job').evaluateAll((items) => {
+      const probe = document.createElement('i');
+      probe.style.color = getComputedStyle(document.documentElement).getPropertyValue('--saffron');
+      document.body.append(probe);
+      const saffron = getComputedStyle(probe).color;
+      probe.remove();
+      return items.map((item) => ({
+        period: item.querySelector('.job__period').textContent,
+        line: getComputedStyle(item, '::before').width,
+        filled: getComputedStyle(item, '::after').backgroundColor === saffron,
+      }));
+    });
+    expect(jobs.length).toBeGreaterThan(1);
+    for (const job of jobs) {
+      expect(job.line, `${job.period}: the line of time`).toBe('1px');
+      expect(job.filled, `${job.period}: filled saffron only while it goes on`).toBe(/Present$/.test(job.period));
+    }
+  });
+});
