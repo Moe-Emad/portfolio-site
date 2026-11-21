@@ -32,16 +32,19 @@ other static host works too (GitHub Pages, a shared web space): upload the conte
 1. **Decide the address.** Either the free one the host gives (`<name>.pages.dev`) or your own domain. You need
    it for step 3 of the next section.
 2. **EmailJS.** The three EmailJS values are part of the JavaScript every visitor downloads. They are not
-   passwords, but anyone can copy them and send mail through your account until you limit where they may be used:
-   - In the [EmailJS dashboard](https://dashboard.emailjs.com) open **Domains** and add the address of the site.
-     EmailJS then refuses requests from anywhere else
+   passwords: EmailJS made them to be public. Anyone can copy them, but with them they can only send your
+   templates with your text
+   ([EmailJS: Is it okay to expose my Public Key?](https://www.emailjs.com/docs/faq/is-it-okay-to-expose-my-public-key/)).
+   Two settings decide where such mail can go:
+   - In the e-mail template in the [EmailJS dashboard](https://dashboard.emailjs.com), set **To Email** to your own
+     address as fixed text, never to a variable such as `{{to_email}}`. Then mail sent with your values can only
+     reach you. The site sends only the three fields of the form: name, address and message.
+   - **Domains** (Account, Security) makes EmailJS refuse requests from any address but the site's
      ([EmailJS: Can I add my domain to the allowlist?](https://www.emailjs.com/docs/faq/can-i-add-my-domain-to-allowlist/)).
-     One review says this needs a paid plan; if the free plan does not offer it, do the next two points and watch
-     the monthly count.
-   - In the e-mail template, set the recipient to your own address as fixed text, never to a field of the form.
-     Then a stranger can only send mail to you.
-   - **Give the site a public key of its own** (Account, API keys), so it can be replaced at any time without
-     touching anything else, and use it in the settings of the host.
+     It belongs to the paid plans, not to the free one ([EmailJS pricing](https://www.emailjs.com/pricing/)). On
+     the free plan the monthly count of 200 requests is the only limit: a stranger who used it up would stop the
+     form until the next month. If unwanted mail ever arrives, a template can also require Google's reCAPTCHA,
+     which would need Google's scripts allowed in the Content-Security-Policy.
 3. **Run every check once more.**
 
    ```powershell
@@ -91,7 +94,7 @@ other static host works too (GitHub Pages, a shared web space): upload the conte
    | `VITE_SITE_URL` | The address of the site without a closing slash: `https://myportfolio-iota-navy-36.vercel.app`, or your own domain |
    | `VITE_APP_EMAILJS_SERVICE_ID` | From the EmailJS dashboard |
    | `VITE_APP_EMAILJS_TEMPLATE_ID` | From the EmailJS dashboard |
-   | `VITE_APP_EMAILJS_PUBLIC_KEY` | The public key of the site from section 2 |
+   | `VITE_APP_EMAILJS_PUBLIC_KEY` | From the EmailJS dashboard (Account) |
 
    They are typed into the dashboard, never written into a file of the repository, and read when the site is
    built: after changing one, deploy again (Deployments, the menu of the latest one, **Redeploy**). The Node.js
@@ -125,7 +128,7 @@ other static host works too (GitHub Pages, a shared web space): upload the conte
    | `VITE_SITE_URL` | The address of the site without a closing slash, for example `https://mohammedemad.pages.dev` |
    | `VITE_APP_EMAILJS_SERVICE_ID` | From the EmailJS dashboard |
    | `VITE_APP_EMAILJS_TEMPLATE_ID` | From the EmailJS dashboard |
-   | `VITE_APP_EMAILJS_PUBLIC_KEY` | The public key of the site from step 2 |
+   | `VITE_APP_EMAILJS_PUBLIC_KEY` | From the EmailJS dashboard (Account) |
 
    These are typed into the dashboard of the host. They are never written into a file of the repository.
 4. **Save and Deploy.** The first build takes a minute or two. From now on every merge to `main` deploys by itself,
@@ -183,7 +186,7 @@ host builds and publishes the new version by itself, usually within two minutes.
 | The build fails with "Could not resolve ..." but works on the PC | A file name differs in upper and lower case; Linux is strict about it | Run `npm run test:tools`: the import test names the file. Fix the letter case |
 | The build says "VITE_SITE_URL is not set" | The variable is missing on the host | Add it (section 3 or 4, step 3) and deploy again. Without it there is no sitemap and no picture in link previews |
 | The contact form is replaced by a notice | One of the three EmailJS variables is missing on the host | Add all three and deploy again: they are read when the site is built, not when it runs |
-| The contact form says the message could not be sent | EmailJS refused it: wrong value, or the address of the site is not in the Domains list | Compare the three values with the dashboard; add the live address under Domains |
+| The contact form says the message could not be sent | EmailJS refused it: a wrong value, the 200 requests of the month are used up, or, on a paid plan with a Domains list, the address of the site is not in it | Compare the three values with the dashboard and look at the monthly count there; with a Domains list, add the live address to it |
 | The gate fails with "the theme script of index.html has the hash 'sha256-...'" | The small script in `index.html` was changed, and the Content-Security-Policy allows it by the hash of its old text | Copy the new hash from the message into the policy in `public/_headers` and in `vercel.json`, in place of the old one |
 | Something from another server does not load (a font, a script, a map), and the console says it was refused by the Content Security Policy | The policy allows files of the site only, and connections to the site and to EmailJS | Add the address of that server to the rule the console names (`script-src`, `connect-src`, `img-src`, `font-src`...) in `public/_headers` and in `vercel.json`, and the same in the test of the policy in `tools/dev/vercel.test.cjs`. Ask first whether the page needs it at all |
 | On a preview address of Vercel the console says the Vercel toolbar was refused | The toolbar of previews is a script from another server | Expected: the policy is the same on previews as on the live site, so the toolbar's comments are not available there |
