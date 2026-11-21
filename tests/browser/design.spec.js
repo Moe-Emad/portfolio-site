@@ -766,7 +766,8 @@ test.describe('the skills', () => {
 // of a project in the list (1.6rem). The record of the site keeps its large figures: it is the one place for them.
 test.describe('figures', () => {
   const blocks = [
-    { path: '/', what: 'the rows of the work list', selector: '#work .project__facts' },
+    // Since F61 the rows with figures are those of /work/; the home page leaves them to the project pages.
+    { path: '/work/', what: 'the rows of the work list', selector: '#work .project__facts' },
     { path: '/work/mtc-training-platform/', what: 'a project page', selector: '.facts' },
     { path: '/work/molok-el-sook/', what: 'a project page with three figures', selector: '.facts' },
   ];
@@ -931,39 +932,42 @@ test.describe('the first screen of a project page', () => {
 
 // A row of the work list has one clear top (tracker F40): the name of its project, in the display face as on the
 // project's page, at least one and a half times the size of any other text of the row. My part, what the row says I
-// did, is in ink; its label is the muted part.
+// did, is in ink; its label is the muted part. On the home page (F61) the large rows say my part; the grid does not.
 test('each row of the work list has its name on top and my part in ink', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
-  await open(page);
-  const rows = page.locator('#work .project');
-  expect(await rows.count()).toBeGreaterThan(1);
-  for (const row of await rows.all()) {
-    const found = await row.evaluate((element) => {
-      const problems = [];
-      const title = element.querySelector('.project__title');
-      const name = title.textContent;
-      const titleStyle = getComputedStyle(title);
-      const size = parseFloat(titleStyle.fontSize);
-      if (!/^"?Rakkas\b/.test(titleStyle.fontFamily)) problems.push(`${name}: the name is in ${titleStyle.fontFamily}`);
-      // Every element of the row's text with words of its own, outside the name.
-      for (const other of element.querySelectorAll('.project__text *')) {
-        if (title.contains(other)) continue;
-        const words = [...other.childNodes].some((node) => node.nodeType === Node.TEXT_NODE && node.textContent.trim());
-        if (!words || other.closest('[hidden]') || getComputedStyle(other).display === 'none') continue;
-        const otherSize = parseFloat(getComputedStyle(other).fontSize);
-        if (size < 1.5 * otherSize) problems.push(`${name}: "${other.textContent.trim().slice(0, 30)}" is ${otherSize}px beside a name of ${size}px`);
-      }
-      const root = getComputedStyle(document.documentElement);
-      const probe = document.createElement('i');
-      document.body.append(probe);
-      probe.style.color = root.getPropertyValue('--ink');
-      const ink = getComputedStyle(probe).color;
-      probe.remove();
-      const part = getComputedStyle(element.querySelector('.project__part p')).color;
-      if (part !== ink) problems.push(`${name}: my part is in ${part}, not in ink (${ink})`);
-      return problems;
-    });
-    expect(found).toEqual([]);
+  for (const path of ['/', '/work/']) {
+    await page.goto(path);
+    const rows = page.locator('#work .project');
+    expect(await rows.count()).toBeGreaterThan(1);
+    for (const row of await rows.all()) {
+      const found = await row.evaluate((element) => {
+        const problems = [];
+        const title = element.querySelector('.project__title');
+        const name = title.textContent;
+        const titleStyle = getComputedStyle(title);
+        const size = parseFloat(titleStyle.fontSize);
+        if (!/^"?Rakkas\b/.test(titleStyle.fontFamily)) problems.push(`${name}: the name is in ${titleStyle.fontFamily}`);
+        // Every element of the row's text with words of its own, outside the name.
+        for (const other of element.querySelectorAll('.project__text *')) {
+          if (title.contains(other)) continue;
+          const words = [...other.childNodes].some((node) => node.nodeType === Node.TEXT_NODE && node.textContent.trim());
+          if (!words || other.closest('[hidden]') || getComputedStyle(other).display === 'none') continue;
+          const otherSize = parseFloat(getComputedStyle(other).fontSize);
+          if (size < 1.5 * otherSize) problems.push(`${name}: "${other.textContent.trim().slice(0, 30)}" is ${otherSize}px beside a name of ${size}px`);
+        }
+        const root = getComputedStyle(document.documentElement);
+        const probe = document.createElement('i');
+        document.body.append(probe);
+        probe.style.color = root.getPropertyValue('--ink');
+        const ink = getComputedStyle(probe).color;
+        probe.remove();
+        const said = element.querySelector('.project__part p, .project__role');
+        const part = said && getComputedStyle(said).color;
+        if (said && part !== ink) problems.push(`${name}: my part is in ${part}, not in ink (${ink})`);
+        return problems;
+      });
+      expect(found, path).toEqual([]);
+    }
   }
 });
 

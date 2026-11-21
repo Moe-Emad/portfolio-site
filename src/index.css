@@ -1222,6 +1222,78 @@ a:hover {
   }
 }
 
+/* The work on the home page (tracker F61). The lead project is in the first screen (F60); then two large rows, their
+   text level with the middle of the picture, and the others in a grid of two, each with its picture on top. My part
+   closes a large row; the figures and the points are on the project's page and on /work/. On a phone every picture
+   comes before its text, so a row starts with what was built. */
+.project[data-size="large"] {
+  align-items: center;
+}
+
+/* Under the first screen the picture that hangs from the band already makes room: the work begins closer. */
+.hero:has(.hero__work) + .section {
+  padding-top: clamp(2.5rem, 5vw, 4rem);
+}
+
+.project__role {
+  max-width: 60ch;
+  margin-top: 1.25rem;
+  color: var(--ink);
+  font-size: 0.9375rem;
+  line-height: 1.55;
+}
+
+.project__role span {
+  display: block;
+  margin-bottom: 0.2rem;
+  color: var(--muted);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+@media (max-width: 59.99rem) {
+  .project[data-size] .shot {
+    order: -1;
+  }
+}
+
+.work-grid {
+  display: grid;
+  gap: 3.25rem clamp(2rem, 4vw, 4rem);
+  padding-top: clamp(2.5rem, 5vw, 3.5rem);
+}
+
+@media (min-width: 48rem) {
+  .work-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.work-grid .project {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  padding: 0;
+  border: 0;
+}
+
+.work-grid .project .shot {
+  order: -1;
+}
+
+.work-grid .project__title {
+  font-size: clamp(1.6rem, 1.2rem + 0.8vw, 1.9rem);
+}
+
+.work-all {
+  margin-top: clamp(2.5rem, 5vw, 3.5rem);
+  font-weight: 600;
+}
+
+.work-all a {
+  text-underline-offset: 0.25em;
+}
+
 /* A screenshot (tracker F50): the picture in a frame of the screen's kind, and its caption under the frame as the
    caption of a figure, not boxed in with it. A wide screen has a hairline frame with the large corner. */
 .shot__frame {

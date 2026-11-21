@@ -13,7 +13,9 @@ about the work, and a page for every project.
   form. Its first screen already shows the work: the screen of the lead project hangs from the blue band, linked to
   its page.
 - **A page for every project** (`/work/<slug>/`): what it is, its figures, my part in it, and real screenshots on a
-  desktop and a phone. The list of work can be narrowed by kind: client work, own products, modernization.
+  desktop and a phone. The home page shows the work as a selection: the lead project in the first screen, two large
+  rows and a grid. The list of all the work (`/work/`) has the figures of each project and can be narrowed by kind:
+  client work, own products, modernization.
 - **A command palette.** Press Ctrl+K, or the Search button, to jump to any section or project, switch the theme or
   open a profile, all from the keyboard.
 - **A light and a dark theme.** The first visit follows the system setting; a choice is remembered.

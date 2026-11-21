@@ -93,3 +93,4 @@ and do not link here.
 - F58: Screenshots taken at twice the size get two more copies, so a sharp laptop screen shows them sharp and an ordinary one keeps its copy; the four wide screenshots of Jpro are retaken at 2880 px; npm run weight measures a sharp desktop too (#85)
 - D7: The deploy guide says what EmailJS offers: its values are public by design, a fixed recipient in the template keeps mail to the owner on every plan, and the Domains list is part of the paid plans (#87)
 - F60: The first screen shows the work: the screen of the lead project hangs from the blue band, over the foot of the star, linked to its page, on a laptop and on a phone (#90)
+- F61: The work on the home page: the lead project in the first screen only, the next two in large rows, the others in a grid of two with the picture on top; the figures and the tabs by kind are on /work/; on a phone every picture comes before its text

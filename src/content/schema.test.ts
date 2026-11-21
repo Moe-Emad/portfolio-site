@@ -10,10 +10,12 @@ import {
   profileProblems,
   projectCard,
   projectProblems,
+  homeWork,
+  leadProject,
   shownProjects,
   sortProjects,
 } from './schema.ts';
-import type { Project } from './schema.ts';
+import type { Project, ProjectImage } from './schema.ts';
 
 const ROOT = path.resolve(import.meta.dirname, '..', '..');
 const read = (file: string): unknown => JSON.parse(fs.readFileSync(path.join(ROOT, file), 'utf8'));
@@ -71,6 +73,21 @@ test('a job may name a project of the site; a name that is not a project is a pr
     contentProblems({ ...base, experience: [{ ...job, project: 'no-such-project' }] }).join('\n'),
     /content\/experience\.json \[job 1\]: project - "no-such-project" is not a project of the site/,
   );
+});
+
+// The home page (tracker F60, F61): the lead project in the first screen, then the next two in large rows and the
+// others in a grid. The lead is the first in the order with a wide screenshot, and is shown once.
+test('the home page shows the lead project first, then two large rows and a grid of the others', () => {
+  const wide: ProjectImage = { src: '/w.jpg', alt: 'a', device: 'desktop', width: 1440, height: 900 };
+  const phone: ProjectImage = { ...wide, device: 'phone', width: 780, height: 1688 };
+  const make = (slug: string, images: ProjectImage[] = [wide], featured = true) => ({ slug, featured, images });
+  const projects = [make('phone-first', [phone]), make('a'), make('b'), make('c'), make('d'), make('quiet', [], false)];
+  assert.equal(leadProject(projects)?.slug, 'a');
+  const home = homeWork(projects);
+  assert.deepEqual(home.large.map((project) => project.slug), ['phone-first', 'b']);
+  assert.deepEqual(home.grid.map((project) => project.slug), ['c', 'd', 'quiet']);
+  assert.equal([...home.large, ...home.grid].some((project) => project.slug === 'a'), false);
+  assert.equal(leadProject([make('none', [phone])]), undefined);
 });
 
 // A draft is checked like any project but left out of the site (tracker F17).

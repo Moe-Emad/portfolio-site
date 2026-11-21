@@ -1,6 +1,7 @@
 import { useState } from 'react';
+import type { ReactNode } from 'react';
 import { content } from '../content/index.ts';
-import { projectMeta } from '../content/schema.ts';
+import { homeWork, projectMeta } from '../content/schema.ts';
 import type { ProjectCard } from '../content/schema.ts';
 import { projectPath } from '../routes.ts';
 import Shot from './Shot.tsx';
@@ -33,6 +34,11 @@ function Tab({ label, pressed, onPress }: { label: string; pressed: boolean; onP
 
 // At most this many points of a project are named in its row; its page has them all.
 const MAX_POINTS = 4;
+
+// sizes: a row's picture takes 7/12 of the row from 60rem, up to about 58rem on a wide screen (F18, F25); a picture
+// of the grid on the home page half the width of the page from 48rem (F61).
+const ROW_SIZES = '(min-width: 60rem) min(56vw, 58rem), 100vw';
+const GRID_SIZES = '(min-width: 104rem) 51rem, (min-width: 48rem) 46vw, 100vw';
 
 /**
  * What a row says beyond its one sentence (tracker F25), all from the project's own content: its measured figures
@@ -98,17 +104,127 @@ function ProjectRow({ project }: { project: ProjectCard }) {
         </ul>
         <ProjectDetails project={project} />
       </div>
-      {/* sizes: from 60rem the picture takes 7/12 of the row, up to about 58rem on a wide screen (F18, F25). */}
-      {project.featured && cover && <Shot image={cover} sizes="(min-width: 60rem) min(56vw, 58rem), 100vw" />}
+      {project.featured && cover && <Shot image={cover} sizes={ROW_SIZES} />}
     </article>
   );
 }
 
 /**
- * The work: every project from content/projects with tabs by kind, then the smaller pieces.
- * page: shown as a page of its own at /work/ (tracker B6), so its title is the h1 of the page.
+ * A project on the home page (tracker F61): its picture, kind, name, sentence and tools. A large row also says my
+ * part; its figures and points are on its own page and on /work/. The whole entry is one link.
+ */
+function HomeEntry({ project, size }: { project: ProjectCard; size: 'large' | 'small' }) {
+  const cover = project.images[0];
+  return (
+    <article className="project" data-size={size} data-featured={size === 'large' && Boolean(cover)}>
+      <div className="project__text">
+        <p className="project__meta">{projectMeta(project)}</p>
+        <h3 className="project__title">
+          <a href={projectPath(project.slug)} className="project__link">
+            {project.title}
+          </a>
+          {project.titleArabic && (
+            <span className="project__title-arabic" lang="ar" dir="rtl">
+              {project.titleArabic}
+            </span>
+          )}
+        </h3>
+        <p className="project__summary">{project.summary}</p>
+        <ul className="stack" aria-label="Built with">
+          {project.stack.map((name) => (
+            <li key={name}>{name}</li>
+          ))}
+        </ul>
+        {size === 'large' && (
+          <p className="project__role">
+            <span>My part</span> {project.role}
+          </p>
+        )}
+      </div>
+      {cover && <Shot image={cover} sizes={size === 'large' ? ROW_SIZES : GRID_SIZES} />}
+    </article>
+  );
+}
+
+/** The head of the work: its title and what it is. */
+function WorkHead({ page, children }: { page: boolean; children?: ReactNode }) {
+  return (
+    <div className="work-head">
+      <div>
+        <SectionTitle id="work-title" pageTitle={page}>
+          Selected work
+        </SectionTitle>
+        <p className="section__lead">
+          Client work, my own products and one long modernization. The code is private, so every project has a page of
+          its own with the full story and real screens.
+        </p>
+      </div>
+      {children}
+    </div>
+  );
+}
+
+/** The smaller pieces, as a register, like the list of sheets in a set of drawings (tracker F41): one line each. */
+function Archive() {
+  return (
+    <>
+      <div className="archive__head">
+        <h3 className="archive__title">Smaller and earlier work</h3>
+        <p className="archive__lead">Coursework, course builds and early experiments: {content.archive.length} pieces.</p>
+      </div>
+      <ul className="archive">
+        {content.archive.map((entry) => (
+          <li key={entry.title} data-animate="draw">
+            <span className="archive__name">{entry.title}</span>
+            <span className="archive__summary">{entry.summary}</span>
+            <span className="archive__tech">{entry.tech}</span>
+          </li>
+        ))}
+      </ul>
+    </>
+  );
+}
+
+/**
+ * The work on the home page (tracker F61): the lead project is in the first screen (F60), so the list goes on with
+ * the next two in large rows and the others in a grid, then the way to all of it at /work/, and the smaller pieces.
+ */
+function HomeWork() {
+  const { large, grid } = homeWork(content.projects);
+  return (
+    <section id="work" className="section" aria-labelledby="work-title">
+      <div className="wrap">
+        <WorkHead page={false} />
+        <div className="projects">
+          {large.map((project) => (
+            <HomeEntry key={project.slug} project={project} size="large" />
+          ))}
+        </div>
+        {grid.length > 0 && (
+          <div className="work-grid">
+            {grid.map((project) => (
+              <HomeEntry key={project.slug} project={project} size="small" />
+            ))}
+          </div>
+        )}
+        <p className="work-all">
+          <a href="/work/">All work, by kind, with the figures of each project</a>
+        </p>
+        <Archive />
+      </div>
+    </section>
+  );
+}
+
+/**
+ * The work: on the home page a selection (HomeWork); at /work/, a page of its own (tracker B6) whose title is the h1
+ * of the page, every project from content/projects in a full row, with tabs by kind, then the smaller pieces.
  */
 export default function Work({ page = false }: { page?: boolean }) {
+  return page ? <AllWork /> : <HomeWork />;
+}
+
+function AllWork() {
   const [kind, setKind] = useState<Kind | null>(null);
   const tabs = kindTabs(content.projects);
   const total = content.projects.length;
@@ -118,16 +234,7 @@ export default function Work({ page = false }: { page?: boolean }) {
   return (
     <section id="work" className="section" aria-labelledby="work-title">
       <div className="wrap">
-        <div className="work-head">
-          <div>
-            <SectionTitle id="work-title" pageTitle={page}>
-              Selected work
-            </SectionTitle>
-            <p className="section__lead">
-              Client work, my own products and one long modernization. The code is private, so every project has a
-              page of its own with the full story and real screens.
-            </p>
-          </div>
+        <WorkHead page>
           <div className="work-head__tabs">
             <div className="kinds" role="group" aria-label="Show the work of one kind">
               <Tab label="All" pressed={kind === null} onPress={() => setKind(null)} />
@@ -139,7 +246,7 @@ export default function Work({ page = false }: { page?: boolean }) {
               {kind && label ? `${shown.length} of ${total} projects: ${label.toLowerCase()}.` : `All ${total} projects.`}
             </p>
           </div>
-        </div>
+        </WorkHead>
 
         <div className="projects">
           {shown.map((project) => (
@@ -147,20 +254,7 @@ export default function Work({ page = false }: { page?: boolean }) {
           ))}
         </div>
 
-        {/* A register, like the list of sheets in a set of drawings (tracker F41): one line per piece. */}
-        <div className="archive__head">
-          <h3 className="archive__title">Smaller and earlier work</h3>
-          <p className="archive__lead">Coursework, course builds and early experiments: {content.archive.length} pieces.</p>
-        </div>
-        <ul className="archive">
-          {content.archive.map((entry) => (
-            <li key={entry.title} data-animate="draw">
-              <span className="archive__name">{entry.title}</span>
-              <span className="archive__summary">{entry.summary}</span>
-              <span className="archive__tech">{entry.tech}</span>
-            </li>
-          ))}
-        </ul>
+        <Archive />
       </div>
     </section>
   );

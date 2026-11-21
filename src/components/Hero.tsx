@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import type { RefObject } from 'react';
 import { content } from '../content/index.ts';
-import { projectMeta } from '../content/schema.ts';
+import { leadProject, projectMeta } from '../content/schema.ts';
 import { roleLine } from '../lib/profile.js';
 import { projectPath } from '../routes.ts';
 import Shot from './Shot.tsx';
@@ -39,8 +39,7 @@ function useLean(area: RefObject<HTMLElement | null>, target: RefObject<HTMLElem
  */
 export default function Hero() {
   const { profile } = content;
-  // The lead project: the first in the order of the work with a wide screenshot.
-  const lead = content.projects.find((project) => project.featured && project.images[0]?.device === 'desktop');
+  const lead = leadProject(content.projects);
   const cover = lead?.images[0];
   // The sign has two rows: the first name on top; below it the rest of the name on the left and the Arabic
   // name on the right, each script starting from its own side.
