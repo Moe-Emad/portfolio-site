@@ -92,3 +92,4 @@ and do not link here.
 - F57: On a wide screen each group of Skills stands on the three lines of Experience: name, note, tools; the section is shorter and uses its width. The finding about the two Jpro addresses is closed: the project page links to the site that was built (#83)
 - F58: Screenshots taken at twice the size get two more copies, so a sharp laptop screen shows them sharp and an ordinary one keeps its copy; the four wide screenshots of Jpro are retaken at 2880 px; npm run weight measures a sharp desktop too (#85)
 - D7: The deploy guide says what EmailJS offers: its values are public by design, a fixed recipient in the template keeps mail to the owner on every plan, and the Domains list is part of the paid plans (#87)
+- F60: The first screen shows the work: the screen of the lead project hangs from the blue band, over the foot of the star, linked to its page, on a laptop and on a phone (#90)

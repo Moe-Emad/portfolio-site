@@ -13,20 +13,35 @@ npm run weight
 
 ## The home page, from the original to today
 
-| | Original | After F2-F4 (new design, real HTML) | After F5 (WebP copies) | Today (after F56) |
+| | Original | After F2-F4 (new design, real HTML) | After F5 (WebP copies) | Today (after F60) |
 |---|---|---|---|---|
-| Requests | 41, of them 15 to other servers | 10, all to the site itself | 10, all to the site itself | 13, all to the site itself |
+| Requests | 41, of them 15 to other servers | 10, all to the site itself | 10, all to the site itself | 14 on a desktop, 13 on a phone, all to the site itself |
 | JavaScript | 414 kB | 74 kB | 74 kB | 83 kB |
 | CSS | 7 kB | 6 kB | 6 kB | 9 kB |
 | HTML | 0.3 kB (an empty page) | 6 kB (the whole text) | 6 kB | 9 kB |
 | Fonts | 80 kB, from Google | 74 kB, from the site | 74 kB, from the site | 55 kB, from the site |
-| Pictures | 2,988 kB | 393 kB | 125 kB on a desktop, 161 kB on a phone | 149 kB on a desktop, 222 kB on a phone |
+| Pictures | 2,988 kB | 393 kB | 125 kB on a desktop, 161 kB on a phone | 162 kB on a desktop, 221 kB on a phone |
 | 3D models and their lighting map | 2,908 kB | none | none | none |
-| **Total as it travels** | **6,397 kB** | **553 kB** | **286 kB on a desktop, 322 kB on a phone** | **306 kB on a desktop, 379 kB on a phone** |
+| **Total as it travels** | **6,397 kB** | **553 kB** | **286 kB on a desktop, 322 kB on a phone** | **319 kB on a desktop, 378 kB on a phone** |
 
 The original was measured from a build of the first version (`583fd75`) with the same method. Its 2,908 kB of 3D data are the models of the room (1,632 kB) and a lighting map the 3D library fetched
 from another server (1,276 kB). The last column counts every picture of the page; before B12 the tool missed the
 lower pictures, so the picture figures of the earlier columns are too low.
+
+## Measured on 2026-11-21, F60 (the work in the first view)
+
+The first screen of the home page now shows the screen of the lead project, so that picture loads with the page
+instead of when the list of work is scrolled to. On a desktop it is shown narrower than in its row, so its own copy
+is fetched besides the row's (14 kB more; 30 kB more on a sharp desktop). On a phone both are shown at the width of
+the screen and the browser fetches the copy once: nothing more.
+
+| Page | Size | Requests before | Requests after | Pictures before | Pictures after | Total before | Total after |
+|---|---|---|---|---|---|---|---|
+| `/` | desktop | 13 | 14 | 148 kB | 162 kB | 305 kB | 319 kB |
+| `/` | sharp desktop | 13 | 14 | 328 kB | 358 kB | 485 kB | 515 kB |
+| `/` | phone | 13 | 13 | 221 kB | 221 kB | 378 kB | 378 kB |
+
+The project pages do not change.
 
 ## Measured on 2026-11-20, F58 (screenshots sharp on sharp screens, starting with Jpro)
 

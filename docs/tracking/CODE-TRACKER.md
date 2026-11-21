@@ -99,6 +99,8 @@ issue and pull request numbers do not link here. From D4 on, the numbers are tho
 | F56 | #80 | The Arabic font holds only the letters the site shows | Every page downloaded the whole Arabic file of Rakkas (26 kB) for ten letters, and its face, without a range, was taken for every character, Latin text included | `feat/f56-arabic-font-subset` | #81 | done |
 | F57 | #82 | Skills on the lines of Experience on a wide screen | At 1920 px the tools of each group ended near the middle of the row and the right of the section stayed empty, while Experience above uses the width in three columns | `feat/f57-skills-columns` | #83 | done |
 | F58 | #84 | Screenshots sharp on sharp screens, starting with Jpro | On a screen with two pixels per point, as most laptops, the 1,440 px screenshots were enlarged and looked soft; the site had no copy for such a screen | `feat/f58-sharp-screenshots` | #85 | done |
+| F59 | #88 | TPMS screenshots sharp on sharp screens | On a screen with two pixels per point the TPMS screenshots are enlarged from 1,440 px and look soft | `feat/f59-tpms-sharp` | - | parked |
+| F60 | #89 | The work in the first view | On a laptop the name and the star filled the whole first screen; the first screenshot of work began about 1,140 px down, on a phone 2.2 screens down | `feat/f60-work-first-view` | #90 | done |
 
 ## D - docs and developer setup
 

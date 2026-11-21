@@ -676,6 +676,140 @@ a:hover {
   }
 }
 
+/* The screen of the lead project under the star (tracker F60): the work is seen in the first view. It hangs from the
+   band as the cover of a project page reaches up into its band: the blue ends --hang above the foot of the block,
+   about two fifths of the way down the picture, and the name of the project stands under it on the page. The whole
+   block is one link to the project's page. --work is the width of the picture; screenshots are 16:10. */
+.hero:has(.hero__work) {
+  --work: calc(100vw - 2 * clamp(1.25rem, 4vw, 4.5rem));
+  --hang: calc(var(--work) * 0.625 * 0.42 + 3.75rem);
+
+  background: linear-gradient(var(--blue) calc(100% - var(--hang)), transparent 0);
+}
+
+.hero:has(.hero__work) .hero__grid {
+  padding-bottom: 0;
+}
+
+.hero__work {
+  --focus: var(--saffron);
+
+  position: relative;
+  z-index: 1;
+  display: block;
+  margin-top: 1.75rem;
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.hero__work .shot__frame {
+  box-shadow: 0 1.5rem 3rem -2rem color-mix(in srgb, var(--ink) 55%, transparent);
+}
+
+.hero__work-label {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.15rem 0.75rem;
+  padding-top: 0.8rem;
+}
+
+.hero__work-title {
+  color: var(--title);
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  line-height: 1.15;
+}
+
+.hero__work-meta {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.hero__work:hover .hero__work-title,
+.hero__work:focus-visible .hero__work-title {
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.2em;
+}
+
+/* The ring of the focus runs over the band and over the page: saffron inside, the band's blue outside, so one of the
+   two stands out on either ground. */
+.hero__work:focus-visible {
+  outline: none;
+}
+
+.hero__work:focus-visible .shot__frame {
+  outline: 3px solid var(--saffron);
+  outline-offset: 3px;
+  box-shadow: 0 0 0 6px var(--blue);
+}
+
+/* A phone: the star smaller under the buttons, and the picture laid over its foot, as on a wide screen, so the picture
+   starts in the first view. */
+@media (max-width: 39.99rem) {
+  .hero:has(.hero__work) .hero__drawing {
+    width: min(40vw, 10rem);
+    margin-top: 1.25rem;
+  }
+
+  .hero__work {
+    margin-top: -1.75rem;
+  }
+}
+
+/* A tablet: the picture under the star and the text, as wide as the column of text, at the right. */
+@media (min-width: 40rem) and (max-width: 63.99rem) {
+  .hero:has(.hero__work) {
+    --work: min(100vw - 2 * clamp(1.25rem, 4vw, 4.5rem), 36rem);
+  }
+
+  .hero__work {
+    grid-column: 1 / -1;
+    width: var(--work);
+    margin-left: auto;
+  }
+}
+
+/* A wide screen: the name on the left; on the right the star, and the picture over its lower half, as a screen laid
+   on the drawing. The star is no longer outside the page at the right: it has a column of its own. */
+@media (min-width: 64rem) {
+  .hero:has(.hero__work) {
+    --work: min(36vw, 40rem);
+  }
+
+  .hero:has(.hero__work) .hero__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) var(--work);
+    column-gap: clamp(2rem, 4vw, 4.5rem);
+    padding-top: clamp(2.5rem, 4.5vw, 4.5rem);
+  }
+
+  /* The text stands in the blue: its foot is the foot of the band, and the buttons keep the band's room under them. */
+  .hero:has(.hero__work) .hero__text {
+    grid-row: 1 / span 2;
+    align-self: end;
+    max-width: none;
+    padding-bottom: calc(var(--hang) + clamp(3rem, 5vw, 5rem));
+  }
+
+  .hero:has(.hero__work) .hero__drawing {
+    position: relative;
+    top: auto;
+    right: auto;
+    grid-column: 2;
+    grid-row: 1;
+    width: 100%;
+    transform: none;
+  }
+
+  .hero__work {
+    grid-column: 2;
+    grid-row: 2;
+    margin-top: calc(var(--work) * -0.45);
+  }
+}
+
 .star {
   display: block;
   width: 100%;
