@@ -1014,6 +1014,23 @@ test('the first view shows the work: a screenshot of the lead project, linked to
   }
 });
 
+// Nothing is laid over the star (tracker F61). F60 laid the screen of the lead project over the lower half of the star;
+// scrolled a little, the bar at the top hid the rest and what was left read as a broken drawing.
+test('the screen of the lead project leaves the star whole', async ({ page }, testInfo) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  const sizes = isPhone(testInfo) ? [page.viewportSize()] : [{ width: 1440, height: 900 }, { width: 2000, height: 910 }, { width: 1024, height: 768 }];
+  for (const size of sizes) {
+    await page.setViewportSize(size);
+    await open(page);
+    const overlap = await page.evaluate(() => {
+      const star = document.querySelector('.hero__drawing svg').getBoundingClientRect();
+      const screen = document.querySelector('.hero__work .shot').getBoundingClientRect();
+      return Math.max(0, Math.min(star.bottom, screen.bottom) - Math.max(star.top, screen.top)) * Math.max(0, Math.min(star.right, screen.right) - Math.max(star.left, screen.left));
+    });
+    expect(overlap, `at ${size.width} x ${size.height} the screen covers ${Math.round(overlap)} px² of the star`).toBe(0);
+  }
+});
+
 // The star on a phone (tracker F46): small and at full strength under the buttons, in the band, at the right. Before,
 // it was enlarged behind the name at 22 % opacity, its lines across the name, the role and the headline.
 test('on a phone the star stands under the buttons at full strength and crosses no text', async ({ page }, testInfo) => {
