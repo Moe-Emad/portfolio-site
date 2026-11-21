@@ -52,6 +52,16 @@ content:
             label: "GitHub address"
             type: "string"
             required: false
+          - name: "email"
+            label: "Email address"
+            type: "string"
+            required: false
+            description: "Shown in the contact section and at the end of every project page, with a copy button."
+      - name: "availability"
+        label: "Availability"
+        type: "string"
+        required: false
+        description: "One line beside the contact form: what you are open to and where you work from."
   - name: "experience"
     label: "Experience"
     type: "file"

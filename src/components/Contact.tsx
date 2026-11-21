@@ -2,6 +2,7 @@ import { useState } from 'react';
 import type { ChangeEvent, FormEvent } from 'react';
 import { content } from '../content/index.ts';
 import { contactSettings, fieldErrors, LIMITS, looksLikeBot, sendMessage } from '../lib/contact.js';
+import EmailAddress from './EmailAddress.tsx';
 import SectionTitle from './SectionTitle.tsx';
 
 type Status = 'idle' | 'sending' | 'sent' | 'failed';
@@ -12,7 +13,8 @@ const EMPTY: Fields = { name: '', email: '', message: '', company: '' };
 
 /** The contact form (rules in src/lib/contact.js) and the other ways to reach me. */
 export default function Contact() {
-  const { links } = content.profile;
+  const { profile } = content;
+  const { links } = profile;
   const settings = contactSettings(import.meta.env);
   const [status, setStatus] = useState<Status>('idle');
   const [form, setForm] = useState<Fields>(EMPTY);
@@ -66,9 +68,15 @@ export default function Contact() {
             Get in touch
           </SectionTitle>
           <p>
-            Have a project that needs building, or an older one that needs bringing up to date? Write a few lines
-            about it and I will reply by email.
+            Hiring for a role, or have a project that needs building or an older one that needs bringing up to date?
+            Write a few lines about it and I will reply by email.
           </p>
+          {profile.availability && <p className="contact__availability">{profile.availability}</p>}
+          {links.email && (
+            <p className="contact__email">
+              <EmailAddress address={links.email} />
+            </p>
+          )}
           <ul className="contact__links">
             <li>
               <a href={links.linkedin} target="_blank" rel="noreferrer">

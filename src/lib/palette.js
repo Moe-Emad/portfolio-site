@@ -31,6 +31,13 @@ export function paletteCommands({ home, sections, projects, links }) {
     { id: 'copy-linkedin', label: 'Copy the LinkedIn address', kind: 'Action', words: 'contact share link', run: { copy: links.linkedin } },
     { id: 'open-linkedin', label: 'Open LinkedIn', kind: 'Action', words: 'contact profile', run: { open: links.linkedin } },
     ...(links.github ? [{ id: 'open-github', label: 'Open GitHub', kind: 'Action', words: 'code repositories profile', run: { open: links.github } }] : []),
+    // The email address (tracker F62): found by the words a recruiter or a client would type.
+    ...(links.email
+      ? [
+          { id: 'write-email', label: 'Write an email', kind: 'Action', words: `contact hire job mail ${links.email}`, run: { go: `mailto:${links.email}` } },
+          { id: 'copy-email', label: 'Copy the email address', kind: 'Action', words: `contact hire job mail ${links.email}`, run: { copy: links.email } },
+        ]
+      : []),
   ];
 }
 

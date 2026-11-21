@@ -3,6 +3,7 @@ import { content } from '../content/index.ts';
 import { projectMeta } from '../content/schema.ts';
 import type { Project } from '../content/schema.ts';
 import { WORK_PATH, projectPath } from '../routes.ts';
+import EmailAddress from './EmailAddress.tsx';
 import Shot from './Shot.tsx';
 
 /**
@@ -32,6 +33,8 @@ export default function ProjectPage({ project }: { project: Project }) {
   const beside = desktop.length > 0 && phone.length > 0;
   const sizes = beside ? GALLERY_SIZES.beside : GALLERY_SIZES.alone;
   const lead = desktop.length % 2 === 1;
+
+  const { links } = content.profile;
 
   // The next project in the order of the home page; after the last one comes the first.
   const index = content.projects.findIndex((other) => other.slug === project.slug);
@@ -147,6 +150,24 @@ export default function ProjectPage({ project }: { project: Project }) {
           </nav>
         )}
       </div>
+
+      {/* The end of every project page (tracker F62): the way to get in touch, in the blue of the band at its top. */}
+      <section className="case-contact" aria-labelledby="case-contact-title">
+        <div className="wrap case-contact__grid">
+          <div>
+            <h2 id="case-contact-title" className="case-contact__title">
+              Want something like this built?
+            </h2>
+            <p className="case-contact__lead">Or hiring for a role? Write a few lines and I will reply by email.</p>
+          </div>
+          <div className="case-contact__ways">
+            <a href="/#contact" className="button button--sign">
+              Get in touch
+            </a>
+            {links.email && <EmailAddress address={links.email} />}
+          </div>
+        </div>
+      </section>
     </article>
   );
 }

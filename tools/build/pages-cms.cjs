@@ -41,8 +41,13 @@ const CONFIG = {
           name: 'links',
           label: 'Links',
           type: 'object',
-          fields: [text('linkedin', 'LinkedIn address', { description: 'Starts with https://' }), text('github', 'GitHub address', { required: false })],
+          fields: [
+            text('linkedin', 'LinkedIn address', { description: 'Starts with https://' }),
+            text('github', 'GitHub address', { required: false }),
+            text('email', 'Email address', { required: false, description: 'Shown in the contact section and at the end of every project page, with a copy button.' }),
+          ],
         },
+        text('availability', 'Availability', { required: false, description: 'One line beside the contact form: what you are open to and where you work from.' }),
       ],
     },
     {

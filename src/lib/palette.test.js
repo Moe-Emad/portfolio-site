@@ -61,6 +61,18 @@ test('every typed word must match, and a match in the name comes first', () => {
   assert.deepEqual(ids(filterCommands(commands, 'contact')), ['section-contact', 'copy-linkedin', 'open-linkedin']);
 });
 
+// The email address (tracker F62): before, the palette's hint invited "the name of a project or a technology", yet
+// "email", "hire" or "cv" found nothing.
+test('with an email address the palette writes or copies it, and finds it by email, mail, hire or contact', () => {
+  const email = 'someone@example.com';
+  const commands = paletteCommands({ ...INPUT, home: true, links: { ...INPUT.links, email } });
+  assert.deepEqual(commands.find((command) => command.id === 'write-email').run, { go: `mailto:${email}` });
+  assert.deepEqual(commands.find((command) => command.id === 'copy-email').run, { copy: email });
+  for (const word of ['email', 'mail', 'hire']) assert.deepEqual(ids(filterCommands(commands, word)), ['write-email', 'copy-email'], word);
+  assert.ok(ids(filterCommands(commands, 'contact')).includes('write-email'));
+  assert.ok(!ids(paletteCommands({ ...INPUT, home: true })).includes('write-email'), 'no address, no command');
+});
+
 test('the arrow keys go round at the ends of the list', () => {
   assert.equal(moveActive(0, 1, 3), 1);
   assert.equal(moveActive(2, 1, 3), 0);

@@ -11,11 +11,10 @@ import {
   projectCard,
   projectProblems,
   homeWork,
-  leadProject,
   shownProjects,
   sortProjects,
 } from './schema.ts';
-import type { Project, ProjectImage } from './schema.ts';
+import type { Project } from './schema.ts';
 
 const ROOT = path.resolve(import.meta.dirname, '..', '..');
 const read = (file: string): unknown => JSON.parse(fs.readFileSync(path.join(ROOT, file), 'utf8'));
@@ -75,19 +74,24 @@ test('a job may name a project of the site; a name that is not a project is a pr
   );
 });
 
-// The home page (tracker F60, F61): the lead project in the first screen, then the next two in large rows and the
-// others in a grid. The lead is the first in the order with a wide screenshot, and is shown once.
-test('the home page shows the lead project first, then two large rows and a grid of the others', () => {
-  const wide: ProjectImage = { src: '/w.jpg', alt: 'a', device: 'desktop', width: 1440, height: 900 };
-  const phone: ProjectImage = { ...wide, device: 'phone', width: 780, height: 1688 };
-  const make = (slug: string, images: ProjectImage[] = [wide], featured = true) => ({ slug, featured, images });
-  const projects = [make('phone-first', [phone]), make('a'), make('b'), make('c'), make('d'), make('quiet', [], false)];
-  assert.equal(leadProject(projects)?.slug, 'a');
+// The contact details of the profile (tracker F62): an email address and a line about availability, both optional.
+test('the profile may give an email address and a line about availability; a wrong address is a problem', () => {
+  const profile = read('content/profile.json') as Record<string, unknown>;
+  const links = profile.links as Record<string, unknown>;
+  assert.deepEqual(profileProblems({ ...profile, links: { ...links, email: 'someone@example.com' }, availability: 'Open to roles.' }), []);
+  assert.deepEqual(profileProblems({ ...profile, links: { ...links, email: '' }, availability: '' }), []);
+  assert.match(profileProblems({ ...profile, links: { ...links, email: 'someone at example' } }).join('\n'), /links: email - must be an email address/);
+  assert.match(profileProblems({ ...profile, availability: ' Open. ' }).join('\n'), /availability - has a space/);
+});
+
+// The work on the home page (tracker F61, F62): all of it under "Selected work", in its order, the first three in
+// large rows and the others in a grid.
+test('the home page shows the first three projects in large rows and the others in a grid, each once', () => {
+  const projects = ['a', 'b', 'c', 'd', 'e', 'f', 'g'];
   const home = homeWork(projects);
-  assert.deepEqual(home.large.map((project) => project.slug), ['phone-first', 'b']);
-  assert.deepEqual(home.grid.map((project) => project.slug), ['c', 'd', 'quiet']);
-  assert.equal([...home.large, ...home.grid].some((project) => project.slug === 'a'), false);
-  assert.equal(leadProject([make('none', [phone])]), undefined);
+  assert.deepEqual(home.large, ['a', 'b', 'c']);
+  assert.deepEqual(home.grid, ['d', 'e', 'f', 'g']);
+  assert.deepEqual(homeWork(['a']), { large: ['a'], grid: [] });
 });
 
 // A draft is checked like any project but left out of the site (tracker F17).
