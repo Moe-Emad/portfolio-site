@@ -31,7 +31,7 @@ export default function Method() {
   ];
 
   return (
-    <section id="method" className="section section--tinted" aria-labelledby="method-title">
+    <section id="method" className="section section--band" aria-labelledby="method-title">
       <div className="wrap method">
         <div className="method__about">
           <SectionTitle id="method-title">

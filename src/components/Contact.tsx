@@ -61,7 +61,7 @@ export default function Contact() {
   const describedBy = (field: keyof Errors) => (errors[field] ? `${field}-error` : undefined);
 
   return (
-    <section id="contact" className="section" aria-labelledby="contact-title">
+    <section id="contact" className="section section--band" aria-labelledby="contact-title">
       <div className="wrap contact">
         <div className="contact__intro">
           <SectionTitle id="contact-title">
@@ -171,7 +171,7 @@ export default function Contact() {
               />
             </div>
 
-            <button type="submit" className="button button--primary" disabled={status === 'sending'}>
+            <button type="submit" className="button button--sign" disabled={status === 'sending'}>
               {status === 'sending' ? 'Sending...' : 'Send message'}
             </button>
 

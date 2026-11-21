@@ -42,6 +42,8 @@
   --on-blue: #ffffff;
   --on-blue-muted: #d5deff;
   --on-blue-line: rgb(255 255 255 / 0.3);
+  --on-blue-error: #ffd0c9;
+  --on-blue-success: #b8f5e9;
   --sign-ink: #0c1440;
 
   /* The page: light theme. */
@@ -762,12 +764,55 @@ a:hover {
   background: var(--tint);
 }
 
+/* A band in the blue of the sign further down the page (tracker F63): How I work and Get in touch stand on it, so the
+   page keeps the rhythm of its first screen - blue, page, blue - instead of one pale ground from the work to the foot.
+   Every colour inside is taken over from the band: white and pale-blue text, saffron for what stands out, and the
+   fields of the form white with dark ink, in both themes. */
+.section--band {
+  --title: var(--on-blue);
+  --ink: var(--on-blue);
+  --muted: var(--on-blue-muted);
+  --line: var(--on-blue-line);
+  --link: var(--on-blue);
+  --focus: var(--saffron);
+  --error: var(--on-blue-error);
+  --success: var(--on-blue-success);
+  --field-border: transparent;
+  --surface: var(--on-blue);
+
+  background: var(--blue);
+  color: var(--on-blue);
+}
+
+.section--band .field input,
+.section--band .field textarea {
+  color: var(--sign-ink);
+}
+
 .section__title {
   color: var(--title);
   font-family: var(--font-display);
   font-size: clamp(2.3rem, 5.2vw, 3.6rem);
   font-weight: 400;
   line-height: 1.05;
+}
+
+/* The star before a title (tracker F63): the eight points of the star of the first screen, small, filled saffron and
+   drawn in the colour of the title; on a band its line is white, as in the first screen. */
+.mark {
+  display: inline-block;
+  width: 0.62em;
+  height: 0.62em;
+  margin-right: 0.26em;
+  overflow: visible;
+  vertical-align: 0.02em;
+}
+
+.mark__star {
+  fill: var(--saffron);
+  stroke: var(--title);
+  stroke-linejoin: round;
+  stroke-width: 0.9;
 }
 
 .section__lead {
@@ -1634,6 +1679,16 @@ a:hover {
   line-height: 1;
 }
 
+/* On the band the numbers of the steps and the figures of the record are saffron, the colour of the star. */
+.section--band .steps li::before,
+.section--band .record dt {
+  color: var(--saffron);
+}
+
+.section--band .steps li::before {
+  font-size: 3.2rem;
+}
+
 .steps h3 {
   font-size: 1.15rem;
   font-weight: 600;
@@ -1698,10 +1753,41 @@ a:hover {
 }
 
 .job {
+  position: relative;
   display: grid;
   gap: 0.5rem 3.5rem;
   padding-block: 2.25rem;
+  padding-left: 1.75rem;
   border-bottom: 1px solid var(--line);
+}
+
+/* A line of time (tracker F63): a hairline down the side of the dates, and at each job a diamond from the star, filled
+   saffron for a job that goes on and drawn in outline for one that has ended. The hairline runs on from job to job. */
+.job::before {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0.32rem;
+  width: 1px;
+  background: var(--line);
+  content: "";
+}
+
+.job::after {
+  position: absolute;
+  top: 2.6rem;
+  left: 0;
+  width: 0.65rem;
+  height: 0.65rem;
+  border: 1.5px solid var(--title);
+  background: var(--ground);
+  content: "";
+  rotate: 45deg;
+}
+
+.job[data-current="true"]::after {
+  border-color: var(--saffron);
+  background: var(--saffron);
 }
 
 @media (min-width: 52rem) {
@@ -1778,9 +1864,11 @@ a:hover {
   border-top: 1px solid var(--line);
 }
 
+/* padding-left: the room of the line of time in Experience (F63), so the columns still meet (F57). */
 .skill-group {
   display: grid;
   padding-block: 1.75rem;
+  padding-left: 1.75rem;
   border-bottom: 1px solid var(--line);
 }
 
@@ -1929,7 +2017,6 @@ a:hover {
 
   margin-top: clamp(4rem, 8vw, 6.5rem);
   padding-block: clamp(3rem, 6vw, 4.5rem);
-  border-bottom: 1px solid var(--on-blue-line);
   background: var(--blue);
   color: var(--on-blue);
 }
@@ -2068,6 +2155,7 @@ a:hover {
   --link: var(--on-blue);
 
   padding-block: 2.75rem;
+  border-top: 1px solid var(--on-blue-line);
   background: var(--blue);
   color: var(--on-blue-muted);
   font-size: 0.9375rem;

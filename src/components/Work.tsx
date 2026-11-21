@@ -6,6 +6,7 @@ import type { ProjectCard } from '../content/schema.ts';
 import { projectPath } from '../routes.ts';
 import Shot from './Shot.tsx';
 import SectionTitle from './SectionTitle.tsx';
+import StarMark from './StarMark.tsx';
 
 type Kind = ProjectCard['kind'];
 
@@ -169,7 +170,10 @@ function Archive() {
   return (
     <>
       <div className="archive__head">
-        <h3 className="archive__title">Smaller and earlier work</h3>
+        <h3 className="archive__title">
+          <StarMark />
+          Smaller and earlier work
+        </h3>
         <p className="archive__lead">Coursework, course builds and early experiments: {content.archive.length} pieces.</p>
       </div>
       <ul className="archive">
