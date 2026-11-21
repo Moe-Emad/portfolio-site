@@ -1150,3 +1150,64 @@ test.describe('the sign further down', () => {
     }
   });
 });
+
+// The lower sections at full strength (tracker F64). After F63 the smaller and earlier work was still the same pale
+// register, the steps of How I work a short list beside the text, and the skills small text beside large group names.
+test.describe('the lower sections at full strength', () => {
+  test('the smaller and earlier work is a drawing sheet: blueprint blue, a title block, the tools in saffron', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await open(page);
+    const found = await page.evaluate(() => {
+      const probe = (value) => {
+        const element = document.createElement('i');
+        element.style.color = value;
+        document.body.append(element);
+        const colour = getComputedStyle(element).color;
+        element.remove();
+        return colour;
+      };
+      const root = getComputedStyle(document.documentElement);
+      const sheet = document.querySelector('#work .sheet');
+      return {
+        deep: probe(root.getPropertyValue('--blue-deep')),
+        saffron: probe(root.getPropertyValue('--saffron')),
+        ground: sheet && getComputedStyle(sheet).backgroundColor,
+        grid: sheet && getComputedStyle(sheet).backgroundImage,
+        tools: [...document.querySelectorAll('#work .sheet .archive__tech')].map((tools) => getComputedStyle(tools).color),
+        block: [...document.querySelectorAll('#work .sheet .sheet__block dt')].map((label) => label.textContent),
+        pieces: document.querySelectorAll('#work .sheet .archive > li').length,
+        count: document.querySelector('#work .sheet .sheet__block dd')?.textContent,
+      };
+    });
+    expect(found.ground, 'blueprint blue').toBe(found.deep);
+    expect(found.grid, 'the grid of drawing paper').toContain('linear-gradient');
+    expect(new Set(found.tools), 'the tools in saffron').toEqual(new Set([found.saffron]));
+    expect(found.block).toEqual(['Pieces', 'Kind', 'Drawn by']);
+    expect(found.count, 'the title block counts the pieces').toBe(String(found.pieces));
+  });
+
+  test('on a wide screen the four steps of How I work stand side by side on one line', async ({ page }, testInfo) => {
+    test.skip(isPhone(testInfo), 'a phone shows the steps one under another');
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await open(page);
+    const steps = await page.locator('#method .steps li').evaluateAll((items) => items.map((item) => Math.round(item.getBoundingClientRect().top)));
+    expect(steps).toHaveLength(4);
+    expect(new Set(steps).size, 'one line').toBe(1);
+  });
+
+  test('the tools of the skills stand in the display face, larger than the name of their group', async ({ page }) => {
+    await open(page);
+    const rows = await page.locator('#skills .skill-group').evaluateAll((groups) =>
+      groups.map((group) => {
+        const tools = getComputedStyle(group.querySelector('ul'));
+        const name = getComputedStyle(group.querySelector('h3'));
+        return { group: group.querySelector('h3').textContent, face: tools.fontFamily, larger: parseFloat(tools.fontSize) > parseFloat(name.fontSize) };
+      }),
+    );
+    for (const row of rows) {
+      expect(row.face, row.group).toMatch(/^"?Rakkas\b/);
+      expect(row.larger, `${row.group}: the tools larger than the name`).toBe(true);
+    }
+  });
+});

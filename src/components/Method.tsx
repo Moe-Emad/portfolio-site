@@ -37,9 +37,11 @@ export default function Method() {
           <SectionTitle id="method-title">
             How I work
           </SectionTitle>
-          {content.profile.about.map((paragraph) => (
-            <p key={paragraph}>{paragraph}</p>
-          ))}
+          <div className="method__text">
+            {content.profile.about.map((paragraph) => (
+              <p key={paragraph}>{paragraph}</p>
+            ))}
+          </div>
         </div>
 
         <ol className="steps">

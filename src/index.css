@@ -1247,21 +1247,50 @@ a:hover {
    another between hairlines, its name, what it is and its tools on one line on a wide screen, one under another on a
    phone. Set smaller than the main work above, in the text face. The entries are not links, so nothing changes under
    the mouse. */
+/* The smaller and earlier work as a sheet of drawing (tracker F64): deep blueprint blue with the paper's grid, a double
+   frame as on a drawing sheet, the register in white with the tools in saffron, and a title block in the corner. The
+   same in both themes, like the bands. */
+.sheet {
+  --title: var(--on-blue);
+  --ink: var(--on-blue);
+  --muted: var(--on-blue-muted);
+  --line: var(--on-blue-line);
+  --paper-line: color-mix(in srgb, var(--on-blue) 7%, transparent);
+  --paper-line-strong: color-mix(in srgb, var(--on-blue) 12%, transparent);
+
+  position: relative;
+  margin-top: clamp(4rem, 8vw, 6rem);
+  padding: clamp(1.75rem, 4vw, 3.5rem);
+  border: 1px solid var(--on-blue-line);
+  background-color: var(--blue-deep);
+  background-image:
+    linear-gradient(var(--paper-line-strong) 1px, transparent 1px),
+    linear-gradient(90deg, var(--paper-line-strong) 1px, transparent 1px),
+    linear-gradient(var(--paper-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--paper-line) 1px, transparent 1px);
+  background-position: -1px -1px;
+  background-size:
+    120px 120px,
+    120px 120px,
+    24px 24px,
+    24px 24px;
+  box-shadow:
+    inset 0 0 0 0.55rem var(--blue-deep),
+    inset 0 0 0 calc(0.55rem + 1px) var(--on-blue-line);
+  color: var(--on-blue);
+}
+
 .archive__head {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 0.4rem 2rem;
-  margin-top: 4.5rem;
+  display: grid;
+  gap: 0.5rem;
 }
 
 .archive__title {
   color: var(--title);
   font-family: var(--font-display);
-  font-size: clamp(1.7rem, 3vw, 2.25rem);
+  font-size: clamp(2.1rem, 4.4vw, 3.4rem);
   font-weight: 400;
-  line-height: 1.1;
+  line-height: 1.05;
 }
 
 .archive__lead {
@@ -1269,15 +1298,51 @@ a:hover {
 }
 
 .archive {
-  margin-top: 1.25rem;
+  margin-top: clamp(1.5rem, 3vw, 2.25rem);
   border-top: 1px solid var(--line);
 }
 
 .archive li {
   display: grid;
   gap: 0.2rem 2.5rem;
-  padding-block: 0.95rem;
+  padding-block: 1.05rem;
   border-bottom: 1px solid var(--line);
+}
+
+/* The title block of the sheet: framed cells in its lower right corner, as on a technical drawing. */
+.sheet__block {
+  display: grid;
+  grid-auto-flow: row;
+  width: fit-content;
+  max-width: 100%;
+  margin: clamp(1.75rem, 4vw, 2.75rem) 0 0 auto;
+  border-top: 1px solid var(--on-blue-line);
+  border-left: 1px solid var(--on-blue-line);
+  font-size: 0.875rem;
+}
+
+@media (min-width: 40rem) {
+  .sheet__block {
+    grid-auto-flow: column;
+  }
+}
+
+.sheet__block > div {
+  padding: 0.55rem 0.9rem 0.6rem;
+  border-right: 1px solid var(--on-blue-line);
+  border-bottom: 1px solid var(--on-blue-line);
+}
+
+.sheet__block dt {
+  color: var(--on-blue-muted);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.sheet__block dd {
+  color: var(--on-blue);
+  font-weight: 600;
 }
 
 @media (min-width: 52rem) {
@@ -1300,8 +1365,9 @@ a:hover {
 }
 
 .archive__tech {
-  color: var(--muted);
+  color: var(--saffron);
   font-size: 0.9rem;
+  font-weight: 600;
 }
 
 /* ---------- A project page ---------- */
@@ -1689,6 +1755,59 @@ a:hover {
   font-size: 3.2rem;
 }
 
+/* A wide screen (tracker F64): the four steps run across the band as a process, on one saffron construction line, each
+   large number standing on the line with the band's blue behind it; the text above reads in two columns. */
+@media (min-width: 60rem) {
+  .method {
+    grid-template-columns: 1fr;
+  }
+
+  .method__text {
+    margin-top: 1.5rem;
+    columns: 2;
+    column-gap: 5rem;
+  }
+
+  .method__about .method__text p {
+    margin-top: 0;
+    margin-bottom: 1.1rem;
+    break-inside: avoid;
+  }
+
+  .section--band .steps {
+    position: relative;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0 clamp(1.75rem, 3vw, 3.5rem);
+    padding-top: 1rem;
+  }
+
+  .section--band .steps::before {
+    position: absolute;
+    top: calc(1rem + 2.35rem);
+    right: 0;
+    left: 0;
+    height: 2px;
+    background: var(--saffron);
+    content: "";
+  }
+
+  .section--band .steps li {
+    position: relative;
+    grid-template-columns: 1fr;
+    align-content: start;
+  }
+
+  .section--band .steps li::before {
+    justify-self: start;
+    grid-row: auto;
+    margin-bottom: 1.1rem;
+    padding-right: 0.7rem;
+    background: var(--blue);
+    font-size: 5rem;
+    line-height: 0.95;
+  }
+}
+
 .steps h3 {
   font-size: 1.15rem;
   font-weight: 600;
@@ -1820,10 +1939,13 @@ a:hover {
   font-size: 0.9375rem;
 }
 
+/* The role in the display face, as the name of a project is (tracker F64). */
 .job__role {
-  font-size: 1.4rem;
-  font-weight: 600;
-  line-height: 1.25;
+  color: var(--title);
+  font-family: var(--font-display);
+  font-size: clamp(1.6rem, 1.2rem + 0.9vw, 2rem);
+  font-weight: 400;
+  line-height: 1.12;
 }
 
 .job__place {
@@ -1927,12 +2049,20 @@ a:hover {
   }
 }
 
+/* A list of materials (tracker F64): the tools are what a row is about, so they stand in the display face, large and
+   in ink; the name of the group is the label beside them. */
 .skill-group h3 {
   color: var(--title);
+  font-size: 1.0625rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.skill-group .stack--large {
+  color: var(--ink);
   font-family: var(--font-display);
-  font-size: 1.6rem;
-  font-weight: 400;
-  line-height: 1.15;
+  font-size: clamp(1.45rem, 1rem + 1.1vw, 1.95rem);
+  line-height: 1.3;
 }
 
 .skill-group p {
