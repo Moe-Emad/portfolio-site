@@ -1,7 +1,10 @@
 import { useEffect, useRef } from 'react';
 import type { RefObject } from 'react';
 import { content } from '../content/index.ts';
+import { projectMeta } from '../content/schema.ts';
 import { roleLine } from '../lib/profile.js';
+import { projectPath } from '../routes.ts';
+import Shot from './Shot.tsx';
 import StarDrawing from './StarDrawing.tsx';
 
 /** The drawing leans a little towards the mouse (tracker F20): only with a mouse, and not with "reduce motion". */
@@ -32,9 +35,13 @@ function useLean(area: RefObject<HTMLElement | null>, target: RefObject<HTMLElem
 /**
  * The first screen: the name as a two-script sign with the role under it, as the caption under a drawing, one
  * sentence about the work, and the way on: one button to the work, and a plain link to the contact form (F45).
+ * Under the star, the screen of the lead project hangs from the band (F60): the work is seen without scrolling.
  */
 export default function Hero() {
   const { profile } = content;
+  // The lead project: the first in the order of the work with a wide screenshot.
+  const lead = content.projects.find((project) => project.featured && project.images[0]?.device === 'desktop');
+  const cover = lead?.images[0];
   // The sign has two rows: the first name on top; below it the rest of the name on the left and the Arabic
   // name on the right, each script starting from its own side.
   const [first, ...rest] = profile.name.split(' ');
@@ -70,6 +77,16 @@ export default function Hero() {
         <div ref={drawing} className="hero__drawing">
           <StarDrawing />
         </div>
+        {lead && cover && (
+          <a href={projectPath(lead.slug)} className="hero__work">
+            {/* sizes: the width of --work in index.css. */}
+            <Shot image={cover} sizes="(min-width: 64rem) min(36vw, 40rem), (min-width: 40rem) 36rem, calc(100vw - 2.5rem)" first />
+            <span className="hero__work-label">
+              <span className="hero__work-title">{lead.title}</span>
+              <span className="hero__work-meta">{projectMeta(lead)}</span>
+            </span>
+          </a>
+        )}
       </div>
     </section>
   );

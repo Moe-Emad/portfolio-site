@@ -10,7 +10,8 @@ about the work, and a page for every project.
 ## What is on the site
 
 - **One home page** with the selected work, how I work, experience, skills, smaller and earlier work, and a contact
-  form.
+  form. Its first screen already shows the work: the screen of the lead project hangs from the blue band, linked to
+  its page.
 - **A page for every project** (`/work/<slug>/`): what it is, its figures, my part in it, and real screenshots on a
   desktop and a phone. The list of work can be narrowed by kind: client work, own products, modernization.
 - **A command palette.** Press Ctrl+K, or the Search button, to jump to any section or project, switch the theme or
