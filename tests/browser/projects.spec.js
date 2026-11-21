@@ -111,11 +111,12 @@ test('a project page passes axe in the dark theme too', async ({ page }) => {
 
 test('the home page links to the page of every project, and the page leads back to the work', async ({ page }) => {
   await page.goto('/');
+  // The lead project in the first screen, the others in the work (tracker F60, F61).
   for (const project of projects) {
-    await expect(page.locator(`#work a[href="/work/${project.slug}/"]`), project.title).toHaveCount(1);
+    await expect(page.locator(`:is(#top, #work) a[href="/work/${project.slug}/"]`), project.title).toHaveCount(1);
   }
   const first = projects.find((project) => project.order === Math.min(...projects.map((other) => other.order)));
-  await page.locator(`#work a[href="/work/${first.slug}/"]`).click();
+  await page.locator(`:is(#top, #work) a[href="/work/${first.slug}/"]`).click();
   await expect(page).toHaveURL(new RegExp(`/work/${first.slug}/$`));
   await expect(page.locator('h1')).toContainText(first.title);
 
@@ -139,10 +140,44 @@ test('the menu of a project page leads to the sections of the home page', async 
   await expect(page.locator('#contact')).toBeInViewport();
 });
 
-// The head of "Selected work" (tracker F19): tabs by kind of work. Each tab is named by its kind alone; the count is
-// said once, in the line under the tabs (tracker F49).
-test('the tabs show the projects of one kind, the line under them says how many, and All brings them back', async ({ page }) => {
+// The work on the home page (tracker F61). Before, seven rows of one template: kind, title, summary, tools, a table of
+// figures and my part, 552 px each, with the lead project's picture twice (in the first screen since F60, and in the
+// first row). Now the lead is in the first screen only, the next two have large rows and the others stand in a grid;
+// the figures and the tabs by kind are on /work/ and on each project's page.
+test('the home page shows each project once: the lead first, two large rows, then a grid, without figures', async ({ page }, testInfo) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('/');
+  const ordered = [...projects].sort((a, b) => a.order - b.order);
+  const lead = ordered.find((project) => project.featured && project.images[0]?.device === 'desktop');
+  // Experience links a job to its project too (F16); here: the first screen and the work.
+  for (const project of projects) {
+    await expect(page.locator(`:is(#top, #work) a[href="/work/${project.slug}/"]`), project.title).toHaveCount(1);
+  }
+  await expect(page.locator(`#top a[href="/work/${lead.slug}/"]`)).toHaveCount(1);
+  const rest = ordered.filter((project) => project !== lead);
+  const large = page.locator('#work .project[data-size="large"]');
+  await expect(large).toHaveCount(2);
+  for (const [index, project] of rest.slice(0, 2).entries()) {
+    await expect(large.nth(index).locator(`a[href="/work/${project.slug}/"]`)).toHaveCount(1);
+  }
+  await expect(page.locator('#work .work-grid .project')).toHaveCount(rest.length - 2);
+  await expect(page.locator('#work .project__facts')).toHaveCount(0);
+  await expect(page.getByRole('group', { name: 'Show the work of one kind' })).toHaveCount(0);
+  await expect(page.locator('#work').getByRole('link', { name: /all work/i })).toHaveAttribute('href', '/work/');
+
+  // On a phone the picture of a row comes first: before, it came after the text, about 2 screens down.
+  if (testInfo.project.name === 'phone') {
+    for (const row of await page.locator('#work .project').all()) {
+      const [picture, title] = await Promise.all([row.locator('.shot').boundingBox(), row.locator('.project__title').boundingBox()]);
+      expect(picture.y, 'the picture above the name').toBeLessThan(title.y);
+    }
+  }
+});
+
+// The head of the list of work (tracker F19): tabs by kind of work. Each tab is named by its kind alone; the count is
+// said once, in the line under the tabs (tracker F49). Since F61 the tabs are on /work/, the list of all the work.
+test('the tabs show the projects of one kind, the line under them says how many, and All brings them back', async ({ page }) => {
+  await page.goto('/work/');
   const rows = page.locator('#work .project');
   const tabs = page.getByRole('group', { name: 'Show the work of one kind' });
   await expect(rows).toHaveCount(projects.length);

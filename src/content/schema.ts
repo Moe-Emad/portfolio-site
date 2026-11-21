@@ -380,6 +380,24 @@ export function shownProjects<T extends Pick<Project, 'order' | 'title' | 'draft
 }
 
 /**
+ * The lead project (tracker F60): the first in the order of the work with a wide screenshot. The first screen of the
+ * home page shows its screen.
+ */
+export function leadProject<T extends Pick<ProjectCard, 'featured' | 'images'>>(projects: T[]): T | undefined {
+  return projects.find((project) => project.featured && project.images[0]?.device === 'desktop');
+}
+
+/**
+ * The rest of the work on the home page (tracker F61), in its order and without the lead, which the first screen
+ * shows: the next two in large rows, the others in a grid. /work/ lists them all.
+ */
+export function homeWork<T extends Pick<ProjectCard, 'featured' | 'images'>>(projects: T[]): { large: T[]; grid: T[] } {
+  const lead = leadProject(projects);
+  const rest = projects.filter((project) => project !== lead);
+  return { large: rest.slice(0, 2), grid: rest.slice(2) };
+}
+
+/**
  * The card of a project (tracker F53), cut from its file when the site is built (vite.config.js). null for a
  * draft: the site leaves it out (F17), so its text is not sent to anyone's browser either.
  */
