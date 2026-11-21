@@ -165,16 +165,20 @@ function WorkHead({ page, children }: { page: boolean; children?: ReactNode }) {
   );
 }
 
-/** The smaller pieces, as a register, like the list of sheets in a set of drawings (tracker F41): one line each. */
+/**
+ * The smaller pieces, as a register, like the list of sheets in a set of drawings (tracker F41): one line each. Since
+ * F64 the register is drawn as a sheet of its own: blueprint paper in a double frame, the tools in saffron, and a
+ * title block in its corner as on a technical drawing.
+ */
 function Archive() {
   return (
-    <>
+    <section className="sheet" aria-labelledby="archive-title">
       <div className="archive__head">
-        <h3 className="archive__title">
+        <h3 id="archive-title" className="archive__title">
           <StarMark />
           Smaller and earlier work
         </h3>
-        <p className="archive__lead">Coursework, course builds and early experiments: {content.archive.length} pieces.</p>
+        <p className="archive__lead">Coursework, course builds and early experiments.</p>
       </div>
       <ul className="archive">
         {content.archive.map((entry) => (
@@ -185,7 +189,21 @@ function Archive() {
           </li>
         ))}
       </ul>
-    </>
+      <dl className="sheet__block">
+        <div>
+          <dt>Pieces</dt>
+          <dd>{content.archive.length}</dd>
+        </div>
+        <div>
+          <dt>Kind</dt>
+          <dd>Coursework, course builds, experiments</dd>
+        </div>
+        <div>
+          <dt>Drawn by</dt>
+          <dd>{content.profile.name}</dd>
+        </div>
+      </dl>
+    </section>
   );
 }
 
