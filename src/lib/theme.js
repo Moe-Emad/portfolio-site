@@ -21,9 +21,22 @@ export function applyTheme(theme) {
   document.dispatchEvent(new Event(THEME_EVENT));
 }
 
-/** Switches to the other theme and returns it. Browser only. */
-export function toggleTheme() {
+/**
+ * Switches to the other theme and returns it. Browser only.
+ * from: the point the change starts from, in the window (tracker F68) - the button that was pressed. Where the
+ * browser has view transitions and motion is welcome, the new colours spread over the page as a circle from there;
+ * elsewhere the theme changes at once.
+ */
+export function toggleTheme(from) {
   const other = currentTheme() === 'dark' ? 'light' : 'dark';
-  applyTheme(other);
+  const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (typeof document.startViewTransition !== 'function' || still) {
+    applyTheme(other);
+    return other;
+  }
+  const root = document.documentElement.style;
+  root.setProperty('--theme-x', `${Math.round(from?.x ?? window.innerWidth / 2)}px`);
+  root.setProperty('--theme-y', `${Math.round(from?.y ?? window.innerHeight / 2)}px`);
+  document.startViewTransition(() => applyTheme(other));
   return other;
 }

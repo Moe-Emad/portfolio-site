@@ -21,7 +21,16 @@ export default function ThemeToggle() {
   const other: Theme = theme === 'dark' ? 'light' : 'dark';
 
   return (
-    <button type="button" className="theme-toggle" onClick={() => toggleTheme()} aria-label={`Switch to the ${other} theme`}>
+    <button
+      type="button"
+      className="theme-toggle"
+      onClick={(event) => {
+        // The new colours spread from the middle of the button (tracker F68).
+        const box = event.currentTarget.getBoundingClientRect();
+        toggleTheme({ x: box.left + box.width / 2, y: box.top + box.height / 2 });
+      }}
+      aria-label={`Switch to the ${other} theme`}
+    >
       <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false">
         {theme === 'dark' ? (
           // Sun: the way back to the light theme.

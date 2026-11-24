@@ -1262,3 +1262,62 @@ test('the sections are measured with dimension lines counted from the content', 
     expect(drawn.width, `${section}: across the width of the section`).toBeGreaterThan(0.95);
   }
 });
+
+// A livelier first screen (tracker F68). As the first screen scrolls away the star turns by an eighth and steps back,
+// tied to the scroll; a change of theme spreads from the button as a circle (a view transition). With "reduce motion"
+// the star stays still and the theme changes at once.
+test.describe('a livelier first screen', () => {
+  const turn = (page) => page.locator('#top .star').evaluate((star) => {
+    const value = getComputedStyle(star).rotate;
+    return value === 'none' ? 0 : parseFloat(value);
+  });
+
+  test('as the first screen scrolls away the star turns and steps back; with reduce motion it stays still', async ({ page }) => {
+    for (const motion of ['no-preference', 'reduce']) {
+      await page.emulateMedia({ reducedMotion: motion });
+      await open(page);
+      // The turn is switched on once the page runs (Hero.tsx).
+      await expect(page.locator('#top')).toHaveAttribute('data-away', '');
+      expect(await turn(page), `${motion}: still at the top`).toBeLessThan(1);
+      await page.evaluate(() => window.scrollTo({ top: 400, behavior: 'instant' }));
+      // The timeline comes alive once the opening of the first screen has settled, about 1.5 s after it opens.
+      if (motion === 'reduce') {
+        await page.waitForTimeout(2500);
+        expect(await turn(page), 'reduce motion: still').toBe(0);
+      } else {
+        await expect.poll(() => turn(page), { message: 'turned with the scroll', timeout: 6000 }).toBeGreaterThan(5);
+      }
+    }
+  });
+
+  test('the theme button changes the theme through a view transition from the button; with reduce motion at once', async ({ page }, testInfo) => {
+    await page.addInitScript(() => {
+      window.transitions = 0;
+      const start = document.startViewTransition?.bind(document);
+      if (start) {
+        document.startViewTransition = (update) => {
+          window.transitions += 1;
+          return start(update);
+        };
+      }
+    });
+    for (const [motion, expected] of [['no-preference', 1], ['reduce', 0]]) {
+      await page.emulateMedia({ colorScheme: 'light', reducedMotion: motion });
+      await open(page);
+      await page.evaluate(() => localStorage.removeItem('theme'));
+      await page.reload();
+      await showSections(page, testInfo);
+      // Measured before the click: then the button is named for the way back.
+      const button = page.getByRole('button', { name: 'Switch to the dark theme' });
+      const box = await button.boundingBox();
+      await button.click();
+      await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+      expect(await page.evaluate(() => window.transitions), `${motion}: view transitions`).toBe(expected);
+      if (expected) {
+        const from = await page.evaluate(() => [document.documentElement.style.getPropertyValue('--theme-x'), document.documentElement.style.getPropertyValue('--theme-y')]);
+        expect(Math.abs(parseFloat(from[0]) - (box.x + box.width / 2)), 'the circle starts at the button').toBeLessThan(2);
+        expect(Math.abs(parseFloat(from[1]) - (box.y + box.height / 2))).toBeLessThan(2);
+      }
+    }
+  });
+});
