@@ -34,7 +34,12 @@ export function sitePaths(): string[] {
   return ['/', WORK_PATH, ...content.projects.map((project) => projectPath(project.slug))];
 }
 
-export function pageHead(path: string): PageHead {
+/**
+ * site: the address of the site, or '' when it is not known. With it, the structured data names every page by its
+ * full address and ties every page to one person, "<site>/#person" (tracker F65): search engines then read the
+ * projects as the work of the person the home page describes.
+ */
+export function pageHead(path: string, site = ''): PageHead {
   const { profile } = content;
   const route = matchRoute(
     path,
@@ -42,15 +47,18 @@ export function pageHead(path: string): PageHead {
   );
   const title = pageTitle(path);
   const sameAs = [profile.links.linkedin, profile.links.github].filter(Boolean);
-  const person = { '@type': 'Person', name: profile.name, jobTitle: profile.role };
+  const at = (address: string) => (site ? { url: site + address } : {});
+  const personId = site ? { '@id': `${site}/#person` } : {};
+  const person = { '@type': 'Person', ...personId, name: profile.name, alternateName: profile.nameArabic, jobTitle: profile.role, ...at('/') };
 
   if (route.page === 'project') {
     const project = projectBySlug(route.slug)!;
     const cover = project.images[0];
+    const address = projectPath(project.slug);
     return {
       title,
       description: project.summary,
-      path: projectPath(project.slug),
+      path: address,
       // With the fingerprint of its files (tracker F54): a link preview of a changed cover fetches it anew.
       image: cover
         ? { src: versioned(cover.src, cover.version), width: cover.width, height: cover.height, alt: cover.alt }
@@ -58,11 +66,31 @@ export function pageHead(path: string): PageHead {
       index: true,
       data: {
         '@context': 'https://schema.org',
-        '@type': 'CreativeWork',
-        name: project.title,
-        description: project.summary,
-        keywords: project.stack.join(', '),
-        author: person,
+        '@graph': [
+          {
+            '@type': 'CreativeWork',
+            name: project.title,
+            description: project.summary,
+            keywords: project.stack.join(', '),
+            ...(project.year ? { dateCreated: project.year } : {}),
+            ...(cover && site ? { image: site + versioned(cover.src, cover.version) } : {}),
+            ...at(address),
+            author: person,
+          },
+          // The trail Google shows under the result: the home page, the work, the project.
+          ...(site
+            ? [
+                {
+                  '@type': 'BreadcrumbList',
+                  itemListElement: [
+                    { '@type': 'ListItem', position: 1, name: profile.name, item: `${site}/` },
+                    { '@type': 'ListItem', position: 2, name: 'Work', item: site + WORK_PATH },
+                    { '@type': 'ListItem', position: 3, name: project.title, item: site + address },
+                  ],
+                },
+              ]
+            : []),
+        ],
       },
     };
   }
@@ -78,8 +106,9 @@ export function pageHead(path: string): PageHead {
         '@context': 'https://schema.org',
         '@type': 'CollectionPage',
         name: title,
+        ...at(WORK_PATH),
         author: person,
-        hasPart: content.projects.map((project) => ({ '@type': 'CreativeWork', name: project.title, url: projectPath(project.slug) })),
+        hasPart: content.projects.map((project) => ({ '@type': 'CreativeWork', name: project.title, url: site + projectPath(project.slug) })),
       },
     };
   }
@@ -97,16 +126,31 @@ export function pageHead(path: string): PageHead {
 
   return {
     title,
-    description: `${profile.name}, ${roleLine(profile.role.toLowerCase(), profile.location)}. ${profile.headline}`,
+    // "full-stack developer": the words people search with besides "software engineer" (tracker F65).
+    description: `${profile.name}, ${roleLine(profile.role.toLowerCase(), profile.location)}. ${profile.headline} Full-stack developer of web apps with Laravel, PHP, React and Next.js.`,
     path: '/',
     image: { ...SHARE_IMAGE, alt: `${profile.name}, ${profile.role}` },
     index: true,
     data: {
       '@context': 'https://schema.org',
-      ...person,
-      description: profile.headline,
-      address: { '@type': 'PostalAddress', addressCountry: profile.location },
-      sameAs,
+      '@graph': [
+        {
+          ...person,
+          description: profile.headline,
+          ...(profile.links.email ? { email: `mailto:${profile.links.email}` } : {}),
+          address: { '@type': 'PostalAddress', addressCountry: profile.location },
+          knowsAbout: content.skills.flatMap((group) => group.skills),
+          sameAs,
+        },
+        {
+          '@type': 'WebSite',
+          ...(site ? { '@id': `${site}/#website` } : {}),
+          name: profile.name,
+          ...at('/'),
+          inLanguage: 'en',
+          publisher: personId['@id'] ? { '@id': personId['@id'] } : { '@type': 'Person', name: profile.name },
+        },
+      ],
     },
   };
 }
