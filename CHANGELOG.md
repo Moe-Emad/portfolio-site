@@ -101,3 +101,4 @@ and do not link here.
 - F66: While a screenshot is on its way its place shows drawing paper with the cross of an opening, in both themes, instead of an empty white box (#103)
 - F67: Dimension lines, as on a technical drawing, measure the work, How I work, Experience and Skills from the content (7 projects, 4 steps, 5 roles from 2021, 5 groups of 28 tools) and draw out from their label as they come into view (#105)
 - F68: As the first screen scrolls away the star turns by an eighth and steps back, tied to the scroll; a change of theme spreads over the page as a circle from the button; both stand still with reduce motion (#107)
+- F69: A reworked screen can be compared with its original on the project page, with a handle to drag or move with the arrow keys; TPMS shows three of its screens so, from the pictures of its original version (#109)

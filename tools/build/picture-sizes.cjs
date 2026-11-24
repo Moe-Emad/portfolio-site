@@ -41,6 +41,11 @@ function pictureSize(buffer) {
   throw new Error('not a JPEG, PNG or WebP picture');
 }
 
+/** Every picture of a project: each screenshot, and the screen before its rework where it has one (tracker F69). */
+function picturesOf(project) {
+  return (project.images || []).flatMap((image) => [image, image && image.before].filter((picture) => picture && typeof picture.src === 'string'));
+}
+
 /** Writes missing or wrong sizes into the project files. Returns the lines to print. */
 function fillSizes(root = ROOT) {
   const lines = [];
@@ -49,7 +54,7 @@ function fillSizes(root = ROOT) {
     const file = path.join(dir, name);
     const project = JSON.parse(fs.readFileSync(file, 'utf8'));
     let changed = false;
-    for (const image of project.images || []) {
+    for (const image of picturesOf(project)) {
       const picture = path.join(root, 'public', image.src);
       if (!fs.existsSync(picture)) {
         lines.push(`${name}: ${image.src} does not exist in public/`);
@@ -97,7 +102,7 @@ async function writeCopies(root = ROOT) {
   const dir = path.join(root, 'content', 'projects');
   for (const name of fs.readdirSync(dir).filter((file) => file.endsWith('.json'))) {
     const project = JSON.parse(fs.readFileSync(path.join(dir, name), 'utf8'));
-    for (const image of project.images || []) {
+    for (const image of picturesOf(project)) {
       const picture = path.join(root, 'public', image.src);
       if (!fs.existsSync(picture) || !Number.isInteger(image.width)) continue;
       for (const format of FORMATS) {

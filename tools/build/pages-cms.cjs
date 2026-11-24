@@ -131,6 +131,19 @@ const CONFIG = {
             choice('device', 'Taken on', ['desktop', 'phone']),
             { name: 'width', label: 'Width in pixels', type: 'number' },
             { name: 'height', label: 'Height in pixels', type: 'number' },
+            {
+              name: 'before',
+              label: 'The same screen before the rework',
+              type: 'object',
+              required: false,
+              description: 'Optional, wide screens only, of the same shape: the page shows both with a handle to compare them. Run "npm run pictures" afterwards.',
+              fields: [
+                { name: 'src', label: 'Picture', type: 'image', required: true },
+                long('alt', 'What the picture shows', { description: 'For people who cannot see it.' }),
+                { name: 'width', label: 'Width in pixels', type: 'number' },
+                { name: 'height', label: 'Height in pixels', type: 'number' },
+              ],
+            },
           ],
         },
         {

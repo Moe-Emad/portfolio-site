@@ -33,8 +33,12 @@ export function withPictureVersions(project, publicDir) {
   if (!Array.isArray(project?.images)) return project;
   return {
     ...project,
-    images: project.images.map((image) =>
-      image && typeof image.src === 'string' ? { ...image, version: pictureVersion(publicDir, image) } : image,
-    ),
+    images: project.images.map((image) => {
+      if (!image || typeof image.src !== 'string') return image;
+      const versioned = { ...image, version: pictureVersion(publicDir, image) };
+      // The screen before the rework (tracker F69) carries its own fingerprint.
+      if (image.before && typeof image.before.src === 'string') versioned.before = { ...image.before, version: pictureVersion(publicDir, image.before) };
+      return versioned;
+    }),
   };
 }

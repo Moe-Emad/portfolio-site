@@ -54,6 +54,11 @@ export interface ProjectImage {
    * dev server (tools/build/picture-versions.mjs); never written in a content file.
    */
   version?: string;
+  /**
+   * The same screen before the rework (tracker F69): the project page then shows the two over each other, with a
+   * handle to compare them. A wide screen of the same shape as the picture; "npm run pictures" fills in its size.
+   */
+  before?: { src: string; alt: string; width: number; height: number; version?: string };
 }
 
 export interface Project {
@@ -293,6 +298,23 @@ export function projectProblems(raw: unknown, file: string): string[] {
       inner.oneOf(image, 'device', ['desktop', 'phone']);
       for (const side of ['width', 'height']) {
         if (!Number.isInteger(image[side]) || (image[side] as number) <= 0) inner.fail(side, 'must be the size of the picture in pixels - "npm run pictures" fills it in');
+      }
+      // The same screen before the rework (tracker F69): shown over the picture, so it must have its shape.
+      if (image.before !== undefined && image.before !== null) {
+        const before = image.before;
+        if (!isObject(before)) inner.fail('before', 'must be an object with src and alt');
+        else {
+          inner.text(before, 'src', { max: 200 });
+          if (typeof before.src === 'string' && !before.src.startsWith('/')) inner.fail('before: src', 'must start with "/" (a path below public/)');
+          inner.text(before, 'alt', { max: 250 });
+          const sized = ['width', 'height'].every((side) => Number.isInteger(before[side]) && (before[side] as number) > 0);
+          if (!sized) inner.fail('before: width and height', 'must be the size of the picture in pixels - "npm run pictures" fills them in');
+          if (image.device !== 'desktop') inner.fail('before', 'only a wide screen can be compared with its rework');
+          const shape = (box: Raw) => (box.width as number) / (box.height as number);
+          if (sized && Number.isInteger(image.width) && Number.isInteger(image.height) && Math.abs(shape(before) - shape(image)) > 0.01) {
+            inner.fail('before', 'must have the same shape as the picture, so the two lie over each other');
+          }
+        }
       }
       check.problems.push(...inner.problems);
     });

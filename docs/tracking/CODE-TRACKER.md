@@ -109,6 +109,7 @@ issue and pull request numbers do not link here. From D4 on, the numbers are tho
 | F66 | #102 | Drawing paper while a screenshot loads | While a screenshot was on its way its frame was an empty white box; on a slow connection the work list was a column of blank frames | `feat/f66-blueprint-placeholders` | #103 | done |
 | F67 | #104 | Dimension lines, as on a technical drawing | The site's idea is the engineer's drawing, but past the first screen nothing was annotated the way a drawing is | `feat/f67-dimension-lines` | #105 | done |
 | F68 | #106 | A livelier first screen | The first screen stood still once it had drawn itself, and a change of theme was an instant cut | `feat/f68-living-first-screen` | #107 | done |
+| F69 | #108 | The rework of a screen next to its original | TPMS was reworked, but its page showed only the new screens: a visitor could not see what the rework changed | `feat/f69-before-after` | #109 | done |
 
 ## D - docs and developer setup
 
