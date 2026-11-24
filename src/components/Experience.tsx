@@ -2,6 +2,7 @@ import { content, projectBySlug } from '../content/index.ts';
 import { formatPeriod } from '../content/schema.ts';
 import type { Job } from '../content/schema.ts';
 import { projectPath } from '../routes.ts';
+import Dimension from './Dimension.tsx';
 import SectionTitle from './SectionTitle.tsx';
 
 function JobEntry({ job }: { job: Job }) {
@@ -31,6 +32,14 @@ function JobEntry({ job }: { job: Job }) {
   );
 }
 
+/** How long the jobs span, for the dimension line (tracker F67): "5 roles, 2021 to today". */
+function span(jobs: Job[]): string {
+  const first = Math.min(...jobs.map((job) => Number(job.start.slice(0, 4))));
+  const ongoing = jobs.some((job) => !job.end);
+  const last = Math.max(...jobs.map((job) => Number((job.end || job.start).slice(0, 4))));
+  return `${jobs.length} roles, ${first} to ${ongoing ? 'today' : last}`;
+}
+
 /** The jobs, newest first, from content/experience.json. */
 export default function Experience() {
   return (
@@ -39,6 +48,7 @@ export default function Experience() {
         <SectionTitle id="experience-title">
           Experience
         </SectionTitle>
+        <Dimension>{span(content.experience)}</Dimension>
         <ol className="jobs">
           {content.experience.map((job) => (
             <JobEntry key={job.id} job={job} />

@@ -5,6 +5,7 @@ import { homeWork, projectMeta } from '../content/schema.ts';
 import type { ProjectCard } from '../content/schema.ts';
 import { projectPath } from '../routes.ts';
 import Shot from './Shot.tsx';
+import Dimension from './Dimension.tsx';
 import SectionTitle from './SectionTitle.tsx';
 import StarMark from './StarMark.tsx';
 
@@ -208,8 +209,8 @@ function Archive() {
 }
 
 /**
- * The work on the home page (tracker F61): the lead project is in the first screen (F60), so the list goes on with
- * the next two in large rows and the others in a grid, then the way to all of it at /work/, and the smaller pieces.
+ * The work on the home page (tracker F61, F62): the first three in large rows and the others in a grid, then the way
+ * to all of it at /work/, and the smaller pieces. A dimension line says how many there are (F67).
  */
 function HomeWork() {
   const { large, grid } = homeWork(content.projects);
@@ -217,6 +218,7 @@ function HomeWork() {
     <section id="work" className="section" aria-labelledby="work-title">
       <div className="wrap">
         <WorkHead page={false} />
+        <Dimension>{content.projects.length} projects</Dimension>
         <div className="projects">
           {large.map((project) => (
             <HomeEntry key={project.slug} project={project} size="large" />
