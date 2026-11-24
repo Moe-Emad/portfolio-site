@@ -1211,3 +1211,23 @@ test.describe('the lower sections at full strength', () => {
     }
   });
 });
+
+// While a screenshot is on its way (tracker F66), its place shows drawing paper with the cross a drawing puts in an
+// opening, not an empty white box; on a slow connection the work list was a column of blank frames.
+test('a screenshot that has not arrived shows drawing paper with a cross, in both themes', async ({ page }) => {
+  // Every picture is held back, as on a slow connection.
+  await page.route(/\.(avif|webp|jpe?g|png)(\?|$)/, () => {});
+  for (const scheme of ['light', 'dark']) {
+    await page.emulateMedia({ colorScheme: scheme, reducedMotion: 'reduce' });
+    await page.goto('/');
+    const found = await page.locator('#work .shot picture').first().evaluate((picture) => {
+      const style = getComputedStyle(picture);
+      const image = picture.querySelector('img').getBoundingClientRect();
+      const box = picture.getBoundingClientRect();
+      return { layers: (style.backgroundImage.match(/linear-gradient/g) ?? []).length, display: style.display, covers: Math.abs(box.height - image.height) <= 1 && Math.abs(box.width - image.width) <= 1 };
+    });
+    expect(found.layers, `${scheme}: the grid and the cross`).toBe(4);
+    expect(found.display, scheme).toBe('block');
+    expect(found.covers, `${scheme}: the paper fills the place of the picture`).toBe(true);
+  }
+});
