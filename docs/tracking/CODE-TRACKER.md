@@ -106,7 +106,7 @@ issue and pull request numbers do not link here. From D4 on, the numbers are tho
 | F63 | #95 | The sign further down the page | From the smaller and earlier work down, every section stood on one pale ground with blue titles and hairlines; the blue, the saffron and the star of the first screen were gone | `feat/f63-sections-carry-the-sign` | #96 | done |
 | F64 | #97 | The lower sections at full strength | After F63 the smaller and earlier work was still a pale register, the steps a short list and the skills small text, so the lower half still read as plain | `feat/f64-lower-sections-bolder` | #98 | done |
 | F65 | #100 | Search engines read who the site is about | The structured data named the person without the address of the site, the Arabic name, the email or the skills, the projects did not point to the person, and the home page did not say "developer" | `feat/f65-seo` | #101 | done |
-| F66 | #102 | Drawing paper while a screenshot loads | While a screenshot was on its way its frame was an empty white box; on a slow connection the work list was a column of blank frames | `feat/f66-blueprint-placeholders` | - | in progress |
+| F66 | #102 | Drawing paper while a screenshot loads | While a screenshot was on its way its frame was an empty white box; on a slow connection the work list was a column of blank frames | `feat/f66-blueprint-placeholders` | #103 | done |
 
 ## D - docs and developer setup
 
