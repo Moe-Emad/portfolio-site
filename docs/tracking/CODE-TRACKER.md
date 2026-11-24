@@ -108,7 +108,7 @@ issue and pull request numbers do not link here. From D4 on, the numbers are tho
 | F65 | #100 | Search engines read who the site is about | The structured data named the person without the address of the site, the Arabic name, the email or the skills, the projects did not point to the person, and the home page did not say "developer" | `feat/f65-seo` | #101 | done |
 | F66 | #102 | Drawing paper while a screenshot loads | While a screenshot was on its way its frame was an empty white box; on a slow connection the work list was a column of blank frames | `feat/f66-blueprint-placeholders` | #103 | done |
 | F67 | #104 | Dimension lines, as on a technical drawing | The site's idea is the engineer's drawing, but past the first screen nothing was annotated the way a drawing is | `feat/f67-dimension-lines` | #105 | done |
-| F68 | #106 | A livelier first screen | The first screen stood still once it had drawn itself, and a change of theme was an instant cut | `feat/f68-living-first-screen` | - | in progress |
+| F68 | #106 | A livelier first screen | The first screen stood still once it had drawn itself, and a change of theme was an instant cut | `feat/f68-living-first-screen` | #107 | done |
 
 ## D - docs and developer setup
 
