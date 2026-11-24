@@ -11,5 +11,6 @@ export function pageTitle(path: string): string {
   if (route.page === 'project') return `${projectBySlug(route.slug)?.title} - ${name}`;
   if (route.page === 'not-found') return `Page not found - ${name}`;
   if (route.page === 'work') return `Work - ${name}`;
-  return `${name} - ${role}`;
+  // The home page in the words people search with: the role, and "full-stack developer" (tracker F65).
+  return `${name} - ${role} and full-stack developer`;
 }

@@ -38,7 +38,7 @@ export async function render(path: string): Promise<{ app: string; head: string;
         <App path={path} project={project} />
       </StrictMode>,
     ),
-    head: headHtml(pageHead(path), SITE),
+    head: headHtml(pageHead(path, SITE), SITE),
     projectFile: route.page === 'project' ? `content/projects/${route.slug}.json` : undefined,
   };
 }

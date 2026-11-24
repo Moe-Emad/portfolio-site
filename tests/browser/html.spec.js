@@ -15,7 +15,7 @@ const projects = fs
   .filter((project) => project.draft !== true);
 
 const pages = [
-  { address: '/', file: 'index.html', title: `${profile.name} - ${profile.role}`, text: [profile.name, profile.nameArabic, profile.headline, 'Selected work', projects[0].summary] },
+  { address: '/', file: 'index.html', title: `${profile.name} - ${profile.role} and full-stack developer`, text: [profile.name, profile.nameArabic, profile.headline, 'Selected work', projects[0].summary] },
   // The list of work (tracker B6).
   { address: '/work/', file: 'work/index.html', title: `Work - ${profile.name}`, text: ['Selected work', 'Smaller and earlier work', projects[0].title] },
   ...projects.map((project) => ({
@@ -174,4 +174,44 @@ test('the page has drawn its text before the JavaScript arrives', async ({ page 
   await page.goto('/');
   await expect(page.locator('h1')).toContainText('Mohammed');
   await expect(page.locator('#contact')).toContainText('Get in touch');
+});
+
+// Search (tracker F65): who the site is about, in the words people search with. Before, the data about the person had
+// no address of the site, no Arabic name, no email and no skills, and the pages of the projects did not point to
+// the person; the home page was "Software engineer" only, while people also search for "developer".
+test.describe('for search engines', () => {
+  const ld = (file) => JSON.parse(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/.exec(read(file))[1]);
+  const skills = JSON.parse(fs.readFileSync('content/skills.json', 'utf8')).flatMap((group) => group.skills);
+
+  test('the home page describes the person and the site, with the Arabic name, the address, the email and the skills', () => {
+    const graph = ld('index.html')['@graph'];
+    const person = graph.find((node) => node['@type'] === 'Person');
+    const website = graph.find((node) => node['@type'] === 'WebSite');
+    expect(person['@id']).toBe(`${SITE}/#person`);
+    expect(person.url).toBe(`${SITE}/`);
+    expect(person.alternateName).toBe(profile.nameArabic);
+    expect(person.email).toBe(`mailto:${profile.links.email}`);
+    expect(person.knowsAbout).toEqual(skills);
+    expect(person.sameAs).toEqual([profile.links.linkedin, profile.links.github]);
+    expect(website.url).toBe(`${SITE}/`);
+    expect(website.publisher['@id']).toBe(person['@id']);
+  });
+
+  test('the home page says "full-stack developer" in its title and description', () => {
+    const html = read('index.html');
+    expect(/<title>([^<]*)<\/title>/.exec(html)[1]).toMatch(/full-stack developer/i);
+    expect(meta(html, 'name', 'description')).toMatch(/full-stack developer/i);
+  });
+
+  test('every project page points to its address and to the person, with a trail of breadcrumbs', () => {
+    for (const project of projects) {
+      const address = `${SITE}/work/${project.slug}/`;
+      const graph = ld(`work/${project.slug}/index.html`)['@graph'];
+      const work = graph.find((node) => node['@type'] === 'CreativeWork');
+      const trail = graph.find((node) => node['@type'] === 'BreadcrumbList');
+      expect(work.url, project.slug).toBe(address);
+      expect(work.author['@id'], project.slug).toBe(`${SITE}/#person`);
+      expect(trail.itemListElement.map((item) => item.item), project.slug).toEqual([`${SITE}/`, `${SITE}/work/`, address]);
+    }
+  });
 });

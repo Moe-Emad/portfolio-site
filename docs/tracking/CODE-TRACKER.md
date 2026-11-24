@@ -105,6 +105,7 @@ issue and pull request numbers do not link here. From D4 on, the numbers are tho
 | F62 | #93 | Getting in touch, and every project under Selected work | The first project's screen stood above "Selected work" since F60, out of place; there was no email address or availability, and project pages ended without a way to get in touch | `feat/f62-contact` | #94 | done |
 | F63 | #95 | The sign further down the page | From the smaller and earlier work down, every section stood on one pale ground with blue titles and hairlines; the blue, the saffron and the star of the first screen were gone | `feat/f63-sections-carry-the-sign` | #96 | done |
 | F64 | #97 | The lower sections at full strength | After F63 the smaller and earlier work was still a pale register, the steps a short list and the skills small text, so the lower half still read as plain | `feat/f64-lower-sections-bolder` | #98 | done |
+| F65 | #100 | Search engines read who the site is about | The structured data named the person without the address of the site, the Arabic name, the email or the skills, the projects did not point to the person, and the home page did not say "developer" | `feat/f65-seo` | - | in progress |
 
 ## D - docs and developer setup
 
