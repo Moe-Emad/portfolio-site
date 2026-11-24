@@ -12,7 +12,7 @@ about the work, and a page for every project.
 - **One home page** with the selected work, how I work, experience, skills, smaller and earlier work, and a contact
   form.
 - **A page for every project** (`/work/<slug>/`): what it is, its figures, my part in it, and real screenshots on a
-  desktop and a phone. The home page shows the work in three large rows and a grid; the list of all the work
+  desktop and a phone; a reworked screen can be compared with its original, with a handle to drag. The home page shows the work in three large rows and a grid; the list of all the work
   (`/work/`) has the figures of each project and can be narrowed by kind: client work, own products, modernization.
 - **A command palette.** Press Ctrl+K, or the Search button, to jump to any section or project, switch the theme or
   open a profile, all from the keyboard.

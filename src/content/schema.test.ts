@@ -84,6 +84,18 @@ test('the profile may give an email address and a line about availability; a wro
   assert.match(profileProblems({ ...profile, availability: ' Open. ' }).join('\n'), /availability - has a space/);
 });
 
+// The same screen before the rework (tracker F69): a wide screen of the same shape, with its description and size.
+test('a picture may name the same screen before the rework; a wrong one is a problem', () => {
+  const image = { src: '/images/projects/sample-project/01.jpg', alt: 'A screen', device: 'desktop', width: 1440, height: 900 };
+  const before = { src: '/images/projects/sample-project/01-before.jpg', alt: 'The screen before', width: 1440, height: 900 };
+  const check = (images: unknown[]) => projectProblems({ ...GOOD_PROJECT, images }, 'content/projects/sample-project.json').join('\n');
+  assert.equal(check([{ ...image, before }]), '');
+  assert.match(check([{ ...image, before: { ...before, alt: '' } }]), /before: alt|alt - must be a text/);
+  assert.match(check([{ ...image, before: { ...before, width: 1000 } }]), /must have the same shape as the picture/);
+  assert.match(check([{ ...image, device: 'phone', width: 780, height: 1688, before: { ...before, width: 780, height: 1688 } }]), /only a wide screen can be compared/);
+  assert.match(check([{ ...image, before: { src: '/a.jpg', alt: 'x' } }]), /before: width and height/);
+});
+
 // The work on the home page (tracker F61, F62): all of it under "Selected work", in its order, the first three in
 // large rows and the others in a grid.
 test('the home page shows the first three projects in large rows and the others in a grid, each once', () => {

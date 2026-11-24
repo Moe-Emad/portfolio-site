@@ -4,7 +4,7 @@ import { projectMeta } from '../content/schema.ts';
 import type { Project } from '../content/schema.ts';
 import { WORK_PATH, projectPath } from '../routes.ts';
 import EmailAddress from './EmailAddress.tsx';
-import Shot from './Shot.tsx';
+import Shot, { Compare } from './Shot.tsx';
 
 /**
  * How wide the pictures of the gallery are shown, for the "sizes" of each (tracker F33). The content is about 92vw
@@ -25,7 +25,12 @@ const GALLERY_SIZES = {
 
 /** The page of one project: what it is, my part, what is worth a closer look, and the screens. */
 export default function ProjectPage({ project }: { project: Project }) {
-  const [cover, ...gallery] = project.images;
+  const [cover, ...rest] = project.images;
+  // A screen with its state before the rework is compared in a section of its own, at full width (tracker F69).
+  const compared = rest.filter((image) => image.before && image.device === 'desktop') as (Project['images'][number] & {
+    before: NonNullable<Project['images'][number]['before']>;
+  })[];
+  const gallery = rest.filter((image) => !compared.includes(image as (typeof compared)[number]));
   const desktop = gallery.filter((image) => image.device === 'desktop');
   const phone = gallery.filter((image) => image.device === 'phone');
   // Phone screens stand beside the wide screens when there are both; the first of an odd number of wide screens
@@ -119,6 +124,18 @@ export default function ProjectPage({ project }: { project: Project }) {
             </ul>
           </aside>
         </div>
+
+        {compared.length > 0 && (
+          <section className="rework" aria-labelledby="rework-title">
+            <h2 id="rework-title">The rework, screen by screen</h2>
+            <p className="rework__lead">Drag the handle across a screen, or move it with the arrow keys, to compare the original with the rework.</p>
+            <div className="rework__list">
+              {compared.map((image) => (
+                <Compare key={image.src} image={image} sizes={GALLERY_SIZES.alone.lead} />
+              ))}
+            </div>
+          </section>
+        )}
 
         {gallery.length > 0 && (
           <section className="gallery" aria-labelledby="gallery-title" data-beside={beside || undefined}>

@@ -47,13 +47,17 @@ for (const project of projects) {
       await page.goto(`/work/${project.slug}/`);
       await expect(page.locator('h1')).toBeVisible();
       const pictures = page.locator('main img');
-      await expect(pictures).toHaveCount(project.images.length);
+      // Each picture, and the screen before its rework where it names one (F69).
+      const all = project.images.flatMap((image) => (image.before ? [image, image.before] : [image]));
+      await expect(pictures).toHaveCount(all.length);
       await scrollThrough(page);
-      for (const image of project.images) {
+      for (const image of all) {
         // The address carries the fingerprint of the picture's files (tracker F54).
         const picture = page.locator(`main img[src^="${image.src}?v="]`);
         await expect(picture).toHaveAttribute('alt', image.alt);
         await expect(picture).toHaveAttribute('width', String(image.width));
+        // In view, so a lazy picture that the quick walk passed by is sure to be asked for.
+        await picture.scrollIntoViewIfNeeded();
         await expect.poll(() => picture.evaluate((element) => element.complete && element.naturalWidth > 0), { message: `${image.src} loaded` }).toBe(true);
       }
     });
@@ -353,9 +357,11 @@ test.describe('the gallery of a project page', () => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
     for (const project of projects) {
       await page.goto(`/work/${project.slug}/`);
-      const pictures = page.locator('.gallery .shot img');
-      await expect(pictures).toHaveCount(project.images.length - 1);
-      for (let index = 0; index < project.images.length - 1; index += 1) {
+      // The gallery, and the screens compared with their state before the rework (F69): two pictures each.
+      const pictures = page.locator('.gallery .shot img, .rework .shot img');
+      const count = project.images.length - 1 + project.images.slice(1).filter((image) => image.before).length;
+      await expect(pictures).toHaveCount(count);
+      for (let index = 0; index < count; index += 1) {
         const picture = pictures.nth(index);
         await picture.scrollIntoViewIfNeeded();
         await expect.poll(() => picture.evaluate((image) => image.complete && image.currentSrc !== ''), { timeout: 15000 }).toBe(true);
@@ -378,4 +384,41 @@ test('"All work" on a project page leads to the list of work', async ({ page }) 
   await page.getByRole('link', { name: 'All work' }).click();
   await expect(page).toHaveURL(/\/work\/$/);
   await expect(page.locator('h1')).toHaveText('Selected work');
+});
+
+// The rework, screen by screen (tracker F69): a screen with its state before the rework is shown over it, with a
+// handle to compare them, on the page of a modernization; before, the page showed only the new screens.
+test('a reworked screen can be compared with its original, by dragging or with the arrow keys', async ({ page }, testInfo) => {
+  const reworked = projects.filter((project) => project.images.some((image) => image.before));
+  expect(reworked.length, 'at least one project compares its screens').toBeGreaterThan(0);
+  for (const project of reworked) {
+    await page.goto(`/work/${project.slug}/`);
+    const compared = project.images.slice(1).filter((image) => image.before);
+    const figures = page.locator('.rework .compare');
+    await expect(figures).toHaveCount(compared.length);
+    const first = figures.first();
+    await first.scrollIntoViewIfNeeded();
+    await expect(first.getByAltText(compared[0].before.alt, { exact: true })).toHaveCount(1);
+    await expect(first.getByAltText(compared[0].alt, { exact: true })).toHaveCount(1);
+    // How much of the original shows: where the handle stands, from the left of the frame.
+    const shown = () => first.locator('.compare__frame').evaluate((frame) => {
+      const box = frame.getBoundingClientRect();
+      const handle = frame.querySelector('.compare__handle').getBoundingClientRect();
+      return Math.round(((handle.left + handle.width / 2 - box.left) / box.width) * 100);
+    });
+    expect(await shown(), 'half of the original at first').toBe(50);
+    // The keys move the handle once React has taken the page over.
+    const range = first.getByRole('slider', { name: /compare the original screen/i });
+    await expect(async () => {
+      await range.focus();
+      await page.keyboard.press('ArrowRight');
+      expect(await shown()).toBeGreaterThan(50);
+    }).toPass({ timeout: 10000 });
+    // A drag to the left shows less of the original.
+    if (testInfo.project.name !== 'phone') {
+      const box = await first.locator('.compare__frame').boundingBox();
+      await page.mouse.click(box.x + box.width * 0.2, box.y + box.height / 2);
+      await expect.poll(shown).toBeLessThan(30);
+    }
+  }
 });

@@ -62,7 +62,13 @@
       "caption": "The student area with the courses on offer. The covers are drawn sample pictures.",
       "device": "desktop",
       "width": 1440,
-      "height": 900
+      "height": 900,
+      "before": {
+        "src": "/images/projects/tpms/02-courses-before.jpg",
+        "alt": "The original student area of TPMS, before the rework: a greeting and four course cards, each with a cover, a title and a price in ringgit",
+        "width": 1440,
+        "height": 900
+      }
     },
     {
       "src": "/images/projects/tpms/03-course-and-certificate.jpg",
@@ -70,7 +76,13 @@
       "caption": "A course the student has joined: who teaches it, who is available, and the button that draws the PDF certificate.",
       "device": "desktop",
       "width": 1440,
-      "height": 900
+      "height": 900,
+      "before": {
+        "src": "/images/projects/tpms/03-course-and-certificate-before.jpg",
+        "alt": "The original course page of TPMS, before the rework: its description, category, dates, the instructors and their availability, and a link to generate a certificate",
+        "width": 1440,
+        "height": 900
+      }
     },
     {
       "src": "/images/projects/tpms/04-provider-dashboard.jpg",
@@ -78,7 +90,13 @@
       "caption": "The training provider signs in to their courses and the three management actions.",
       "device": "desktop",
       "width": 1440,
-      "height": 900
+      "height": 900,
+      "before": {
+        "src": "/images/projects/tpms/04-provider-dashboard-before.jpg",
+        "alt": "The original provider dashboard of TPMS, before the rework: the number of courses, and buttons to add, delete and edit a course",
+        "width": 1440,
+        "height": 900
+      }
     },
     {
       "src": "/images/projects/tpms/05-instructor-courses.jpg",
