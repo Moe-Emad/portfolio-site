@@ -52,9 +52,18 @@ export async function settle(page) {
 export async function axeFindings(page, knownRules = []) {
   await settle(page);
   // Let what is rising into place finish first (tracker F23): axe should see the page as it rests. The turning
-  // circles of the first screen never finish, so animations that repeat for ever are not waited for.
+  // circles of the first screen never finish, so animations that repeat for ever are not waited for; nor is one tied
+  // to the scroll (the star, F68), which runs as long as the page can scroll.
   await page.waitForFunction(
-    () => document.getAnimations().every((animation) => animation.playState !== 'running' || animation.effect?.getComputedTiming().iterations === Infinity),
+    () =>
+      document
+        .getAnimations()
+        .every(
+          (animation) =>
+            animation.playState !== 'running' ||
+            animation.effect?.getComputedTiming().iterations === Infinity ||
+            (animation.timeline && !(animation.timeline instanceof DocumentTimeline)),
+        ),
     null,
     { timeout: 15000 },
   );

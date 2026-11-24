@@ -2550,6 +2550,57 @@ a:hover {
   }
 }
 
+/* As the first screen scrolls away the star turns by an eighth, its own symmetry, and steps back (tracker F68): tied
+   to the scroll itself - a view timeline of the first screen, from the moment it starts to leave the window to the
+   moment it has left. Hero.tsx switches it on (data-away) once the page runs: a timeline made with the page's first
+   styles stayed inactive in the built site, as did one of the page's own scroller. A browser without scroll
+   timelines, and "reduce motion", keep the star still. */
+@supports (view-timeline: --hero block) {
+  @media (prefers-reduced-motion: no-preference) {
+    .hero[data-away] {
+      view-timeline: --hero block;
+    }
+
+    .hero[data-away] .star {
+      animation: star-away linear both;
+      animation-range: exit 0% exit 100%;
+      animation-timeline: --hero;
+    }
+  }
+}
+
+@keyframes star-away {
+  to {
+    opacity: 0.45;
+    rotate: 45deg;
+    scale: 0.82;
+  }
+}
+
+/* A change of theme (tracker F68, src/lib/theme.js): the new colours spread over the page as a circle from the
+   button that was pressed, --theme-x and --theme-y. Where the browser has no view transitions, at once. */
+@media (prefers-reduced-motion: no-preference) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
+    mix-blend-mode: normal;
+  }
+
+  ::view-transition-new(root) {
+    animation: theme-spread 0.65s cubic-bezier(0.6, 0, 0.2, 1);
+  }
+}
+
+@keyframes theme-spread {
+  from {
+    clip-path: circle(0 at var(--theme-x, 50%) var(--theme-y, 50%));
+  }
+
+  to {
+    clip-path: circle(150vmax at var(--theme-x, 50%) var(--theme-y, 50%));
+  }
+}
+
 /* Lines draw themselves while scrolling (tracker F48, src/lib/scroll-motion.ts). A block that carries a rule (a job,
    a group of skills, an entry of the earlier work, a point worth a closer look, my part, the record) leaves its rule
    undrawn while it waits below the screen, and draws it from left to right as it comes into view; blocks that arrive

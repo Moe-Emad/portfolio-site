@@ -41,6 +41,10 @@ export default function Hero() {
   const hero = useRef<HTMLElement>(null);
   const drawing = useRef<HTMLDivElement>(null);
   useLean(hero, drawing);
+  // The star turns as the first screen scrolls away (tracker F68, index.css): switched on once the page runs.
+  useEffect(() => {
+    if (hero.current) hero.current.dataset.away = '';
+  }, []);
 
   return (
     <section ref={hero} id="top" className="hero" aria-labelledby="hero-name">

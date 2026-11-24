@@ -100,3 +100,4 @@ and do not link here.
 - F65: Search engines read who the site is about: one person with the Arabic name, the address of the site, the email and the skills; every project page tied to that person with a trail of breadcrumbs; "full-stack developer" in the title and description of the home page (#101)
 - F66: While a screenshot is on its way its place shows drawing paper with the cross of an opening, in both themes, instead of an empty white box (#103)
 - F67: Dimension lines, as on a technical drawing, measure the work, How I work, Experience and Skills from the content (7 projects, 4 steps, 5 roles from 2021, 5 groups of 28 tools) and draw out from their label as they come into view (#105)
+- F68: As the first screen scrolls away the star turns by an eighth and steps back, tied to the scroll; a change of theme spreads over the page as a circle from the button; both stand still with reduce motion (#107)
