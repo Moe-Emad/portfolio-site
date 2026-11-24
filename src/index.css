@@ -1209,6 +1209,31 @@ a:hover {
   background: var(--surface);
 }
 
+/* While the picture is on its way (tracker F66) its place is drawing paper - the grid of the dark theme's ground,
+   in the colour of the titles - with the cross a drawing puts in an opening, instead of an empty white box. The
+   picture covers it as it arrives. On the picture, not the frame: the bezel of a phone keeps its own colour. */
+.shot picture {
+  --paper: color-mix(in srgb, var(--title) 10%, transparent);
+  --cross: color-mix(in srgb, var(--title) 14%, transparent);
+
+  display: block;
+  background-color: var(--tint);
+  background-image:
+    linear-gradient(to top right, transparent calc(50% - 0.75px), var(--cross) calc(50% - 0.75px), var(--cross) calc(50% + 0.75px), transparent calc(50% + 0.75px)),
+    linear-gradient(to bottom right, transparent calc(50% - 0.75px), var(--cross) calc(50% - 0.75px), var(--cross) calc(50% + 0.75px), transparent calc(50% + 0.75px)),
+    linear-gradient(var(--paper) 1px, transparent 1px),
+    linear-gradient(90deg, var(--paper) 1px, transparent 1px);
+  background-size:
+    100% 100%,
+    100% 100%,
+    24px 24px,
+    24px 24px;
+}
+
+.shot picture img {
+  display: block;
+}
+
 .shot picture {
   display: block;
 }
