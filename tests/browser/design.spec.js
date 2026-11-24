@@ -1231,3 +1231,34 @@ test('a screenshot that has not arrived shows drawing paper with a cross, in bot
     expect(found.covers, `${scheme}: the paper fills the place of the picture`).toBe(true);
   }
 });
+
+// Dimension lines (tracker F67): the page is annotated as a technical drawing. Under the head of the work, How I work,
+// Experience and Skills a dimension line - ticks, arrowheads, a measure in the middle - says the size of what follows,
+// counted from the content.
+test('the sections are measured with dimension lines counted from the content', async ({ page }) => {
+  const projects = fs.readdirSync('content/projects').map((name) => JSON.parse(fs.readFileSync(`content/projects/${name}`, 'utf8'))).filter((project) => project.draft !== true);
+  const jobs = JSON.parse(fs.readFileSync('content/experience.json', 'utf8'));
+  const skills = JSON.parse(fs.readFileSync('content/skills.json', 'utf8'));
+  const first = Math.min(...jobs.map((job) => Number(job.start.slice(0, 4))));
+  const expected = {
+    work: `${projects.length} projects`,
+    method: '4 steps, in this order',
+    experience: `${jobs.length} roles, ${first} to today`,
+    skills: `${skills.length} groups, ${skills.reduce((sum, group) => sum + group.skills.length, 0)} tools`,
+  };
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await open(page);
+  for (const [section, measure] of Object.entries(expected)) {
+    const dim = page.locator(`#${section} .dim`);
+    await expect(dim, section).toHaveCount(1);
+    await expect(dim.locator('.dim__label')).toHaveText(measure);
+    const drawn = await dim.evaluate((element) => ({
+      ticks: element.querySelectorAll('.dim__tick').length,
+      heads: [getComputedStyle(element.querySelector('.dim__line--start'), '::before').content, getComputedStyle(element.querySelector('.dim__line--end'), '::after').content],
+      width: element.getBoundingClientRect().width / element.parentElement.getBoundingClientRect().width,
+    }));
+    expect(drawn.ticks, `${section}: a tick at each end`).toBe(2);
+    expect(drawn.heads, `${section}: an arrowhead at each end`).toEqual(['""', '""']);
+    expect(drawn.width, `${section}: across the width of the section`).toBeGreaterThan(0.95);
+  }
+});

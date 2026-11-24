@@ -815,6 +815,92 @@ a:hover {
   stroke-width: 0.9;
 }
 
+/* A dimension line, as on a technical drawing (tracker F67): an extension tick at each end, a line out to each tick
+   with an arrowhead, and what it measures in the middle, in the colour of the titles - saffron on a band. */
+.dim {
+  display: flex;
+  align-items: center;
+  margin-top: clamp(1.75rem, 3vw, 2.5rem);
+  color: var(--title);
+  font-size: 0.875rem;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+}
+
+.section--band .dim {
+  color: var(--saffron);
+}
+
+.dim__tick {
+  flex: none;
+  width: 1px;
+  height: 1.1rem;
+  background: currentColor;
+}
+
+.dim__line {
+  position: relative;
+  flex: 1;
+  height: 1px;
+  background: currentColor;
+}
+
+.dim__line--start::before,
+.dim__line--end::after {
+  position: absolute;
+  top: 50%;
+  width: 0.7rem;
+  height: 0.5rem;
+  background: currentColor;
+  content: "";
+  translate: 0 -50%;
+}
+
+.dim__line--start::before {
+  left: 0;
+  clip-path: polygon(0 50%, 100% 0, 100% 100%);
+}
+
+.dim__line--end::after {
+  right: 0;
+  clip-path: polygon(100% 50%, 0 0, 0 100%);
+}
+
+.dim__label {
+  flex: none;
+  padding-inline: 0.9rem;
+  white-space: nowrap;
+}
+
+/* Further down the page the two lines draw out from the label to the ticks as the dimension comes into view; the
+   label stands still. */
+@media (prefers-reduced-motion: no-preference) {
+  .dim__line--start {
+    transform-origin: right center;
+  }
+
+  .dim__line--end {
+    transform-origin: left center;
+  }
+
+  .dim[data-reveal="waiting"] .dim__line {
+    scale: 0 1;
+  }
+
+  .dim[data-reveal="waiting"] .dim__tick {
+    opacity: 0;
+  }
+
+  .dim[data-reveal="shown"] .dim__line {
+    transition: scale 0.9s cubic-bezier(0.6, 0, 0.2, 1) var(--reveal-delay, 0ms);
+  }
+
+  .dim[data-reveal="shown"] .dim__tick {
+    transition: opacity 0.3s ease calc(var(--reveal-delay, 0ms) + 0.75s);
+  }
+}
+
 .section__lead {
   max-width: 62ch;
   margin-top: 1rem;
@@ -2546,6 +2632,14 @@ a:hover {
   [data-animate][data-reveal],
   [data-animate][data-reveal="shown"] {
     border-image-source: none;
+    transition: none;
+  }
+
+  /* A dimension line still to be drawn is whole on paper too (F67). */
+  .dim[data-reveal] .dim__line,
+  .dim[data-reveal] .dim__tick {
+    opacity: 1;
+    scale: none;
     transition: none;
   }
 }

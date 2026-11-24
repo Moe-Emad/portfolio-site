@@ -1,4 +1,5 @@
 import { content } from '../content/index.ts';
+import Dimension from './Dimension.tsx';
 import SectionTitle from './SectionTitle.tsx';
 
 /**
@@ -13,6 +14,9 @@ export default function Skills() {
       <div className="wrap">
         <SectionTitle id="skills-title">Skills</SectionTitle>
         <p className="section__lead">The tools I work with, by what they are for.</p>
+        <Dimension>
+          {content.skills.length} groups, {content.skills.reduce((sum, group) => sum + group.skills.length, 0)} tools
+        </Dimension>
         <div className="skills">
           {content.skills.map((group) => (
             <div key={group.group} className="skill-group" data-animate="draw">

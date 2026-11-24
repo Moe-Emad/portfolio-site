@@ -1,4 +1,5 @@
 import { content } from '../content/index.ts';
+import Dimension from './Dimension.tsx';
 import SectionTitle from './SectionTitle.tsx';
 
 // The order is the point: each step makes the next one safe. That is why this list is numbered.
@@ -43,6 +44,8 @@ export default function Method() {
             ))}
           </div>
         </div>
+
+        <Dimension>{STEPS.length} steps, in this order</Dimension>
 
         <ol className="steps">
           {STEPS.map((step) => (
