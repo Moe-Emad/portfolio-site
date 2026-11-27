@@ -1705,3 +1705,89 @@ test.describe('the end of a line of text', () => {
     expect(await alone(page, 'main h1, main h2, main h3, main h4'), 'titles ending with a word alone').toEqual([]);
   });
 });
+
+// The star fills its room (tracker B15). Before, on a phone it stood at the right under the buttons, at most 16rem,
+// beside an empty block; between 640 and 1023 px it stood beside the text at a fixed 14rem, and from about 900 px the
+// name, which stops growing at 8.25rem, ended at two thirds of the width, so the right of the band was empty above it.
+test.describe('the star fills its room', () => {
+  /** Where the star stands against the band and the text of the first screen. */
+  const measure = (page) =>
+    page.locator('#top').evaluate((hero) => {
+      const box = (element) => element.getBoundingClientRect();
+      const star = box(hero.querySelector('.star'));
+      const band = box(hero.querySelector('.hero__grid'));
+      const style = getComputedStyle(hero.querySelector('.hero__grid'));
+      const left = band.left + parseFloat(style.paddingLeft);
+      const right = band.right - parseFloat(style.paddingRight);
+      const wrap = box(hero.querySelector('.wrap'));
+      // The words and the buttons themselves: a paragraph's box runs the width of its column, past its last word.
+      const inked = (element) => {
+        const range = document.createRange();
+        range.selectNodeContents(element);
+        return range.getBoundingClientRect();
+      };
+      const texts = [
+        ['the name', box(hero.querySelector('h1'))],
+        ['the role', inked(hero.querySelector('.hero__role'))],
+        ['the headline', inked(hero.querySelector('.hero__headline'))],
+        ...[...hero.querySelectorAll('.hero__actions a')].map((link) => [link.textContent.trim(), box(link)]),
+      ];
+      return {
+        size: Math.round(star.width),
+        width: window.innerWidth,
+        offCentre: Math.round(Math.abs((star.left + star.right) / 2 - (Math.max(left, wrap.left) + Math.min(right, wrap.right)) / 2)),
+        crossed: texts.filter(([, text]) => star.left < text.right && star.right > text.left && star.top < text.bottom && star.bottom > text.top).map(([name]) => name),
+        beside: texts.every(([, text]) => star.left >= text.right),
+      };
+    });
+
+  test('on a phone the star stands in the middle under the buttons, larger than before', async ({ page }, testInfo) => {
+    test.skip(!isPhone(testInfo), 'the layout of a phone');
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    for (const [width, height] of [
+      [412, 790],
+      [412, 839],
+      [390, 664],
+    ]) {
+      await page.setViewportSize({ width, height });
+      await open(page);
+      const found = await measure(page);
+      const screen = `${width} x ${height}`;
+      expect(found.offCentre, `${screen}: off the middle of the band, px`).toBeLessThanOrEqual(2);
+      expect(found.crossed, `${screen}: text the star crosses`).toEqual([]);
+    }
+    // Where the room allows, larger than the 16rem of before.
+    await page.setViewportSize({ width: 412, height: 839 });
+    await open(page);
+    expect((await measure(page)).size, '412 x 839: the star, px').toBeGreaterThan(256);
+  });
+
+  test('on a wide tablet the star stands large beside the name and the text', async ({ page }, testInfo) => {
+    test.skip(isPhone(testInfo), 'the layout of a wider screen');
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    // 980 px is the width at which Chrome on a phone shows a page as the desktop site.
+    for (const [width, height] of [
+      [900, 1000],
+      [980, 1800],
+      [1023, 768],
+    ]) {
+      await page.setViewportSize({ width, height });
+      await open(page);
+      const found = await measure(page);
+      const screen = `${width} x ${height}`;
+      expect(found.crossed, `${screen}: text the star crosses`).toEqual([]);
+      expect(found.beside, `${screen}: the star beside the name and the text`).toBe(true);
+      expect(found.size / found.width, `${screen}: the star's share of the width`).toBeGreaterThanOrEqual(0.4);
+    }
+  });
+
+  test('on a tablet held upright the star beside the text grows with the width', async ({ page }, testInfo) => {
+    test.skip(isPhone(testInfo), 'the layout of a tablet');
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.setViewportSize({ width: 768, height: 1024 });
+    await open(page);
+    const found = await measure(page);
+    expect(found.crossed, 'text the star crosses').toEqual([]);
+    expect(found.size, 'the star, px (14rem before)').toBeGreaterThan(224);
+  });
+});
