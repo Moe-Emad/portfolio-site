@@ -107,3 +107,4 @@ and do not link here.
 - F70: A phone answers a finger: hover looks only where a pointer hovers, so a tap leaves nothing behind; a pressed look while a finger or a mouse button is down; the page is blue past both ends, as its bar and foot are (#115)
 - F71: The bar marks the section in view: its link carries the star of the sign, in the gap before it on a wide screen and before its name in the menu of a phone, and is the current place for screen readers (#117)
 - F72: No word left alone on the last line: running text avoids a single word at its end and titles break into lines of even length; on a phone the home page goes from nine and three to one and none (#119)
+- D8: The page weight after B13 to F72: the same pictures, a stylesheet 2 kB and a script 1 kB larger, the screenshots fetched before they come into view; the stylesheet is close to its budget (#121)
