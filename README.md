@@ -22,9 +22,10 @@ about the work, and a page for every project.
   the Arabic letters of the content whenever the site is built, with every form they take in a word: 6.5 kB instead
   of 26 kB.
 - **Motion in CSS only.** The first screen opens with the star drawing itself line by line, the name rising and the
-  Arabic name written from the right. Further down, pictures unroll as they come into view and rules draw themselves
-  across, while the text stands still. Everything stands still for a visitor who has asked their system to reduce
-  motion.
+  Arabic name written from the right. Further down, each picture is fetched before it comes into view and unrolls
+  from under a sheet of drawing paper once it has arrived, and rules draw themselves across, while the
+  text stands still. Nothing moves by the clock once the page has opened, and everything stands still for a visitor
+  who has asked their system to reduce motion.
 - **A contact form** that says clearly whether the message went out, with a trap for bots.
 
 ## How it is built

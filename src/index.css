@@ -2624,13 +2624,14 @@ a:hover {
     transition: translate 0.8s cubic-bezier(0.2, 0.7, 0.2, 1);
   }
 
-  /* A picture further down unrolls from the left into its frame as it comes into view. The frame itself is not
-     clipped, so the browser can tell when it is in view. Under the mouse a project's picture lifts by 2 px (F48),
-     and its frame casts a light shadow that follows the frame's corners (F50). */
+  /* A picture further down unrolls from the left as it comes into view (tracker B14, after F20). Until then a sheet of
+     its drawing paper (F66) lies over it: the picture itself is never hidden, so the browser fetches it ahead, as it
+     would not fetch a picture clipped away. Once the picture has arrived (src/lib/reveal.ts) the sheet slides off to
+     the right - a move of the sheet alone, which the browser makes on a layer of its own without drawing the picture
+     again. Under the mouse a project's picture lifts by 2 px (F48), and its frame casts a light shadow that follows
+     the frame's corners (F50). */
   .shot {
-    transition:
-      translate 1.1s cubic-bezier(0.2, 0.7, 0.2, 1),
-      transform 0.35s ease;
+    transition: transform 0.35s ease;
   }
 
   .shot__frame {
@@ -2638,19 +2639,21 @@ a:hover {
   }
 
   .shot[data-reveal] picture {
-    transition: clip-path 1.1s cubic-bezier(0.6, 0, 0.2, 1) 0.1s;
+    position: relative;
+    overflow: hidden;
   }
 
-  .shot[data-reveal="waiting"] {
-    translate: 0 1.5rem;
+  .shot[data-reveal] picture::after {
+    position: absolute;
+    inset: 0;
+    background: inherit;
+    content: "";
+    pointer-events: none;
+    transition: translate 0.9s cubic-bezier(0.6, 0, 0.2, 1);
   }
 
-  .shot[data-reveal="waiting"] picture {
-    clip-path: inset(0 100% 0 0);
-  }
-
-  .shot[data-reveal="shown"] picture {
-    clip-path: inset(0 0 0 0);
+  .shot[data-reveal="shown"] picture::after {
+    translate: 101% 0;
   }
 
   .project:hover .shot {
@@ -2809,11 +2812,9 @@ a:hover {
    lowered on paper, and nothing moves while the page is laid out for print. These rules come last, so they win
    over the waiting rules above, which have the same weight. */
 @media print {
-  .shot[data-reveal],
-  .shot[data-reveal] picture {
-    clip-path: none;
-    translate: none;
-    transition: none;
+  /* A picture still on its way is printed, not the paper over it (B14). */
+  .shot[data-reveal] picture::after {
+    display: none;
   }
 
   /* A rule still to be drawn is whole on paper (F48). The longhand: the minifier of the build empties a shorthand
