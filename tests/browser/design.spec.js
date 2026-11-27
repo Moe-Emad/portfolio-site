@@ -236,10 +236,88 @@ test.describe('motion', () => {
     const context = await browser.newContext({ javaScriptEnabled: false });
     const page = await context.newPage();
     await page.goto('/');
-    const clips = await page.locator('.shot, .shot picture').evaluateAll((shots) => shots.map((shot) => getComputedStyle(shot).clipPath));
-    expect(clips.length).toBeGreaterThan(0);
-    expect(new Set(clips)).toEqual(new Set(['none']));
+    // Neither clipped (F20) nor under a sheet of drawing paper (B14).
+    const looks = await page.locator('.shot').evaluateAll((shots) =>
+      shots.flatMap((shot) => {
+        const picture = shot.querySelector('picture');
+        return [getComputedStyle(shot).clipPath, getComputedStyle(picture).clipPath, getComputedStyle(picture, '::after').content];
+      }),
+    );
+    expect(looks.length).toBeGreaterThan(0);
+    expect(new Set(looks)).toEqual(new Set(['none']));
     await context.close();
+  });
+});
+
+// Screenshots arrive before they are in view and unroll smoothly (tracker B14). Before, a picture below the screen was
+// clipped away to nothing, and Chrome does not fetch a lazy picture it cannot see: it asked for each one only when it
+// was well into the screen. The frame came in as an empty white box, and the picture appeared at once halfway through
+// its unrolling, a clip that the browser redrew at every frame while the frame rose 24 px.
+test.describe('pictures further down', () => {
+  /** The last screenshot of the work on the home page, far below the first screen. */
+  const lastShot = (page) => page.locator('#work .project .shot').last();
+
+  test('are fetched before they come into view', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'no-preference' });
+    await open(page);
+    const shot = lastShot(page);
+    await expect(shot).toHaveAttribute('data-reveal', 'waiting');
+    // Half a screen below the window: near, but not in view.
+    await shot.evaluate((element) => window.scrollTo({ top: element.getBoundingClientRect().top + window.scrollY - window.innerHeight * 1.5, behavior: 'instant' }));
+    await expect
+      .poll(() => shot.locator('img').evaluate((image) => image.complete && image.naturalWidth > 0), { message: 'the picture has arrived while it is still below the window' })
+      .toBe(true);
+    expect(await shot.evaluate((element) => element.getBoundingClientRect().top > window.innerHeight), 'still below the window').toBe(true);
+  });
+
+  test('stay under their drawing paper until the picture has arrived, then show it', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'no-preference' });
+    // Every picture is held back, as on a slow connection, until the test lets them through.
+    const held = [];
+    const pictures = /\.(avif|webp|jpe?g|png)(\?|$)/;
+    await page.route(pictures, (route) => held.push(route));
+    await open(page);
+    const shot = lastShot(page);
+    await expect(shot).toHaveAttribute('data-reveal', 'waiting');
+    await shot.scrollIntoViewIfNeeded();
+    await page.waitForTimeout(1500);
+    await expect(shot, 'it waits while its picture is on its way').toHaveAttribute('data-reveal', 'waiting');
+    const sheet = await shot.locator('picture').evaluate((picture) => {
+      const style = getComputedStyle(picture, '::after');
+      return { content: style.content, translate: style.translate, paper: (style.backgroundImage.match(/linear-gradient/g) ?? []).length };
+    });
+    expect(sheet, 'a sheet of drawing paper, the grid and the cross, lies over the picture').toEqual({ content: '""', translate: 'none', paper: 4 });
+
+    await page.unroute(pictures);
+    for (const route of held) await route.continue().catch(() => {});
+    await expect(shot).toHaveAttribute('data-reveal', 'shown');
+    await expect
+      .poll(() => shot.locator('picture').evaluate((picture) => getComputedStyle(picture, '::after').translate), { message: 'the paper slides away' })
+      .not.toBe('none');
+  });
+
+  test('are never clipped, and only the paper moves as they are shown', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'no-preference' });
+    await open(page);
+    const shot = lastShot(page);
+    await expect(shot).toHaveAttribute('data-reveal', 'waiting');
+    const look = await shot.evaluate((element) => {
+      const picture = element.querySelector('picture');
+      /** The properties an element moves with a transition of some length. */
+      const moving = (style) => {
+        const durations = style.transitionDuration.split(',').map((duration) => parseFloat(duration));
+        return style.transitionProperty.split(',').map((name) => name.trim()).filter((name, index) => durations[index % durations.length] > 0);
+      };
+      return {
+        clip: getComputedStyle(picture).clipPath,
+        lowered: getComputedStyle(element).translate,
+        moving: [...new Set([...moving(getComputedStyle(element)), ...moving(getComputedStyle(picture)), ...moving(getComputedStyle(picture, '::after'))])],
+      };
+    });
+    expect(look.clip, 'the picture itself is not clipped, so the browser fetches it ahead').toBe('none');
+    expect(look.lowered, 'the frame does not rise while the page scrolls').toBe('none');
+    // What the browser moves on a layer of its own, without drawing the picture again.
+    expect(look.moving.filter((name) => !['transform', 'translate', 'opacity'].includes(name)), 'properties redrawn at every frame').toEqual([]);
   });
 });
 
@@ -403,6 +481,9 @@ test.describe('printing', () => {
         for (const shot of document.querySelectorAll('.shot[data-reveal="waiting"]')) {
           check(shot, 'shot', getComputedStyle(shot));
           check(shot, 'shot picture', getComputedStyle(shot.querySelector('picture')));
+          // The drawing paper over a picture still on its way (B14) is not printed over it.
+          const sheet = getComputedStyle(shot.querySelector('picture'), '::after');
+          if (sheet.content !== 'none' && sheet.display !== 'none') found.push('shot picture: under its drawing paper');
         }
         return found;
       });
