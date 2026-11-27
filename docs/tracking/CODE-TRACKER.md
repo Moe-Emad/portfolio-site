@@ -127,7 +127,7 @@ issue and pull request numbers do not link here. From D4 on, the numbers are tho
 | D5 | #8 | A README about the site, and public docs without working notes | The README was a setup manual, not documentation of the site; some docs carried working notes that do not belong in a public repository | `docs/d5-public-docs` | #9 | done |
 | D6 | #70 | The README describes the motion of the site as it is today | The README said blocks rise into place while scrolling, the motion before F48; since then the text further down stands still and its rules draw themselves | `docs/d6-readme-motion` | #71 | done |
 | D7 | #86 | The deploy guide says what EmailJS offers on the free plan | The guide said the Domains list might be on the free plan and that a site could get a public key of its own; EmailJS lists the Domains list from its paid plans and describes no second public key | `docs/d7-emailjs-plans` | #87 | done |
-| D8 | #120 | The page weight after the phone fixes | B14 changed when the screenshots are fetched, and the table of page weights was last measured after F62 | `docs/d8-page-weight` | - | in progress |
+| D8 | #120 | The page weight after the phone fixes | B14 changed when the screenshots are fetched, and the table of page weights was last measured after F62 | `docs/d8-page-weight` | #121 | done |
 
 ## Findings noted for later
 
