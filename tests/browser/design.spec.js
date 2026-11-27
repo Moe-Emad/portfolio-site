@@ -1648,3 +1648,60 @@ test.describe('the section in view', () => {
     expect(await marked(page).count(), 'links marked as the place of the reader').toBe(0);
   });
 });
+
+// No word left alone on the last line (tracker F72). Before, on a phone the home page had nine paragraphs and list
+// items and three titles that ended with a single word on a line of its own; on a laptop the title "UHRS Judge, AI and
+// search quality" left "quality" alone.
+test.describe('the end of a line of text', () => {
+  /** Pieces of text whose last line holds one word alone, as "the last words" of each. */
+  const alone = (page, selector) =>
+    page.evaluate((selector) => {
+      const found = [];
+      for (const element of document.querySelectorAll(selector)) {
+        if (element.getClientRects().length === 0) continue;
+        // Only one run of text: an entry laid out in parts (a name, a sentence, its tools on lines of their own) is a
+        // layout, not a paragraph.
+        if ([...element.querySelectorAll('*')].some((child) => !getComputedStyle(child).display.startsWith('inline') && getComputedStyle(child).display !== 'none')) continue;
+        const boxes = [];
+        const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT);
+        for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+          for (const word of node.textContent.matchAll(/\S+/g)) {
+            const range = document.createRange();
+            range.setStart(node, word.index);
+            range.setEnd(node, word.index + word[0].length);
+            const box = range.getClientRects()[0];
+            if (box) boxes.push(Math.round(box.top));
+          }
+        }
+        const lines = [...new Set(boxes)];
+        if (boxes.length < 4 || lines.length < 2) continue;
+        const last = Math.max(...boxes);
+        if (boxes.filter((top) => Math.abs(top - last) <= 2).length === 1) found.push(element.textContent.trim().split(/\s+/).slice(-3).join(' '));
+      }
+      return found;
+    }, selector);
+
+  test('running text and titles ask for good breaks', async ({ page }) => {
+    for (const path of ['/', '/work/relic/']) {
+      await page.goto(path);
+      await expect(page.locator('h1')).toBeVisible();
+      const styles = await page.evaluate(() => ({
+        text: [...new Set([...document.querySelectorAll('main p, main li, main dd, main figcaption')].map((element) => getComputedStyle(element).textWrapStyle))],
+        titles: [...new Set([...document.querySelectorAll('main h2, main h3, main h4, main h1:not(.sign)')].map((element) => getComputedStyle(element).textWrapStyle))],
+      }));
+      // The headline of the first screen is balanced (F26), which is a good break too.
+      expect(styles.text.filter((style) => !['pretty', 'balance'].includes(style)), `${path}: running text`).toEqual([]);
+      expect(styles.titles, `${path}: titles`).toEqual(['balance']);
+    }
+  });
+
+  test('on a phone the home page leaves at most one word alone', async ({ page }, testInfo) => {
+    test.skip(!isPhone(testInfo), 'the narrow columns of a phone');
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await open(page);
+    // A browser cannot always avoid it: one piece of running text may still end so (there were nine).
+    const text = await alone(page, 'main p, main li, main dd, main figcaption');
+    expect(text.length, `running text ending with a word alone: ${JSON.stringify(text)}`).toBeLessThanOrEqual(1);
+    expect(await alone(page, 'main h1, main h2, main h3, main h4'), 'titles ending with a word alone').toEqual([]);
+  });
+});

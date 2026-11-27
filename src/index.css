@@ -105,6 +105,23 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+/* Text that ends well (tracker F72): running text avoids a word alone on its last line, and a title breaks into lines
+   of even length, as the headline of the first screen does. A browser that cannot breaks text as before. The sign of
+   the first screen sets its own lines. */
+p,
+li,
+dd,
+figcaption {
+  text-wrap: pretty;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  text-wrap: balance;
+}
+
 /* Drawing paper under the blueprint: a fine line every 24 px, a stronger one every 120 px. Bands and cards have solid
    backgrounds, so the grid shows on the ground only. Faint enough that no text loses its contrast over a line (a
    browser test checks; axe, which cannot measure over an image, measures with the grid taken away). */
