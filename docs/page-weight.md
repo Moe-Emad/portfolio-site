@@ -13,20 +13,38 @@ npm run weight
 
 ## The home page, from the original to today
 
-| | Original | After F2-F4 (new design, real HTML) | After F5 (WebP copies) | Today (after F62) |
+| | Original | After F2-F4 (new design, real HTML) | After F5 (WebP copies) | Today (after F72) |
 |---|---|---|---|---|
 | Requests | 41, of them 15 to other servers | 10, all to the site itself | 10, all to the site itself | 13, all to the site itself |
-| JavaScript | 414 kB | 74 kB | 74 kB | 84 kB |
-| CSS | 7 kB | 6 kB | 6 kB | 9 kB |
+| JavaScript | 414 kB | 74 kB | 74 kB | 85 kB |
+| CSS | 7 kB | 6 kB | 6 kB | 11 kB |
 | HTML | 0.3 kB (an empty page) | 6 kB (the whole text) | 6 kB | 9 kB |
 | Fonts | 80 kB, from Google | 74 kB, from the site | 74 kB, from the site | 55 kB, from the site |
 | Pictures | 2,988 kB | 393 kB | 125 kB on a desktop, 161 kB on a phone | 148 kB on a desktop, 221 kB on a phone |
 | 3D models and their lighting map | 2,908 kB | none | none | none |
-| **Total as it travels** | **6,397 kB** | **553 kB** | **286 kB on a desktop, 322 kB on a phone** | **305 kB on a desktop, 378 kB on a phone** |
+| **Total as it travels** | **6,397 kB** | **553 kB** | **286 kB on a desktop, 322 kB on a phone** | **309 kB on a desktop, 382 kB on a phone** |
 
 The original was measured from a build of the first version (`583fd75`) with the same method. Its 2,908 kB of 3D data are the models of the room (1,632 kB) and a lighting map the 3D library fetched
 from another server (1,276 kB). The last column counts every picture of the page; before B12 the tool missed the
 lower pictures, so the picture figures of the earlier columns are too low.
+
+## Measured on 2026-11-27, after B13 to F72 (a phone first: the star, the screenshots, touch, the bar, line breaks)
+
+Since F62 the items changed how the pages look and move, not what they download. B14 changed when the screenshots are
+fetched: a picture that waits below the screen now lies under a sheet of drawing paper instead of being clipped away,
+and Chrome fetches it 1,000 to 3,000 px before it comes into view; before, it asked for it only once the picture was
+about 400 px into the screen. A page read to the end downloads the same pictures as before, which is what the table
+counts; a page opened and left at once may fetch a few more. The stylesheet grew by about 2 kB from F63 to F72 and
+is 10.9 kB compressed (11,192 bytes), close to its budget of 12 kB; the script grew by 1 kB.
+
+| Page | Size | Requests | HTML | CSS | JavaScript | Fonts | Pictures | Total as it travels |
+|---|---|---|---|---|---|---|---|---|
+| `/` | desktop | 13 | 9 kB | 11 kB | 85 kB | 55 kB | 148 kB | **309 kB** |
+| `/` | sharp desktop | 13 | 9 kB | 11 kB | 85 kB | 55 kB | 328 kB | **489 kB** |
+| `/` | phone | 13 | 9 kB | 11 kB | 85 kB | 55 kB | 221 kB | **382 kB** |
+| `/work/rplms-v2/` | desktop | 14 | 5 kB | 11 kB | 87 kB | 55 kB | 165 kB | **324 kB** |
+| `/work/rplms-v2/` | sharp desktop | 14 | 5 kB | 11 kB | 87 kB | 55 kB | 229 kB | **388 kB** |
+| `/work/rplms-v2/` | phone | 14 | 5 kB | 11 kB | 87 kB | 55 kB | 202 kB | **361 kB** |
 
 ## Measured on 2026-11-21, F62 (every project under Selected work; getting in touch)
 
