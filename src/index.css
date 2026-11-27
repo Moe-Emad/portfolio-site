@@ -88,7 +88,10 @@
 
 /* ---------- Base ---------- */
 
+/* Past both ends of the page, where a phone lets it be pulled, the blue of the bar and the foot instead of a strip of
+   the pale ground (tracker F70). The body paints the ground over the page itself. */
 html {
+  background-color: var(--blue);
   scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;
 }
@@ -130,7 +133,16 @@ a {
   text-underline-offset: 0.22em;
 }
 
-a:hover {
+/* Hover looks only where the pointer can hover, a mouse or a trackpad (tracker F70): on a phone a tap left them in
+   place until the next tap elsewhere. While a finger or a mouse button is down, the pressed look (:active) answers
+   instead; it is the hover look, and a button also sinks by a pixel. */
+@media (hover: hover) {
+  a:hover {
+    text-decoration-thickness: 2px;
+  }
+}
+
+a:active {
   text-decoration-thickness: 2px;
 }
 
@@ -193,7 +205,13 @@ a:hover {
   color: var(--sign-ink);
 }
 
-.button--sign:hover {
+@media (hover: hover) {
+  .button--sign:hover {
+    background: var(--saffron-light);
+  }
+}
+
+.button--sign:active {
   background: var(--saffron-light);
 }
 
@@ -203,8 +221,18 @@ a:hover {
   color: var(--on-blue);
 }
 
-.button--primary:hover {
+@media (hover: hover) {
+  .button--primary:hover {
+    background: var(--blue-deep);
+  }
+}
+
+.button--primary:active {
   background: var(--blue-deep);
+}
+
+.button:active:not([disabled]) {
+  translate: 0 1px;
 }
 
 .button[disabled] {
@@ -255,8 +283,15 @@ a:hover {
   cursor: pointer;
 }
 
-.site-header__menu-button:hover,
-.theme-toggle:hover {
+@media (hover: hover) {
+  .site-header__menu-button:hover,
+  .theme-toggle:hover {
+    background: rgb(255 255 255 / 0.14);
+  }
+}
+
+.site-header__menu-button:active,
+.theme-toggle:active {
   background: rgb(255 255 255 / 0.14);
 }
 
@@ -291,7 +326,13 @@ a:hover {
   }
 }
 
-.palette-button:hover {
+@media (hover: hover) {
+  .palette-button:hover {
+    background: rgb(255 255 255 / 0.14);
+  }
+}
+
+.palette-button:active {
   background: rgb(255 255 255 / 0.14);
 }
 
@@ -350,7 +391,13 @@ a:hover {
   text-decoration: none;
 }
 
-.site-nav li a:hover {
+@media (hover: hover) {
+  .site-nav li a:hover {
+    text-decoration: underline;
+  }
+}
+
+.site-nav li a:active {
   text-decoration: underline;
 }
 
@@ -600,7 +647,13 @@ a:hover {
   text-underline-offset: 0.3em;
 }
 
-.hero__link:hover {
+@media (hover: hover) {
+  .hero__link:hover {
+    text-decoration-thickness: 2px;
+  }
+}
+
+.hero__link:active {
   text-decoration-thickness: 2px;
 }
 
@@ -1008,7 +1061,13 @@ a:hover {
   transition: transform 0.25s ease;
 }
 
-.kinds button:hover {
+@media (hover: hover) {
+  .kinds button:hover {
+    color: var(--ink);
+  }
+}
+
+.kinds button:active {
   color: var(--ink);
 }
 
@@ -1088,7 +1147,16 @@ a:hover {
   content: "";
 }
 
-.project:hover .project__link {
+@media (hover: hover) {
+  .project:hover .project__link {
+    color: var(--link);
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+  }
+}
+
+/* Pressed anywhere, the row is the pressed link: its name takes the underline. */
+.project:active .project__link {
   color: var(--link);
   text-decoration: underline;
   text-decoration-thickness: 2px;
@@ -1944,7 +2012,14 @@ a:hover {
   text-decoration: none;
 }
 
-.case__next a:hover {
+@media (hover: hover) {
+  .case__next a:hover {
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+  }
+}
+
+.case__next a:active {
   text-decoration: underline;
   text-decoration-thickness: 2px;
 }
@@ -2395,7 +2470,13 @@ a:hover {
   cursor: pointer;
 }
 
-.email__copy:hover {
+@media (hover: hover) {
+  .email__copy:hover {
+    border-color: var(--title);
+  }
+}
+
+.email__copy:active {
   border-color: var(--title);
 }
 
@@ -2656,12 +2737,14 @@ a:hover {
     translate: 101% 0;
   }
 
-  .project:hover .shot {
-    transform: translateY(-2px);
-  }
+  @media (hover: hover) {
+    .project:hover .shot {
+      transform: translateY(-2px);
+    }
 
-  .project:hover .shot__frame {
-    box-shadow: 0 14px 30px -22px rgb(12 20 64 / 0.35);
+    .project:hover .shot__frame {
+      box-shadow: 0 14px 30px -22px rgb(12 20 64 / 0.35);
+    }
   }
 }
 
