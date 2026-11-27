@@ -604,12 +604,44 @@ a:hover {
   text-decoration-thickness: 2px;
 }
 
-/* The drawing. Phone and tablet: small and at full strength in the band under the buttons, at the right, so the
-   name stands on clean blue (tracker F46). Wide screens: large, beside the text. */
+/* The drawing. Phone and tablet: at full strength in the band under the buttons, at the right, so the name stands on
+   clean blue (tracker F46). Wide screens: large, beside the text. */
 .hero__drawing {
-  width: min(64vw, 16rem);
-  margin: 2.25rem 0 0 auto;
   pointer-events: none;
+}
+
+/* On a phone the band fills the first screen, less the bar at the top (4rem), and the star takes the room left under
+   the buttons (tracker B13): the smaller of its width and its height, so it is always whole. Before, the band was
+   taller than most phone screens and the bottom of the screen cut the star. The small viewport height is the screen
+   with the browser's bars shown, so nothing moves when they hide. */
+@media (max-width: 39.99rem) {
+  .hero__grid {
+    display: flex;
+    flex-direction: column;
+    min-height: calc(100vh - 4rem);
+    min-height: calc(100svh - 4rem);
+    padding-block: 2.5rem 2rem;
+  }
+
+  .hero__drawing {
+    flex: 1 1 0;
+    container-type: size;
+    display: grid;
+    place-items: center end;
+    margin-top: 1.75rem;
+  }
+
+  .hero__drawing .star {
+    width: min(100cqw, 100cqh, 16rem);
+  }
+
+  /* A screen too short for a star of 6rem leaves it out rather than cutting it. Hidden, not removed: its turn with
+     the scroll keeps its place. */
+  @container (height < 6rem) {
+    .star {
+      visibility: hidden;
+    }
+  }
 }
 
 /* A tablet has room beside the role, the headline and the buttons: the star stands there, under the name, its foot
@@ -678,10 +710,16 @@ a:hover {
   }
 }
 
+/* The drawing in a box of its own (tracker B13): the turn with the scroll moves the box (star-away below). */
 .star {
+  width: 100%;
+  aspect-ratio: 1;
+}
+
+.star svg {
   display: block;
   width: 100%;
-  height: auto;
+  height: 100%;
   overflow: visible;
 }
 
@@ -2579,15 +2617,6 @@ a:hover {
     animation: rise-in 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) 1.2s both;
   }
 
-  /* Behind the star, the circles and radii of the construction turn: once in four minutes. */
-  .star__construction {
-    transform-box: view-box;
-    transform-origin: 0 0;
-    animation:
-      star-appear 1.4s ease both,
-      star-turn 240s linear 1.4s infinite;
-  }
-
   /* The drawing leans a little towards the mouse (Hero.tsx sets --lean-x and --lean-y, from -0.5 to 0.5); gently,
      by 5 px at most (F48). */
   .hero__drawing {
@@ -2657,17 +2686,13 @@ a:hover {
   }
 }
 
-@keyframes star-turn {
-  to {
-    rotate: 360deg;
-  }
-}
-
 /* As the first screen scrolls away the star turns by an eighth, its own symmetry, and steps back (tracker F68): tied
-   to the scroll itself - a view timeline of the first screen, from the moment it starts to leave the window to the
-   moment it has left. Hero.tsx switches it on (data-away) once the page runs: a timeline made with the page's first
-   styles stayed inactive in the built site, as did one of the page's own scroller. A browser without scroll
-   timelines, and "reduce motion", keep the star still. */
+   to the scroll itself - a view timeline of the first screen, from the moment its top leaves at the top of the window
+   to the moment its foot has followed (exit-crossing, tracker B13). Measured at the top only, the turn does not depend
+   on the height of the window, which changes on a phone as the browser's bars hide and come back. Hero.tsx switches
+   it on (data-away) once the page runs: a timeline made with the page's first styles stayed inactive in the built
+   site, as did one of the page's own scroller. A browser without scroll timelines, and "reduce motion", keep the star
+   still. */
 @supports (view-timeline: --hero block) {
   @media (prefers-reduced-motion: no-preference) {
     .hero[data-away] {
@@ -2676,7 +2701,7 @@ a:hover {
 
     .hero[data-away] .star {
       animation: star-away linear both;
-      animation-range: exit 0% exit 100%;
+      animation-range: exit-crossing 0% exit-crossing 100%;
       animation-timeline: --hero;
     }
   }
