@@ -1321,3 +1321,119 @@ test.describe('a livelier first screen', () => {
     }
   });
 });
+
+// On a phone the star fits the first screen and moves smoothly (tracker B13). Before, the band of the first screen was
+// taller than most phone screens and cut the star off at the bottom; the circles behind the star turned inside the
+// drawing, so the browser drew it again at every frame for as long as the page was open; and the turn while scrolling
+// was measured against the bottom of the window, so it jumped when the bars of a phone's browser hid.
+test.describe('the star on a phone', () => {
+  const turn = (page) => page.locator('#top .star').evaluate((star) => {
+    const value = getComputedStyle(star).rotate;
+    return value === 'none' ? 0 : parseFloat(value);
+  });
+
+  /** Waits until the opening of the first screen is over: only the slow turn and the turn tied to the scroll run. */
+  const opened = (page) =>
+    page.waitForFunction(
+      () =>
+        document
+          .getAnimations()
+          .every(
+            (animation) =>
+              animation.playState !== 'running' ||
+              animation.effect?.getComputedTiming().iterations === Infinity ||
+              (animation.timeline && !(animation.timeline instanceof DocumentTimeline)),
+          ),
+      null,
+      { timeout: 15000 },
+    );
+
+  test('the whole star stands in the first screen, or is left out on a screen too short for it', async ({ page }, testInfo) => {
+    test.skip(!isPhone(testInfo), 'the layout of a phone');
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    // Phones with the bars of their browser shown: an iPhone 13, a large iPhone, a narrow Android phone, the Pixel 7 of
+    // these tests; then a small iPhone, whose name, headline and buttons leave no room for the star.
+    for (const [width, height, shown] of [
+      [390, 664, true],
+      [430, 740, true],
+      [360, 740, true],
+      [412, 839, true],
+      [375, 553, false],
+    ]) {
+      await page.setViewportSize({ width, height });
+      await open(page);
+      const found = await page.locator('#top').evaluate((hero) => {
+        const star = hero.querySelector('.star');
+        const box = star.getBoundingClientRect();
+        return {
+          shown: getComputedStyle(star).visibility === 'visible' && box.width > 0,
+          whole: box.top >= hero.querySelector('.hero__actions').getBoundingClientRect().bottom && box.bottom <= window.innerHeight && box.right <= document.documentElement.clientWidth,
+          size: Math.round(box.width),
+        };
+      });
+      const screen = `${width} x ${height}`;
+      expect(found.shown, `${screen}: the star is shown`).toBe(shown);
+      if (shown) {
+        expect(found.whole, `${screen}: the whole star under the buttons, in the first screen`).toBe(true);
+        expect(found.size, `${screen}: the star is at least 6rem across`).toBeGreaterThanOrEqual(96);
+      }
+    }
+  });
+
+  test('while the page stands still nothing is restyled or laid out, and the circles rest out of view', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'no-preference' });
+    await open(page);
+    await opened(page);
+    // A picture that arrives restyles the page once; only the work done at every frame counts here.
+    await page.waitForLoadState('networkidle');
+    const cdp = await page.context().newCDPSession(page);
+    await cdp.send('Performance.enable');
+    const counts = async () => Object.fromEntries((await cdp.send('Performance.getMetrics')).metrics.map(({ name, value }) => [name, value]));
+    /** The style and layout passes of the browser in one second of rest: about 60 when something is redrawn at every
+        frame, a few at most when nothing is. */
+    const oneSecond = async () => {
+      const before = await counts();
+      await page.waitForTimeout(1000);
+      const after = await counts();
+      return { style: after.RecalcStyleCount - before.RecalcStyleCount, layout: after.LayoutCount - before.LayoutCount };
+    };
+    const slowTurn = () =>
+      page.evaluate(() => document.getAnimations().filter((animation) => animation.animationName === 'star-turn').map((animation) => animation.playState));
+
+    // At the top the circles turn behind the star, without a pass of the page at every frame.
+    expect(await slowTurn(), 'the circles turn at the top').toEqual(['running']);
+    const top = await oneSecond();
+    expect(top.style, 'style passes in a second at the top').toBeLessThan(10);
+    expect(top.layout, 'layout passes in a second at the top').toBeLessThan(10);
+
+    // At the foot of the page the first screen is out of view, and the circles rest.
+    await page.evaluate(() => window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'instant' }));
+    await opened(page);
+    await expect.poll(slowTurn, { message: 'the circles rest out of view' }).toEqual(['paused']);
+    const foot = await oneSecond();
+    expect(foot.style, 'style passes in a second at the foot').toBeLessThan(10);
+    expect(foot.layout, 'layout passes in a second at the foot').toBeLessThan(10);
+  });
+
+  test('the turn while scrolling follows the share of the first screen that has left at the top', async ({ page }, testInfo) => {
+    test.skip(!isPhone(testInfo), 'a phone held sideways');
+    await page.emulateMedia({ reducedMotion: 'no-preference' });
+    // A phone held sideways: the first screen is taller than the window. Measured against the bottom of the window,
+    // the turn depended on the height of the window, which changes as the bars of the browser hide and come back.
+    await page.setViewportSize({ width: 844, height: 390 });
+    await open(page);
+    await expect(page.locator('#top')).toHaveAttribute('data-away', '');
+    const hero = await page.locator('#top').evaluate((element) => {
+      const box = element.getBoundingClientRect();
+      return { top: box.top + window.scrollY, height: box.height };
+    });
+    expect(hero.height, 'the first screen is taller than the window').toBeGreaterThan(390);
+    for (const share of [0.25, 0.5]) {
+      await page.evaluate((y) => window.scrollTo({ top: y, behavior: 'instant' }), Math.round(hero.top + share * hero.height));
+      // An eighth of a turn (45 degrees) over the whole first screen; the timeline comes alive about 1.5 s after load.
+      await expect
+        .poll(async () => Math.abs((await turn(page)) - 45 * share), { message: `${share * 100} % of the first screen has left`, timeout: 6000 })
+        .toBeLessThan(1);
+    }
+  });
+});

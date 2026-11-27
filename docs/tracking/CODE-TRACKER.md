@@ -36,6 +36,7 @@ issue and pull request numbers do not link here. From D4 on, the numbers are tho
 | B10 | #18 | After a failed send the label of the first field stays in view | The form put the cursor in a field just under the bar and its label stayed hidden behind the bar | `fix/b10-form-label-in-view` | #19 | done |
 | B11 | #64 | A Content-Security-Policy: the site runs only its own scripts | Without a policy the browser runs any script that finds its way into a page, and lets it load code from anywhere and send data anywhere | `fix/b11-content-security-policy` | #65 | done |
 | B12 | #68 | npm run weight counts every picture of a page, the same on every run | It counted four of the seven pictures of the home page on a desktop and three on a phone: its quick scroll never got near the bottom of a page that scrolls smoothly | `fix/b12-weight-every-picture` | #69 | done |
+| B13 | #110 | On a phone the star fits the first screen and moves smoothly | On most phone screens the bottom of the screen cut the star off, and its turn began at the first touch; the circles behind it turned inside the drawing, so the page was restyled at every frame while nothing moved | `fix/b13-phone-star` | - | in progress |
 
 ## F - features and the look
 

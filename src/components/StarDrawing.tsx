@@ -17,15 +17,18 @@ const INNER = Math.round(R * Math.cos(Math.PI / 4) * 100) / 100;
 // The corners of the small octagon where the lines of the {8/3} star cross.
 const CORE = Math.round(R * (Math.SQRT2 - 1) * 100) / 100;
 
+const VIEW = '-100 -100 200 200';
+
 export default function StarDrawing() {
   let order = 0;
   // pathLength 1 lets one CSS rule draw every line, whatever its real length; --i staggers them.
   const draw = () => ({ pathLength: 1, style: { '--i': order++ } as CSSProperties });
 
   return (
-    <svg className="star" viewBox="-100 -100 200 200" aria-hidden="true" focusable="false">
-      {/* Construction: circles and radii, thin and dashed. */}
-      <g className="star__construction">
+    <div className="star" aria-hidden="true">
+      {/* Construction: circles and radii, thin and dashed. A drawing of its own under the star (tracker B13), so its
+          slow turn moves the finished picture on a layer of its own instead of drawing it again at every frame. */}
+      <svg className="star__construction" viewBox={VIEW} focusable="false">
         <circle r={R} />
         <circle r={INNER} />
         <circle r={CORE} />
@@ -37,30 +40,32 @@ export default function StarDrawing() {
           const [x, y] = point(index * 2 + 1, R, 16);
           return <line key={`h${index}`} x1={x} y1={y} x2={-x} y2={-y} />;
         })}
-      </g>
+      </svg>
 
-      {/* The {8/3} star: every third point joined. */}
-      <path d={path([0, 3, 6, 1, 4, 7, 2, 5])} {...draw()} className="star__line star__line--fine" />
+      <svg className="star__figure" viewBox={VIEW} focusable="false">
+        {/* The {8/3} star: every third point joined. */}
+        <path d={path([0, 3, 6, 1, 4, 7, 2, 5])} {...draw()} className="star__line star__line--fine" />
 
-      {/* The eight-pointed star itself: two squares, one turned by 45 degrees. */}
-      <path d={path([0, 2, 4, 6])} {...draw()} className="star__line star__line--main" />
-      <path d={path([1, 3, 5, 7])} {...draw()} className="star__line star__line--main" />
+        {/* The eight-pointed star itself: two squares, one turned by 45 degrees. */}
+        <path d={path([0, 2, 4, 6])} {...draw()} className="star__line star__line--main" />
+        <path d={path([1, 3, 5, 7])} {...draw()} className="star__line star__line--main" />
 
-      {/* The octagon in the middle. */}
-      <path d={path([0, 1, 2, 3, 4, 5, 6, 7], CORE)} {...draw()} className="star__line star__line--fine" />
+        {/* The octagon in the middle. */}
+        <path d={path([0, 1, 2, 3, 4, 5, 6, 7], CORE)} {...draw()} className="star__line star__line--fine" />
 
-      {/* Notes of the draughtsman. */}
-      <g className="star__notes">
-        <path d={`M0 ${-R * 0.3} A${R * 0.3} ${R * 0.3} 0 0 1 ${point(1, R * 0.3).join(' ')}`} />
-        <text x="13" y={-R * 0.36}>
-          45°
-        </text>
-        <line x1="0" y1="0" x2={point(2)[0]} y2="0" className="star__radius" />
-        <text x={R * 0.52} y="-3.5">
-          r
-        </text>
-        <circle r="1.6" className="star__centre" />
-      </g>
-    </svg>
+        {/* Notes of the draughtsman. */}
+        <g className="star__notes">
+          <path d={`M0 ${-R * 0.3} A${R * 0.3} ${R * 0.3} 0 0 1 ${point(1, R * 0.3).join(' ')}`} />
+          <text x="13" y={-R * 0.36}>
+            45°
+          </text>
+          <line x1="0" y1="0" x2={point(2)[0]} y2="0" className="star__radius" />
+          <text x={R * 0.52} y="-3.5">
+            r
+          </text>
+          <circle r="1.6" className="star__centre" />
+        </g>
+      </svg>
+    </div>
   );
 }

@@ -41,9 +41,19 @@ export default function Hero() {
   const hero = useRef<HTMLElement>(null);
   const drawing = useRef<HTMLDivElement>(null);
   useLean(hero, drawing);
-  // The star turns as the first screen scrolls away (tracker F68, index.css): switched on once the page runs.
+  // The star turns as the first screen scrolls away (tracker F68, index.css): switched on once the page runs. The
+  // circles behind it turn slowly only while the first screen is in view (tracker B13, data-offscreen).
   useEffect(() => {
-    if (hero.current) hero.current.dataset.away = '';
+    const element = hero.current;
+    if (!element) return undefined;
+    element.dataset.away = '';
+    if (!('IntersectionObserver' in window)) return undefined;
+    const observer = new IntersectionObserver((entries) => {
+      if (entries.some((entry) => entry.isIntersecting)) delete element.dataset.offscreen;
+      else element.dataset.offscreen = '';
+    });
+    observer.observe(element);
+    return () => observer.disconnect();
   }, []);
 
   return (
