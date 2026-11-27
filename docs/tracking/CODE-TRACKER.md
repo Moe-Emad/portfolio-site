@@ -114,7 +114,7 @@ issue and pull request numbers do not link here. From D4 on, the numbers are tho
 | F69 | #108 | The rework of a screen next to its original | TPMS was reworked, but its page showed only the new screens: a visitor could not see what the rework changed | `feat/f69-before-after` | #109 | done |
 | F70 | #114 | A phone answers a finger, not a mouse | A tap left the hover look of what was tapped in place until the next tap elsewhere, nothing changed while the finger was down, and the page pulled past its top showed a strip of the pale ground above the blue bar | `feat/f70-touch` | #115 | done |
 | F71 | #116 | The bar marks the section in view | The home page is about 14 screens long on a laptop and 21 on a phone, and the links of the bar looked the same wherever the reader was | `feat/f71-section-in-view` | #117 | done |
-| F72 | #118 | No word left alone on the last line | On a phone nine paragraphs and three titles of the home page ended with a single word on a line of its own, and on a laptop a title of Experience left its last word alone | `feat/f72-text-breaks` | - | in progress |
+| F72 | #118 | No word left alone on the last line | On a phone nine paragraphs and three titles of the home page ended with a single word on a line of its own, and on a laptop a title of Experience left its last word alone | `feat/f72-text-breaks` | #119 | done |
 
 ## D - docs and developer setup
 

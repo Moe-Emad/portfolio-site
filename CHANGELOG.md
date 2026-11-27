@@ -106,3 +106,4 @@ and do not link here.
 - B14: Screenshots further down are fetched before they come into view, under a sheet of their drawing paper instead of being clipped away, and the paper slides off only once the picture has arrived: no empty white frame and no picture that appears at once halfway through (#113)
 - F70: A phone answers a finger: hover looks only where a pointer hovers, so a tap leaves nothing behind; a pressed look while a finger or a mouse button is down; the page is blue past both ends, as its bar and foot are (#115)
 - F71: The bar marks the section in view: its link carries the star of the sign, in the gap before it on a wide screen and before its name in the menu of a phone, and is the current place for screen readers (#117)
+- F72: No word left alone on the last line: running text avoids a single word at its end and titles break into lines of even length; on a phone the home page goes from nine and three to one and none (#119)
