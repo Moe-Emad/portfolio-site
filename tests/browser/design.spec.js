@@ -1791,3 +1791,25 @@ test.describe('the star fills its room', () => {
     expect(found.size, 'the star, px (14rem before)').toBeGreaterThan(224);
   });
 });
+
+// The links of the bar fit on one line from 896 px (tracker B16). Before, between 56rem and about 970 px they did not:
+// at 896 px "How I work" broke onto three lines and the bar grew from 64 to 92 px.
+test('from 896 px the bar keeps one line and no link of it breaks', async ({ page }, testInfo) => {
+  test.skip(isPhone(testInfo), 'the bar of a wider screen');
+  for (const width of [896, 920, 960, 1000, 1023, 1024]) {
+    await page.setViewportSize({ width, height: 800 });
+    await open(page);
+    const found = await page.locator('.site-header').evaluate((header) => ({
+      height: Math.round(header.getBoundingClientRect().height),
+      broken: [...header.querySelectorAll('.site-nav li a')]
+        .filter((link) => {
+          const range = document.createRange();
+          range.selectNodeContents(link);
+          return new Set([...range.getClientRects()].filter((rect) => rect.width > 0).map((rect) => Math.round(rect.top))).size > 1;
+        })
+        .map((link) => link.textContent.trim()),
+      wider: header.scrollWidth > header.clientWidth,
+    }));
+    expect(found, `${width} px`).toEqual({ height: 64, broken: [], wider: false });
+  }
+});

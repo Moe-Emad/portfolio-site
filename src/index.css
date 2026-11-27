@@ -363,7 +363,8 @@ a:active {
   font-size: 0.75rem;
 }
 
-@media (min-width: 56rem) {
+/* The hint of the keys from 64rem: between 56rem and 64rem the bar needs its room for the links (tracker B16). */
+@media (min-width: 64rem) {
   .palette-button kbd {
     display: inline;
   }
@@ -469,6 +470,25 @@ a:active {
     font-family: inherit;
     font-size: 1rem;
     line-height: inherit;
+    white-space: nowrap;
+  }
+}
+
+/* Between 56rem and 64rem the links stand closer together, so the bar keeps its one line (tracker B16): at 896 px
+   "How I work" broke onto three lines and the bar grew to 92 px. The star of the section in view still fits the gap. */
+@media (min-width: 56rem) and (max-width: 63.99rem) {
+  .site-nav,
+  .site-nav[data-open="true"] {
+    gap: 1rem;
+  }
+
+  .site-nav ul {
+    gap: 1.4rem;
+  }
+
+  /* Nearer its own link than the one before it. */
+  .site-nav a[aria-current] .mark {
+    margin-right: 0.25em;
   }
 }
 
