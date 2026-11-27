@@ -1323,16 +1323,17 @@ test.describe('a livelier first screen', () => {
 });
 
 // On a phone the star fits the first screen and moves smoothly (tracker B13). Before, the band of the first screen was
-// taller than most phone screens and cut the star off at the bottom; the circles behind the star turned inside the
-// drawing, so the browser drew it again at every frame for as long as the page was open; and the turn while scrolling
-// was measured against the bottom of the window, so it jumped when the bars of a phone's browser hid.
+// taller than most phone screens and cut the star off at the bottom; the circles behind the star turned for ever, so
+// the browser restyled the page at every frame for as long as it was open; and the turn while scrolling was measured
+// against the bottom of the window, so it jumped when the bars of a phone's browser hid.
 test.describe('the star on a phone', () => {
   const turn = (page) => page.locator('#top .star').evaluate((star) => {
     const value = getComputedStyle(star).rotate;
     return value === 'none' ? 0 : parseFloat(value);
   });
 
-  /** Waits until the opening of the first screen is over: only the slow turn and the turn tied to the scroll run. */
+  /** Waits until what moves for a while has finished: the opening of the first screen, a rule or a picture coming in.
+      An animation that never ends, or one tied to the scroll, is not waited for. */
   const opened = (page) =>
     page.waitForFunction(
       () =>
@@ -1380,7 +1381,7 @@ test.describe('the star on a phone', () => {
     }
   });
 
-  test('while the page stands still nothing is restyled or laid out, and the circles rest out of view', async ({ page }) => {
+  test('once the star has drawn itself nothing moves until the page scrolls, and nothing is restyled or laid out', async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'no-preference' });
     await open(page);
     await opened(page);
@@ -1397,19 +1398,24 @@ test.describe('the star on a phone', () => {
       const after = await counts();
       return { style: after.RecalcStyleCount - before.RecalcStyleCount, layout: after.LayoutCount - before.LayoutCount };
     };
-    const slowTurn = () =>
-      page.evaluate(() => document.getAnimations().filter((animation) => animation.animationName === 'star-turn').map((animation) => animation.playState));
+    /** Animations that run by the clock; the turn of the star tied to the scroll moves only while the page scrolls. */
+    const byTheClock = () =>
+      page.evaluate(() =>
+        document
+          .getAnimations()
+          .filter((animation) => animation.playState === 'running' && animation.timeline instanceof DocumentTimeline)
+          .map((animation) => animation.animationName ?? animation.transitionProperty),
+      );
 
-    // At the top the circles turn behind the star, without a pass of the page at every frame.
-    expect(await slowTurn(), 'the circles turn at the top').toEqual(['running']);
+    expect(await byTheClock(), 'animations still running at the top').toEqual([]);
     const top = await oneSecond();
     expect(top.style, 'style passes in a second at the top').toBeLessThan(10);
     expect(top.layout, 'layout passes in a second at the top').toBeLessThan(10);
 
-    // At the foot of the page the first screen is out of view, and the circles rest.
+    // Far down the page, with the first screen out of view, the same.
     await page.evaluate(() => window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'instant' }));
     await opened(page);
-    await expect.poll(slowTurn, { message: 'the circles rest out of view' }).toEqual(['paused']);
+    expect(await byTheClock(), 'animations still running at the foot').toEqual([]);
     const foot = await oneSecond();
     expect(foot.style, 'style passes in a second at the foot').toBeLessThan(10);
     expect(foot.layout, 'layout passes in a second at the foot').toBeLessThan(10);

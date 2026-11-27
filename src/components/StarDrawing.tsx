@@ -17,32 +17,31 @@ const INNER = Math.round(R * Math.cos(Math.PI / 4) * 100) / 100;
 // The corners of the small octagon where the lines of the {8/3} star cross.
 const CORE = Math.round(R * (Math.SQRT2 - 1) * 100) / 100;
 
-const VIEW = '-100 -100 200 200';
-
 export default function StarDrawing() {
   let order = 0;
   // pathLength 1 lets one CSS rule draw every line, whatever its real length; --i staggers them.
   const draw = () => ({ pathLength: 1, style: { '--i': order++ } as CSSProperties });
 
+  // The drawing stands in a box of its own (tracker B13): the browser turns a box with the scroll on its own layer,
+  // but not an SVG element (index.css, star-away).
   return (
     <div className="star" aria-hidden="true">
-      {/* Construction: circles and radii, thin and dashed. A drawing of its own under the star (tracker B13), so its
-          slow turn moves the finished picture on a layer of its own instead of drawing it again at every frame. */}
-      <svg className="star__construction" viewBox={VIEW} focusable="false">
-        <circle r={R} />
-        <circle r={INNER} />
-        <circle r={CORE} />
-        {[0, 1, 2, 3].map((index) => {
-          const [x, y] = point(index);
-          return <line key={`d${index}`} x1={x} y1={y} x2={-x} y2={-y} />;
-        })}
-        {[0, 1, 2, 3].map((index) => {
-          const [x, y] = point(index * 2 + 1, R, 16);
-          return <line key={`h${index}`} x1={x} y1={y} x2={-x} y2={-y} />;
-        })}
-      </svg>
+      <svg viewBox="-100 -100 200 200" focusable="false">
+        {/* Construction: circles and radii, thin and dashed. */}
+        <g className="star__construction">
+          <circle r={R} />
+          <circle r={INNER} />
+          <circle r={CORE} />
+          {[0, 1, 2, 3].map((index) => {
+            const [x, y] = point(index);
+            return <line key={`d${index}`} x1={x} y1={y} x2={-x} y2={-y} />;
+          })}
+          {[0, 1, 2, 3].map((index) => {
+            const [x, y] = point(index * 2 + 1, R, 16);
+            return <line key={`h${index}`} x1={x} y1={y} x2={-x} y2={-y} />;
+          })}
+        </g>
 
-      <svg className="star__figure" viewBox={VIEW} focusable="false">
         {/* The {8/3} star: every third point joined. */}
         <path d={path([0, 3, 6, 1, 4, 7, 2, 5])} {...draw()} className="star__line star__line--fine" />
 
