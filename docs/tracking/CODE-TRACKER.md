@@ -39,6 +39,7 @@ issue and pull request numbers do not link here. From D4 on, the numbers are tho
 | B13 | #110 | On a phone the star fits the first screen and moves smoothly | On most phone screens the bottom of the screen cut the star off, and its turn began at the first touch; the circles behind it turned inside the drawing, so the page was restyled at every frame while nothing moved | `fix/b13-phone-star` | #111 | done |
 | B14 | #112 | Screenshots arrive before they are in view and unroll smoothly | A picture waiting below the screen was clipped away, so Chrome fetched it only once it was well into the screen: on a phone the frame came in empty and the picture appeared halfway through an unrolling that was redrawn at every frame | `fix/b14-smooth-pictures` | #113 | done |
 | B15 | #122 | The star of the first screen fills its room on a phone and a tablet | On a phone the star stood at the right beside an empty block, at most 16rem; between 640 and 1023 px it stood beside the text at a fixed 14rem, and from about 900 px, as on a phone that shows the desktop site, the right of the band was empty above it | `fix/b15-tablet-star` | #123 | done |
+| B16 | #124 | The links of the bar fit on one line from 896 px | From 56rem the bar shows all its links, but up to about 970 px they did not fit: at 896 px "How I work" broke onto three lines and the bar grew from 64 to 92 px | `fix/b16-bar-one-line` | - | in progress |
 
 ## F - features and the look
 
@@ -134,7 +135,6 @@ issue and pull request numbers do not link here. From D4 on, the numbers are tho
 
 New findings that are outside the item being worked on go here first, then become an item.
 
-- Between 896 and about 970 px the links of the bar do not fit: "How I work" breaks onto three lines at 896 px and the bar grows to 92 px (seen in B15, there before it).
 
 - On a phone with a fractional pixel ratio (the Pixel 7, 2.625), a line of the page one device pixel high can show
   between the bar and its open menu (seen in F71, there before it).
