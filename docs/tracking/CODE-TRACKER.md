@@ -113,7 +113,7 @@ issue and pull request numbers do not link here. From D4 on, the numbers are tho
 | F68 | #106 | A livelier first screen | The first screen stood still once it had drawn itself, and a change of theme was an instant cut | `feat/f68-living-first-screen` | #107 | done |
 | F69 | #108 | The rework of a screen next to its original | TPMS was reworked, but its page showed only the new screens: a visitor could not see what the rework changed | `feat/f69-before-after` | #109 | done |
 | F70 | #114 | A phone answers a finger, not a mouse | A tap left the hover look of what was tapped in place until the next tap elsewhere, nothing changed while the finger was down, and the page pulled past its top showed a strip of the pale ground above the blue bar | `feat/f70-touch` | #115 | done |
-| F71 | #116 | The bar marks the section in view | The home page is about 14 screens long on a laptop and 21 on a phone, and the links of the bar looked the same wherever the reader was | `feat/f71-section-in-view` | - | in progress |
+| F71 | #116 | The bar marks the section in view | The home page is about 14 screens long on a laptop and 21 on a phone, and the links of the bar looked the same wherever the reader was | `feat/f71-section-in-view` | #117 | done |
 
 ## D - docs and developer setup
 
@@ -130,6 +130,9 @@ issue and pull request numbers do not link here. From D4 on, the numbers are tho
 ## Findings noted for later
 
 New findings that are outside the item being worked on go here first, then become an item.
+
+- On a phone with a fractional pixel ratio (the Pixel 7, 2.625), a line of the page one device pixel high can show
+  between the bar and its open menu (seen in F71, there before it).
 
 - The other pictures of Molok El-Sook (02 to 06) are still the 800 px pictures of the game's `demo/` folder. They
   are shown smaller, in the gallery of its page, so they are sharp enough; new ones at 1440 px would match the rest.
