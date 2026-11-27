@@ -112,6 +112,7 @@ issue and pull request numbers do not link here. From D4 on, the numbers are tho
 | F67 | #104 | Dimension lines, as on a technical drawing | The site's idea is the engineer's drawing, but past the first screen nothing was annotated the way a drawing is | `feat/f67-dimension-lines` | #105 | done |
 | F68 | #106 | A livelier first screen | The first screen stood still once it had drawn itself, and a change of theme was an instant cut | `feat/f68-living-first-screen` | #107 | done |
 | F69 | #108 | The rework of a screen next to its original | TPMS was reworked, but its page showed only the new screens: a visitor could not see what the rework changed | `feat/f69-before-after` | #109 | done |
+| F70 | #114 | A phone answers a finger, not a mouse | A tap left the hover look of what was tapped in place until the next tap elsewhere, nothing changed while the finger was down, and the page pulled past its top showed a strip of the pale ground above the blue bar | `feat/f70-touch` | #115 | done |
 
 ## D - docs and developer setup
 

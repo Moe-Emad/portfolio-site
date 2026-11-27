@@ -1524,3 +1524,69 @@ test.describe('the star on a phone', () => {
     }
   });
 });
+
+// A phone answers a finger, not a mouse (tracker F70). Before, a tap left the hover look of what was tapped in place
+// until the next tap elsewhere, nothing changed while the finger was down, and the page pulled past its top showed a
+// strip of the pale ground above the blue bar.
+test.describe('a phone answers a finger', () => {
+  test('every hover look of the stylesheet asks for a pointer that hovers', async ({ page }) => {
+    await open(page);
+    const loose = await page.evaluate(() => {
+      const found = [];
+      const walk = (rules, conditions) => {
+        for (const rule of rules) {
+          const inner = rule.conditionText !== undefined ? [...conditions, rule.conditionText] : conditions;
+          if (rule.selectorText?.includes(':hover') && !inner.some((condition) => /\(hover:\s*hover\)/.test(condition))) found.push(rule.selectorText);
+          if (rule.cssRules) walk(rule.cssRules, inner);
+        }
+      };
+      for (const sheet of document.styleSheets) walk(sheet.cssRules, []);
+      return found;
+    });
+    expect(loose).toEqual([]);
+  });
+
+  test('after a tap the Copy button looks as it did before', async ({ page }, testInfo) => {
+    test.skip(!isPhone(testInfo), 'a tap of a finger');
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await open(page);
+    const copy = page.locator('#contact .email__copy');
+    await copy.scrollIntoViewIfNeeded();
+    const outline = () => copy.evaluate((button) => getComputedStyle(button).borderTopColor);
+    const before = await outline();
+    await copy.tap();
+    await expect(copy).toContainText(/Copied|Select/);
+    // The pressed look is held for a moment after a quick tap, so that it is seen; then the button is as before.
+    await expect.poll(outline, { message: 'the outline after the tap', timeout: 2000 }).toBe(before);
+  });
+
+  test('while pressed the main button sinks and takes its pressed colour', async ({ page }, testInfo) => {
+    test.skip(!isPhone(testInfo), 'a screen without hover looks');
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await open(page);
+    const button = page.locator('#top .button--sign');
+    const look = () => button.evaluate((element) => ({ background: getComputedStyle(element).backgroundColor, translate: getComputedStyle(element).translate }));
+    const rest = await look();
+    const box = await button.boundingBox();
+    await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+    await page.mouse.down();
+    const pressed = await look();
+    await page.mouse.up();
+    expect(pressed.background, 'a lighter saffron while pressed').not.toBe(rest.background);
+    expect(pressed.translate, 'a pixel lower while pressed').toBe('0px 1px');
+  });
+
+  test('past both ends the page is the blue of its bar, in both themes', async ({ page }) => {
+    for (const colorScheme of ['light', 'dark']) {
+      await page.emulateMedia({ colorScheme, reducedMotion: 'reduce' });
+      await open(page);
+      const colours = await page.evaluate(() => ({
+        root: getComputedStyle(document.documentElement).backgroundColor,
+        bar: getComputedStyle(document.querySelector('.site-header')).backgroundColor,
+        foot: getComputedStyle(document.querySelector('.site-footer')).backgroundColor,
+      }));
+      expect(colours.root, `${colorScheme}: the ground past the top and the foot`).toBe(colours.bar);
+      expect(colours.foot, `${colorScheme}: the foot`).toBe(colours.bar);
+    }
+  });
+});
