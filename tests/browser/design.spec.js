@@ -1590,3 +1590,61 @@ test.describe('a phone answers a finger', () => {
     }
   });
 });
+
+// The bar marks the section in view (tracker F71). Before, the links of the bar looked the same wherever the reader
+// was, so on a page of fourteen screens or more nothing said which section they were in.
+test.describe('the section in view', () => {
+  const marked = (page) => page.locator('.site-nav a[aria-current="location"]');
+
+  test('its link in the bar carries the star of the sign, and only its link', async ({ page }, testInfo) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await open(page);
+    await showSections(page, testInfo);
+    // In the first screen no section is in view yet.
+    await expect(marked(page)).toHaveCount(0);
+    if (isPhone(testInfo)) await page.getByRole('button', { name: 'Close' }).click();
+
+    for (const [id, label] of [
+      ['work', 'Work'],
+      ['experience', 'Experience'],
+      ['contact', 'Contact'],
+    ]) {
+      await page.locator(`#${id}`).evaluate((section) => window.scrollTo({ top: section.getBoundingClientRect().top + window.scrollY + 40, behavior: 'instant' }));
+      await showSections(page, testInfo);
+      await expect(marked(page), id).toHaveCount(1);
+      await expect(marked(page), id).toHaveText(label);
+      await expect(marked(page).locator('.mark'), `${id}: the star`).toBeVisible();
+      if (isPhone(testInfo)) await page.getByRole('button', { name: 'Close' }).click();
+    }
+  });
+
+  test('on a wide screen the star stands in the gap before the link, and no link moves', async ({ page }, testInfo) => {
+    test.skip(isPhone(testInfo), 'the bar of a wide screen');
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await open(page);
+    const places = () => page.locator('.site-nav li a').evaluateAll((links) => links.map((link) => Math.round(link.getBoundingClientRect().left)));
+    const before = await places();
+    await page.locator('#experience').evaluate((section) => window.scrollTo({ top: section.getBoundingClientRect().top + window.scrollY + 40, behavior: 'instant' }));
+    await expect(marked(page)).toHaveText('Experience');
+    expect(await places(), 'the links stay where they were').toEqual(before);
+    const gap = await marked(page).evaluate((link) => {
+      const star = link.querySelector('.mark').getBoundingClientRect();
+      const previous = link.parentElement.previousElementSibling.querySelector('a').getBoundingClientRect();
+      return { afterPrevious: star.left >= previous.right, beforeLink: star.right <= link.getBoundingClientRect().left };
+    });
+    expect(gap).toEqual({ afterPrevious: true, beforeLink: true });
+  });
+
+  test('on another page the bar leads back to the home page and marks nothing', async ({ page }) => {
+    await page.goto('/work/');
+    await expect(page.locator('h1')).toBeVisible();
+    // A section that crosses the line is reported after the next frames the browser draws, which a test browser may
+    // hold back for a second after the page opens: wait for two frames, give React a moment, then look once (an
+    // assertion that waits would pass at its first look).
+    await page.waitForFunction(() => Object.keys(document.getElementById('root')).some((key) => key.startsWith('__reactContainer')));
+    await page.evaluate(() => window.scrollTo({ top: 1200, behavior: 'instant' }));
+    await page.evaluate(() => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+    await page.waitForTimeout(500);
+    expect(await marked(page).count(), 'links marked as the place of the reader').toBe(0);
+  });
+});

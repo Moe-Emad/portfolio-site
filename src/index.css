@@ -401,7 +401,26 @@ a:active {
   text-decoration: underline;
 }
 
+/* The section in view (tracker F71): its link carries the star of the sign, as the title of the section does, drawn
+   in the white of the bar. In the menu of a phone the star stands before the name of the section. */
+.site-nav .mark__star {
+  stroke: var(--on-blue);
+}
+
 @media (min-width: 56rem) {
+  /* On a wide screen the star stands in the gap before the link, so no link moves along the bar. */
+  .site-nav a[aria-current] {
+    position: relative;
+  }
+
+  .site-nav a[aria-current] .mark {
+    position: absolute;
+    top: 50%;
+    right: 100%;
+    margin-right: 0.4em;
+    translate: 0 -50%;
+  }
+
   .site-header__menu-button {
     display: none;
   }
