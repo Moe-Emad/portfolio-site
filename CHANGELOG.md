@@ -108,3 +108,4 @@ and do not link here.
 - F71: The bar marks the section in view: its link carries the star of the sign, in the gap before it on a wide screen and before its name in the menu of a phone, and is the current place for screen readers (#117)
 - F72: No word left alone on the last line: running text avoids a single word at its end and titles break into lines of even length; on a phone the home page goes from nine and three to one and none (#119)
 - D8: The page weight after B13 to F72: the same pictures, a stylesheet 2 kB and a script 1 kB larger, the screenshots fetched before they come into view; the stylesheet is close to its budget (#121)
+- B15: The star of the first screen fills its room: in the middle under the buttons on a phone, up to 20rem; larger beside the text on a tablet held upright; large beside the name from 896 px, as on a wide screen, where a phone showing the desktop site had a small star under an empty corner (#123)
